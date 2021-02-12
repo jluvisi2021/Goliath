@@ -3,6 +3,11 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# Specific Folders & Files
+Goliath/Goliath/appsettings.json
+Goliath/Goliath/appsettings.Development.json
+**/wwwroot/lib/
+
 # User-specific files
 *.rsuser
 *.suo
@@ -351,5 +356,4 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
-Goliath/Goliath/appsettings.json
-Goliath/Goliath/appsettings.Development.json
+

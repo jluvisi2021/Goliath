@@ -10,15 +10,21 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Index</title>
-    <link href="~/css/style.css" rel="stylesheet" />
+    <link href="~/lib/twitter-bootstrap/css/bootstrap.css" rel="stylesheet" />
+    <script src="~/lib/jquery/jquery.js"></script>
 </head>
 
-<body>
-    <h1>
+<body class="container">
+    <h1 class="h1">
         Hello Goliath!
     </h1>
-    <h3>
+    <h3 class="h3">
         Current Time: @DateTime.Now
     </h3>
 </body>
 </html>
+<script>
+    $(document).ready(function () {
+        alert("Hello");
+    });
+</script>
