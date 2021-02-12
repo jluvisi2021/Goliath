@@ -1,27 +1,20 @@
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Goliath
 {
-
     /*
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-   _____       _ _       _   _      
-  / ____|     | (_)     | | | |                         
- | |  __  ___ | |_  __ _| |_| |__   
- | | |_ |/ _ \| | |/ _` | __| '_ \  
- | |__| | (_) | | | (_| | |_| | | | 
-  \_____|\___/|_|_|\__,_|\__|_| |_| 
-          Password Manager       
+   _____       _ _       _   _
+  / ____|     | (_)     | | | |
+ | |  __  ___ | |_  __ _| |_| |__
+ | | |_ |/ _ \| | |/ _` | __| '_ \
+ | |__| | (_) | | | (_| | |_| | | |
+  \_____|\___/|_|_|\__,_|\__|_| |_|
+          Password Manager
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-    
+
     -> By Jacob Luvisi
     -> GitHub: https://github.com/jluvisi2021/Goliath
     -> C# 9.0 - .NET Core 5
@@ -39,7 +32,6 @@ namespace Goliath
     - 2 Factor Authentication
     - Categories for secure information
     */
-
 
     public class Program
     {
