@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31005.135
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Goliath", "Goliath\Goliath.csproj", "{2E668226-492C-4B38-A29D-35C5EDC19123}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2E668226-492C-4B38-A29D-35C5EDC19123}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E668226-492C-4B38-A29D-35C5EDC19123}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E668226-492C-4B38-A29D-35C5EDC19123}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E668226-492C-4B38-A29D-35C5EDC19123}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9CA1C571-A2FD-4926-BB13-DF6AA7E5C643}
+	EndGlobalSection
+EndGlobal
