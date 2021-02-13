@@ -1,30 +1,54 @@
-﻿
-@{
+﻿@{
+    <!-- Because the login screen is seperate we don't need the navbar and other stuff. -->
     Layout = null;
-    
 }
+
+
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en-us">
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>Index</title>
-    <link href="~/lib/twitter-bootstrap/css/bootstrap.css" rel="stylesheet" />
-    <script src="~/lib/jquery/jquery.js"></script>
-</head>
+    <meta charset="utf-8" />
+    <meta name="author" content="jluvisi" />
+    <meta name="description" content="Goliath is an ASP.NET Core based password & secrets manager. Goliath allows users to setup personal accounts and provides a cloud based way of retrieving sensitive encrypted information." />
 
-<body class="container">
-    <h1 class="h1">
-        Hello Goliath!
-    </h1>
-    <h3 class="h3">
-        Current Time: @DateTime.Now
-    </h3>
+    <title>Goliath - Login</title>
+
+    <script src="~/lib/jquery/jquery.js"></script>
+    <script src="~/lib/twitter-bootstrap/js/bootstrap.bundle.js"></script>
+    <link href="~/lib/twitter-bootstrap/css/theme/light-theme.css" rel="stylesheet" />
+    <!-- Custom Site Scripts -->
+    <link href="~/css/login-style.css" rel="stylesheet" />
+    <script src="~/js/scripts.js"></script>
+
+</head>
+<body>
+
+
+
+
+    
+
+    <div class="container">
+        <div class="row">
+            <div class="col text-center justify-content-center">
+                <h1 class="h1">Login Form</h1>
+                <a type="button" class="btn btn-primary btn-lg" href="/UserPanel/">Go to UserPanel</a>
+            </div>
+        </div>
+    </div>
+    
+
+
+
+
+
 </body>
 </html>
+
+<!-- Scripts to be run on Index page only -->
 <script>
-    $(document).ready(function () {
-        alert("Hello");
-    });
+    testjQuery();
 </script>

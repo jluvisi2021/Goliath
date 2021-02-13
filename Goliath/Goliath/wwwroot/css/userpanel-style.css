@@ -1,0 +1,18 @@
+﻿body {
+    background-color: white;
+}
+.navbar-brand {
+    font-size: x-large;
+    font-weight: bold;
+}
+
+.navbar {
+    padding-top: 0.35%;
+    padding-bottom: 0.35%;
+    padding-left: 15%;
+}
+
+.navbar-nav {
+    font-size: large;
+    font-weight: 700;
+}

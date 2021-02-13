@@ -1,0 +1,76 @@
+﻿<!DOCTYPE html>
+<!-- Main layout file for application -->
+<html lang="en-us">
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <meta charset="utf-8" />
+    <meta name="author" content="jluvisi" />
+    <meta name="description" content="Goliath is an ASP.NET Core based password & secrets manager. Goliath allows users to setup personal accounts and provides a cloud based way of retrieving sensitive encrypted information." />
+
+    <title>Goliath</title>
+
+    <script src="~/lib/jquery/jquery.js"></script>
+    <script src="~/lib/twitter-bootstrap/js/bootstrap.bundle.js"></script>
+    <link href="~/lib/twitter-bootstrap/css/theme/light-theme.css" rel="stylesheet" />
+    <!-- Custom Site Scripts -->
+    <link href="~/css/userpanel-style.css" rel="stylesheet" />
+    <script src="~/js/scripts.js"></script>
+
+</head>
+<body>
+
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm nav">
+            <a class="navbar-brand" href="#">
+                <img src="~/images/icon.svg" width="55" height="55"/>
+                Goliath
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarColor03">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active px-3">
+                        <a class="nav-link px-3" href="#">
+                            My Profile
+                            <span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+                    <li class="nav-item px-3">
+                        <a class="nav-link" href="#">Database</a>
+                    </li>
+                    <li class="nav-item px-3">
+                        <a class="nav-link" href="#">Utilities</a>
+                    </li>
+                    <li class="nav-item px-3">
+                        <a class="nav-link" href="#">Help (Q&A)</a>
+                    </li>
+                    <li class="nav-item px-3">
+                        <a class="nav-link" href="#">About Goliath</a>
+                    </li>
+                    <li class="nav-item px-3">
+                        <a class="nav-link" href="#">Build Info</a>
+                    </li>
+                    <li class="nav-item dropdown px-3">
+                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Other</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="#">View Source Code</a>
+                            <a class="dropdown-item" href="#">Go to Wiki</a>
+                            <a class="dropdown-item" href="#">Report Issue</a>
+                            <a class="dropdown-item" href="#">Suggest Feature</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#">Log Out</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <div>
+        <!-- Render the child HTML -->
+        @RenderBody()
+    </div>
+</body>
+</html>
