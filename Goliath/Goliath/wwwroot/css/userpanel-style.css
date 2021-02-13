@@ -1,5 +1,6 @@
 ﻿body {
     background-color: white;
+    font-family: 'Trebuchet MS';
 }
 .navbar-brand {
     font-size: x-large;
@@ -7,9 +8,9 @@
 }
 
 .navbar {
-    padding-top: 0.35%;
-    padding-bottom: 0.35%;
-    padding-left: 15%;
+    padding-top: 0%;
+    padding-bottom: 0%;
+    padding-left: 10%;
 }
 
 .navbar-nav {
@@ -23,5 +24,5 @@
     border-top-style: solid;
     height: 60px;
     border-top-color: #FFF;
-    background-color: lightgray;
+    background-color: #f2f2f2;
 }
