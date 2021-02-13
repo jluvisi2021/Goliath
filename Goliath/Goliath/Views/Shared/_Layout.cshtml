@@ -22,7 +22,7 @@
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm nav">
             <a class="navbar-brand" href="#">
-                <img src="~/images/icon.svg" width="55" height="55"/>
+                <img src="~/images/icon.svg" width="55" height="55" />
                 Goliath
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
@@ -72,5 +72,16 @@
         <!-- Render the child HTML -->
         @RenderBody()
     </div>
+
+   
+    <footer class="footer fixed-bottom" >
+        <div class="container text-center">
+            <p class="p-3">
+                Goliath. Last Updated: @DateTime.Now
+            </p>
+            
+        </div>
+    </footer>
 </body>
+
 </html>
