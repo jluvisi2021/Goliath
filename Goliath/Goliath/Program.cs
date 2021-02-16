@@ -31,6 +31,9 @@ namespace Goliath
     - Themes
     - 2 Factor Authentication
     - Categories for secure information
+
+    Bootstrap Layouts:
+    -> https://jluvisi2021.github.io/Bubblegum/
     */
 
     public class Program
