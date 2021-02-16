@@ -1,28 +1,19 @@
 ﻿body {
     background-color: white;
-    font-family: 'Trebuchet MS';
 }
+
+
 .navbar-brand {
     font-size: x-large;
     font-weight: bold;
 }
 
 .navbar {
-    padding-top: 0%;
-    padding-bottom: 0%;
+    padding-top: 0.3%;
+    padding-bottom: 0.3%;
     padding-left: 10%;
 }
 
 .navbar-nav {
     font-size: large;
-    font-weight: 700;
-}
-.footer {
-    position: absolute;
-    bottom: 0;
-    border-top-width: 5px;
-    border-top-style: solid;
-    height: 60px;
-    border-top-color: #FFF;
-    background-color: #f2f2f2;
 }

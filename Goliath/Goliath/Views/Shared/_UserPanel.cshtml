@@ -1,0 +1,66 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<head>
+    <!-- UserPanel Style -->
+    <link href="~/css/userpanel-style.css" rel="stylesheet" />
+</head>
+<header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary ht-tm-element">
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <a class="navbar-brand" href="#!">
+            <img src="~/images/icon.svg" height="40" width="40" />
+
+                Goliath
+
+            
+        </a>
+        <div class="px-3">
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+                <ul class="navbar-nav mr-auto mt-2 mt-md-0">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#!">Profile <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#!">Database</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#!">Utilities</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#!">Help (Q&A)</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#!">About Goliath</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#!">Build Info</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Other
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="#">Go to GitHub</a>
+                            <a class="dropdown-item" href="#">Go to Wiki</a>
+                            <a class="dropdown-item" href="#">Suggest Feature</a>
+                            <a class="dropdown-item" href="#">Report Issue</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#">Logout</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </nav>
+</header>
+<body>
+    @RenderBody()
+</body>

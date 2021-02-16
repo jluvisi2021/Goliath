@@ -1,0 +1,11 @@
+﻿
+
+.footer {
+    font-family: 'Trebuchet MS';
+    bottom: 0;
+    border-top-width: 5px;
+    border-top-style: solid;
+    height: 60px;
+    border-top-color: #FFF;
+    background-color: #f2f2f2;
+}
