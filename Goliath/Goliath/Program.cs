@@ -27,7 +27,7 @@ namespace Goliath
     Planned Features:
     - User Accounts
     - Encryption
-    - Bootstrap CSS
+    - Bootstrap CSS (4.6)
     - Microsoft Azure Database
     - Themes
     - 2 Factor Authentication

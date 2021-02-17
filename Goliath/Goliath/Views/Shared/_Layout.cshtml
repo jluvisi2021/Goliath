@@ -1,7 +1,7 @@
 ﻿
 @{ 
     string jsonStr = ViewBag.Message;
-    string fontAwesomeStr = jsonStr.Replace("[", "").Replace("\"", "").Replace("]", "");
+    string fontAwesomeScript = jsonStr.Replace("[", "").Replace("\"", "").Replace("]", "");
 }
 
 <!DOCTYPE html>
@@ -12,20 +12,24 @@
     <meta charset="utf-8" />
     <meta name="author" content="jluvisi" />
     <meta name="description" content="Goliath is an ASP.NET Core based password & secrets manager. Goliath allows users to setup personal accounts and provides a cloud based way of retrieving sensitive encrypted information." />
-
+    
     <title>Goliath</title>
 
-    <!-- jQuery & Bootstrap 4 -->
+    <!-- jQuery, Bootstrap 4 & FontAwesome -->
     <script src="~/lib/jquery/jquery.js"></script>
     <script src="~/lib/twitter-bootstrap/js/bootstrap.bundle.js"></script>
-    <script src="@fontAwesomeStr" crossorigin="anonymous"></script>
+    <script src="@fontAwesomeScript" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.discordapp.com/attachments/811080332937920522/811322563270803537/bootstrap4-bubblegum.css">
+    <!--------------------------------------->
 
-    <!-------------------------->
-    <!-- Custom Files -->
+    <!-- Custom Files (Global) -->
     <link href="~/css/global.css" rel="stylesheet" />
     <script src="~/js/global.js"></script>
-    <!------------------>
+    <!--------------------------->
+
+    <!-- Custom Files (Specific) -->
+    @RenderSection("UniqueHeader")
+    <!----------------------------->
 </head>
 <body>
 
@@ -33,7 +37,7 @@
         <!-- Render the child HTML -->
         @RenderBody()
     </div>
-
+    
     <footer class="footer fixed-bottom">
         <div class="container text-center">
             <p class="p-3">
@@ -43,5 +47,6 @@
         </div>
     </footer>
 </body>
+
 
 </html>

@@ -1,0 +1,72 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@{
+    Layout = "_Layout";
+}
+
+@section UniqueHeader {
+    <link href="~/css/login-style.css" rel="stylesheet" />
+}
+
+<div class="">
+    <div class="container parent-container">
+
+        <div class="row">
+            <!-- The image half -->
+            <div class="col-md-6 d-none d-md-flex bg-dark round-left"></div>
+
+            <!-- The content half -->
+            <div class="col-md-6 bg-light round-right">
+                <div class="d-flex align-items-center py-5">
+
+                    <!-- Demo content-->
+                    <div class="container">
+                        <div class="row justify-content-md-center">
+                            <div class="col-lg-10 col-xl-9 mx-auto">
+                                <div class="text-center">
+                                    <div class="ht-tm-element btn-group btn-group-toggle" data-toggle="buttons">
+                                        <label class="btn btn-outline-primary active">
+                                            <input type="radio" name="options" id="radio-option-1" autocomplete="off" checked=""> Login
+                                        </label>
+                                        <label class="btn btn-outline-primary">
+                                            <input type="radio" name="options" id="radio-option-2" autocomplete="off"> Register
+                                        </label>
+                                        <div class="btn-group" role="group">
+                                            <button id="btnGroupDrop1" type="button" class="btn btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Other
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="btnGroupDrop1" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 38px, 0px);">
+
+                                                <a class="dropdown-item" href="#!">Forgot Password</a>
+                                                <a class="dropdown-item" href="#!">Verify Email</a>
+                                                <div class="dropdown-divider"></div>
+                                                <a class="dropdown-item py-xl-1" href="#!"><i class="fab fa-google px-sm-1"></i>Sign in with Google</a>
+                                                <a class="dropdown-item" href="#!"><i class="fab fa-microsoft px-sm-1"></i>Sign in with Microsoft</a>
+                                                <a class="dropdown-item" href="#!"><i class="fab fa-github px-sm-1"></i>View GitHub</a>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <hr />
+                                    <div>
+                                        <!-- Right Panel Header -->
+                                        @RenderSection("AuthHeader")
+                                    </div>
+
+                                </div>
+                                <div>
+                                    <!-- Right Panel Body -->
+                                    @RenderBody()
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- End -->
+
+                </div>
+            </div><!-- End -->
+
+        </div>
+    </div>
+</div>

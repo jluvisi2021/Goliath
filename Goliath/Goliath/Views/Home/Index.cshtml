@@ -1,122 +1,59 @@
-﻿@{
-    <!-- Because the login screen is seperate we don't need the navbar and other stuff. -->
-    Layout = "_Layout";
-    
+﻿<!-- Login Panel -->
+
+@section AuthHeader {
+    <h3 class="display-4">Login</h3>
+    <p class="text-muted mb-4">Enter your Goliath credentials.</p>
 }
 
-<head>
-    <!-- Login Site Style -->
-    <link href="~/css/login-style.css" rel="stylesheet" />
-
-</head>
-<body>
-
-    <div class="">
-        <div class="container parent-container">
-
-            <div class="row">
-                <!-- The image half -->
-                <div class="col-md-6 d-none d-md-flex bg-dark round-left"></div>
-
-                <!-- The content half -->
-                <div class="col-md-6 bg-light round-right">
-                    <div class="d-flex align-items-center py-5">
-
-                        <!-- Demo content-->
-                        <div class="container">
-                            <div class="row justify-content-md-center">
-                                <div class="col-lg-10 col-xl-9 mx-auto">
-                                    <div class="text-center">
-                                        <div class="ht-tm-element btn-group btn-group-toggle" data-toggle="buttons">
-                                            <label class="btn btn-outline-primary active">
-                                                <input type="radio" name="options" id="radio-option-1" autocomplete="off" checked=""> Login
-                                            </label>
-                                            <label class="btn btn-outline-primary">
-                                                <input type="radio" name="options" id="radio-option-2" autocomplete="off"> Register
-                                            </label>
-                                            <div class="btn-group" role="group">
-                                                <button id="btnGroupDrop1" type="button" class="btn btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                    Other
-                                                </button>
-                                                <div class="dropdown-menu" aria-labelledby="btnGroupDrop1" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 38px, 0px);">
-                                                    
-                                                    <a class="dropdown-item" href="#!">Forgot Password</a>
-                                                    <a class="dropdown-item" href="#!">Verify Email</a>
-                                                    <div class="dropdown-divider"></div>
-                                                    <a class="dropdown-item py-xl-1" href="#!"><i class="fab fa-google px-sm-1"></i>Sign in with Google</a>
-                                                    <a class="dropdown-item" href="#!"><i class="fab fa-microsoft px-sm-1"></i>Sign in with Microsoft</a>
-                                                    <a class="dropdown-item" href="#!"><i class="fab fa-github px-sm-1"></i>View GitHub</a>
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                        <hr />
-                                        <h3 class="display-4">Login</h3>
-                                        <p class="text-muted mb-4">Enter your Goliath credentials.</p>
-                                    </div>
-                                    
-                                    <form>
-                                        <div class="form-group mb-3">
-                                            <input id="inputEmail" type="email" placeholder="Email address" required="" autofocus="" class="form-control rounded-pill shadow-sm px-4">
-                                        </div>
-                                        <div class="form-group mb-3">
-                                            <input id="inputPassword" type="password" placeholder="Password" required="" class="form-control rounded-pill shadow-sm px-4 text-primary">
-                                        </div>
-                                        <div class="custom-control custom-checkbox mb-3">
-                                            <input id="customCheck1" type="checkbox" checked class="custom-control-input">
-                                            <label for="customCheck1" class="custom-control-label" data-toggle="tooltip" data-placement="right" title="Click for us to remember your account on this browser.">Remember Me</label>
-                                        </div>
-                                        <hr />
-                                        <button type="submit" class="btn btn-primary btn-block text-uppercase mb-2 rounded-pill shadow-sm">Sign in</button>
-                                        <div class="text-center">
-                                            <a href="#!" class="ht-tm-element btn btn-outline-danger">
-                                                <span class="fab fa-google"></span>
-                                                Login with Google
-                                            </a>
-                                            <a href="#!" class="ht-tm-element btn btn-outline-secondary">
-                                                <span class="fab fa-microsoft"></span>
-                                                Login with Microsoft
-                                            </a>
-                                        </div>
-                                        
-                                        <div class="text-center d-flex justify-content-between mt-4">
-                                            <p>
-                                                
-                                                <a href="" data-toggle="tooltip" data-placement="right" data-html="true" title="<p>Continue without logging in.<br>You will not be able to access <i>some</i> utilities.</p>">
-                                                    <i class="fas fa-user-slash text-dark"></i>
-                                                    Continue without logging in.
-                                                
-                                                </a>
-                                            </p>
-
-
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div><!-- End -->
-
-                    </div>
-                </div><!-- End -->
-
-            </div>
+<form>
+    <div class="ht-tm-element input-group mb-3">
+        <div class="input-group-prepend">
+            <button class="btn btn-outline-primary" type="button">
+                <i class="fas fa-envelope"></i>
+            </button>
         </div>
+        <input id="inputEmail" type="email" placeholder="Email address" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
     </div>
-    
 
-    <!--
-    <div class="container vertical-center">
+    <div class="ht-tm-element input-group mb-3">
+        <div class="input-group-prepend">
+            <button class="btn btn-outline-primary" type="button">
+                <i class="fas fa-unlock"></i>
+            </button>
+        </div>
+        <input id="inputPassword" type="password" placeholder="Password" required="" class="form-control shadow-sm px-2 rounded-right text-primary" />
+    </div>
 
-            <div class="col text-center justify-content-center">
-                <h1 class="h1">Login Form</h1>
-                <a type="button" class="btn btn-primary btn-lg" href="/UserPanel/">Go to UserPanel</a>
-            </div>
+    <div class="custom-control custom-checkbox mb-3">
+        <input id="customCheck1" type="checkbox" checked class="custom-control-input">
+        <label for="customCheck1" class="custom-control-label" data-toggle="tooltip" data-placement="right" title="Click for us to remember your account on this browser.">Remember Me</label>
+    </div>
+    <hr />
+    <button type="submit" class="btn btn-primary btn-block text-uppercase mb-2 rounded-pill shadow-sm">Sign in</button>
+    <div class="text-center">
+        <a href="#!" class="ht-tm-element btn btn-outline-danger">
+            <span class="fab fa-google"></span>
+            Login with Google
+        </a>
+        <a href="#!" class="ht-tm-element btn btn-outline-secondary">
+            <span class="fab fa-microsoft"></span>
+            Login with Microsoft
+        </a>
+    </div>
+
+    <div class="text-center d-flex justify-content-between mt-4">
+        <p>
+
+            <a href="" data-toggle="tooltip" data-placement="right" title="Continue without logging in. You will not be able to access some utilities.">
+                <i class="fas fa-user-slash text-dark"></i>
+                Continue without logging in.
+
+            </a>
+        </p>
+
 
     </div>
-    -->
-
-</body>
-
+</form>
 
 <!-- Scripts to be run on Index page only -->
 <script>
