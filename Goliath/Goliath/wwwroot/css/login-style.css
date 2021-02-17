@@ -1,6 +1,40 @@
-﻿.vertical-center {
-    min-height: 100%; /* Fallback for browsers do NOT support vh unit */
-    min-height: 100vh; /* These two lines are counted as one :-)       */
-    display: flex;
-    align-items: center;
+﻿html, body {
+    display: table;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+}
+
+
+body {
+    background: #CE6CE9;
+    background: -webkit-linear-gradient(bottom right, #CE6CE9, #F8AF5A);
+    background: -moz-linear-gradient(bottom right, #CE6CE9, #F8AF5A);
+    background: linear-gradient(to top left, #CE6CE9, #F8AF5A);
+    background-repeat: no-repeat;
+    background-size: cover;
+    float: left;
+}
+
+.round-right {
+    border-bottom-right-radius: 15%;
+    border-top-right-radius: 15%;
+}
+
+.round-left {
+    border-bottom-left-radius: 15%;
+    border-top-left-radius: 15%;
+}
+
+
+
+
+
+/* Repersents the main login container. This also accounts for footers. */
+.parent-container {
+    position: fixed; /* or absolute */
+    top: calc(50% - 30px);
+    left: calc(50% - 30px);
+    /* bring your own prefixes */
+    transform: translate(calc(-50% + 30px), -50%);
 }

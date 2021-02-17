@@ -1,4 +1,10 @@
-﻿<!DOCTYPE html>
+﻿
+@{ 
+    string jsonStr = ViewBag.Message;
+    string fontAwesomeStr = jsonStr.Replace("[", "").Replace("\"", "").Replace("]", "");
+}
+
+<!DOCTYPE html>
 <!-- Main layout file for application -->
 <html lang="en-us">
 <head>
@@ -12,6 +18,7 @@
     <!-- jQuery & Bootstrap 4 -->
     <script src="~/lib/jquery/jquery.js"></script>
     <script src="~/lib/twitter-bootstrap/js/bootstrap.bundle.js"></script>
+    <script src="@fontAwesomeStr" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.discordapp.com/attachments/811080332937920522/811322563270803537/bootstrap4-bubblegum.css">
 
     <!-------------------------->
@@ -21,17 +28,18 @@
     <!------------------>
 </head>
 <body>
+
     <div>
         <!-- Render the child HTML -->
         @RenderBody()
     </div>
 
-    <footer class="footer fixed-bottom" >
+    <footer class="footer fixed-bottom">
         <div class="container text-center">
             <p class="p-3">
                 Goliath. Last Updated: @DateTime.Now
             </p>
-            
+
         </div>
     </footer>
 </body>
