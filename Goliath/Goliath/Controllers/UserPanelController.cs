@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
@@ -9,26 +10,22 @@ using System.Threading.Tasks;
 namespace Goliath.Controllers
 {
     
-    public class UserPanelController : Controller
+    public sealed class UserPanelController : Controller
     {
-        private readonly IConfiguration _configuration;
 
-        public UserPanelController(IConfiguration configuration)
+        public UserPanelController()
         {
-            _configuration = configuration;
         }
 
         public IActionResult Index()
         {
-            List<object> settings = new List<object>();
-            var fontAwesomeJS = _configuration["FontAwesome:js-file"];
-            settings.AddRange(new object[] { fontAwesomeJS });
-            ViewBag.Message = JsonConvert.SerializeObject(settings);
+            //ViewBag.config = _config.Serialize();
             return View("Profile");
         }
 
         public IActionResult Database()
         {
+            //ViewBag.config = _config.Serialize();
             return View();
         }
 

@@ -1,0 +1,93 @@
+﻿@{
+    ViewData["Title"] = "Login";
+}
+<!-- Login Panel -->
+
+@section AuthHeader {
+    <h3 class="display-4">Register</h3>
+    <p class="text-muted mb-4">Make a new Goliath Account.<br />Once complete more settings can be changed inside the user panel.</p>
+}
+@section AuthBanner {}
+
+@*
+    Example of banner:
+
+        @section AuthBanner {
+        <div class="alert alert-primary alert-dismissible fade show" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">×</span>
+            </button>
+            <strong>Test Banner!</strong> You can dismiss this message with the X button.
+        </div>
+    }
+*@
+
+
+<form>
+
+    <div class="ht-tm-element input-group mb-3">
+        <div class="input-group-prepend">
+            <button class="btn btn-outline-primary" type="button">
+                <i class="fas fa-user-tag"></i>
+            </button>
+        </div>
+        <input id="inputUsername" type="text" placeholder="Username (6-18 Characters)" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
+    </div>
+
+    <div class="ht-tm-element input-group mb-3">
+        <div class="input-group-prepend">
+            <button class="btn btn-outline-primary" type="button">
+                <i class="fas fa-envelope"></i>
+            </button>
+        </div>
+        <input id="inputEmail" type="email" placeholder="Email address" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
+    </div>
+
+    <div class="ht-tm-element input-group mb-3">
+        <div class="input-group-prepend">
+            <button class="btn btn-outline-primary" type="button">
+                <i class="fas fa-envelope"></i>
+            </button>
+        </div>
+        <input id="inputEmailConfirm" type="email" placeholder="Confirm Email address" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
+
+    </div>
+
+    <div class="ht-tm-element input-group mb-3">
+        <div class="input-group-prepend">
+            <button class="btn btn-outline-primary" type="button">
+                <i class="fas fa-unlock"></i>
+            </button>
+        </div>
+        <input id="inputPassword" type="password" placeholder="Password" required="" class="form-control shadow-sm px-2 rounded-right text-primary" />
+    </div>
+
+    <div class="ht-tm-element input-group mb-3">
+        <div class="input-group-prepend">
+            <button class="btn btn-outline-primary" type="button">
+                <i class="fas fa-unlock"></i>
+            </button>
+        </div>
+        <input id="inputPasswordConfirm" type="password" placeholder="Confirm Password" required="" class="form-control shadow-sm px-2 rounded-right text-primary" />
+    </div>
+
+    <hr />
+    <button type="submit" class="btn btn-primary btn-block text-uppercase mb-2 rounded-pill shadow-sm">Send Verification Email</button>
+    <div class="text-center">
+        <a href="#!" class="ht-tm-element btn btn-outline-danger mb-1">
+            <span class="fab fa-google"></span>
+            Sign Up with Google Instead
+        </a>
+
+        <a href="#!" class="ht-tm-element btn btn-outline-secondary">
+            <span class="fab fa-microsoft"></span>
+            Sign Up with Microsoft Instead
+        </a>
+    </div>
+
+</form>
+
+<!-- Scripts to be run on Index page only -->
+<script>
+    testjQuery();
+</script>

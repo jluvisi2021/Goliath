@@ -1,3 +1,4 @@
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -14,9 +15,10 @@ namespace Goliath
         {
             // Enable MVC Design
             services.AddControllersWithViews();
-        #if DEBUG
+#if DEBUG
             services.AddRazorPages().AddRazorRuntimeCompilation();
-        #endif
+#endif
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -40,11 +42,13 @@ namespace Goliath
             // Enable URL routing.
             app.UseRouting();
 
-            
 
+            /* Starts at ~/Views/Home/Login.cshtml */
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapDefaultControllerRoute();
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
         }

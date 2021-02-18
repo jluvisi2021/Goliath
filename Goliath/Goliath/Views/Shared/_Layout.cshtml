@@ -1,24 +1,24 @@
-﻿
-@{ 
-    string jsonStr = ViewBag.Message;
-    string fontAwesomeScript = jsonStr.Replace("[", "").Replace("\"", "").Replace("]", "");
-}
+﻿@*
 
+Primary layout for all pages in Goliath.
+Specific layouts are in Layouts folder.
+
+*@
 <!DOCTYPE html>
 <!-- Main layout file for application -->
 <html lang="en-us">
 <head>
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta charset="utf-8" />
     <meta name="author" content="jluvisi" />
     <meta name="description" content="Goliath is an ASP.NET Core based password & secrets manager. Goliath allows users to setup personal accounts and provides a cloud based way of retrieving sensitive encrypted information." />
     
-    <title>Goliath</title>
+    <title>Goliath | @ViewData["Title"]</title>
 
     <!-- jQuery, Bootstrap 4 & FontAwesome -->
     <script src="~/lib/jquery/jquery.js"></script>
     <script src="~/lib/twitter-bootstrap/js/bootstrap.bundle.js"></script>
-    <script src="@fontAwesomeScript" crossorigin="anonymous"></script>
+    <script src="@ViewBag.fontAwesome" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.discordapp.com/attachments/811080332937920522/811322563270803537/bootstrap4-bubblegum.css">
     <!--------------------------------------->
 
@@ -37,16 +37,22 @@
         <!-- Render the child HTML -->
         @RenderBody()
     </div>
-    
+
     <footer class="footer fixed-bottom">
         <div class="container text-center">
             <p class="p-3">
-                Goliath. Last Updated: @DateTime.Now
+                <a data-toggle="tooltip" data-placement="top" data-html="true" title="Web Version: @ViewData["Version"]<br>Latest Update: 2/17/2021">
+                    [Goliath @ViewData["Version"]] Last Updated: @DateTime.Now
+                    </a>
             </p>
 
         </div>
     </footer>
+    
 </body>
 
 
 </html>
+<script>
+
+</script>

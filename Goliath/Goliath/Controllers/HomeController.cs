@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿
+using Goliath.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
@@ -13,23 +15,44 @@ namespace Goliath.Controllers
     /// <summary>
     /// Manages the Views for the Home.
     /// </summary>
-    public class HomeController : Controller
+    public sealed class HomeController : Controller
     {
 
-        private readonly IConfiguration _configuration;
-
-        public HomeController(IConfiguration configuration)
+        public HomeController()
         {
-            _configuration = configuration;
+
+        }
+        
+        public IActionResult Index()
+        {   
+            return View("Login", new AuthModel
+            {
+                SelectedValue = Models.Enums.AuthPage.Login
+            });
         }
 
-        public IActionResult Index()
+        public IActionResult Register()
         {
-            List<object> settings = new List<object>();
-            var fontAwesomeJS = _configuration["FontAwesome:js-file"];
-            settings.AddRange(new object[] { fontAwesomeJS });
-            ViewBag.Message = JsonConvert.SerializeObject(settings);
-            return View();
+            return View(new AuthModel
+            {
+                SelectedValue = Models.Enums.AuthPage.Register
+            });
+        }
+
+        public IActionResult ForgotPassword()
+        {
+            return View(new AuthModel
+            {
+                SelectedValue = Models.Enums.AuthPage.Forgot_Password
+            });
+        }
+
+        public IActionResult VerifyEmail()
+        {
+            return View(new AuthModel
+            {
+                SelectedValue = Models.Enums.AuthPage.Verify_Email
+            });
         }
     }
 }
