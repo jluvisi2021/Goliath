@@ -17,11 +17,19 @@
 @section UniqueHeader {
     <link href="~/css/login-style.css" rel="stylesheet" />
 }
-<div>
+
+<div id="ZoomDiv">
 
     <div class="container parent-container">
 
         @RenderSection("AuthBanner")
+
+        <div class="alert alert-primary alert-dismissible fade show hide" role="alert" id="ChangedGraphicAlert" style="z-index: 3;">
+            <button type="button" class="close" data-hide="alert" aria-label="Close">
+                <span aria-hidden="true">×</span>
+            </button>
+            <strong>You changed the view.</strong> Your data is saved; You can undo this anytime.
+        </div>
 
         <div class="row">
 
@@ -103,7 +111,7 @@
                                                 <a class="dropdown-item" href="#!"><i class="fab fa-github px-sm-1"></i>View GitHub</a>
                                             </div>
                                         </div>
-                                        <a class="btn btn-outline-primary bg-primary" id="ShowGraphic" onclick="toggleGraphic()">
+                                        <a class="btn btn-outline-primary bg-primary" id="ShowGraphic" onclick="toggleGraphic(true)">
                                             <i class="fas fa-eye text-white" id="ShowGraphicIcon"></i>
                                         </a>
                                     </div>
@@ -127,17 +135,28 @@
     </div>
 </div>
 <script>
+    //TODO: Move most of this to scripts.js
+
+    // Hide the notification area.
+    $("#ChangedGraphicAlert").hide();
+
+    // Don't delete the notification when it is closed just hide it.
+    $(function () {
+        $("[data-hide]").on("click", function () {
+                $(this).closest("." + $(this).attr("data-hide")).hide();
+        });
+    });
 
     // Save the information if the user prefers hidden mode.
     if (localStorage.getItem("graphic") == null) {
         localStorage.setItem("graphic", "enabled");
     }
     if (localStorage.getItem("graphic") == "disabled") {
-        toggleGraphic();
+        toggleGraphic(false);
     }
     // Change the layout.
-    function toggleGraphic() {
-
+    function toggleGraphic(alert) {
+        
         if ($("#ShowGraphicIcon").hasClass("fas fa-eye-slash")) {
             localStorage.setItem("graphic", "enabled");
             $("#ShowGraphicIcon").attr("class", "fas fa-eye text-white");
@@ -151,7 +170,9 @@
             $("#RightContainer").attr("class", "container bg-light round parent-container");
             $("#RightContainer").attr("style", "min-height: 100%;zoom: 1.15; margin-top: 3%");
         }
-
+        if (alert) {
+            $("#ChangedGraphicAlert").show();
+        }
     }
 
     // This fixes a bug where the other dropdown radio button could be "clicked" even if the dropdown did not open.
@@ -172,5 +193,33 @@ if ($("#" + "@Model.SelectedValue.ToString()RadioBtn").length == 0) {
     });
 } else {
     $("#@Model.SelectedValue.ToString()RadioBtn").prop("checked", true);
-}
+    }
+    /**
+     * Return the mathmatical difference between uwh and cwh as well as uww and cww.
+     * It ends up returning the lowest of the two as a raw percentage.
+     */
+    function calculateDifference(uwh, uww, cwh, cww) {
+        var whdiff = uwh - cwh;
+        var wwdiff = uww - cww;
+        var calcA = whdiff / uwh;
+        var calcB = wwdiff / cwh;
+        return calcA < calcB ? (1 - calcA) : (1 - calcB);
+    }
+    /**
+     * Adjusts the viewport for any screen to match the developers computer. This ensures proper scaling without HTML/CSS nonsense.
+    */
+    function adjustViewport() {
+        var usualWindowHeight = 969;
+        var usualWindowWidth = 1920;
+        var currWindowHeight = $(window).height();
+        var currWindowWidth = $(window).width();
+
+        $("#ZoomDiv").css({
+            "zoom": String(calculateDifference(usualWindowHeight, usualWindowWidth, currWindowHeight, currWindowWidth))
+        });
+        //alert("Your calculated zoom: " + String(calculateDifference(usualWindowHeight, usualWindowWidth, currWindowHeight, currWindowWidth)));
+    }
+
+    // When the window loads account for screen size.
+    $(window).on("load", adjustViewport());
 </script>
