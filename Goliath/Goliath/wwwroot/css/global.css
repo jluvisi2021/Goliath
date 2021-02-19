@@ -8,3 +8,23 @@
     border-top-color: #FFF;
     background-color: #f2f2f2;
 }
+/* Horizontally Center a banner max width of 50%
+   This div should go above other content.
+*/
+#center-banner {
+    position: relative;
+    max-width: 50%;
+    width: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+}
+
+/* For drop down menus */
+.drop-down {
+    position: absolute;
+    will-change: transform;
+    top: 0px;
+    left: 0px;
+    transform: translate3d(0px, 38px, 0px);
+}
