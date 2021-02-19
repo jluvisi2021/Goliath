@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Goliath.Models.Enums
+﻿namespace Goliath.Models.Enums
 {
     public enum AuthPage
     {

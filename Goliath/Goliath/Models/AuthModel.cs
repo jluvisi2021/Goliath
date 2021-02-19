@@ -1,9 +1,5 @@
-﻿
-using Goliath.Models.Enums;
+﻿using Goliath.Models.Enums;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Goliath.Models
 {
@@ -13,10 +9,11 @@ namespace Goliath.Models
         Login, Register, Forgot_Password, Verify_Email
     }
     */
+
     public class AuthModel
     {
         public AuthPage SelectedValue { get; set; }
-        
+
         public AuthPage FromString(string str)
         {
             return str switch
@@ -29,8 +26,6 @@ namespace Goliath.Models
             };
         }
 
-
-
         public override string ToString()
         {
             return SelectedValue switch
@@ -42,8 +37,5 @@ namespace Goliath.Models
                 _ => throw new NullReferenceException(),
             };
         }
-        
-
     }
-    
 }

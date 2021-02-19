@@ -1,7 +1,7 @@
 ﻿@*
 
-Primary layout for all pages in Goliath.
-Specific layouts are in Layouts folder.
+    Primary layout for all pages in Goliath.
+    Specific layouts are in Layouts folder.
 
 *@
 <!DOCTYPE html>
@@ -12,7 +12,7 @@ Specific layouts are in Layouts folder.
     <meta charset="utf-8" />
     <meta name="author" content="jluvisi" />
     <meta name="description" content="Goliath is an ASP.NET Core based password & secrets manager. Goliath allows users to setup personal accounts and provides a cloud based way of retrieving sensitive encrypted information." />
-    
+
     <title>Goliath | @ViewData["Title"]</title>
 
     <!-- jQuery, Bootstrap 4 & FontAwesome -->
@@ -21,12 +21,10 @@ Specific layouts are in Layouts folder.
     <script src="@ViewBag.fontAwesome" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.discordapp.com/attachments/811080332937920522/811322563270803537/bootstrap4-bubblegum.css">
     <!--------------------------------------->
-
     <!-- Custom Files (Global) -->
     <link href="~/css/global.css" rel="stylesheet" />
     <script src="~/js/global.js"></script>
     <!--------------------------->
-
     <!-- Custom Files (Specific) -->
     @RenderSection("UniqueHeader")
     <!----------------------------->
@@ -43,16 +41,11 @@ Specific layouts are in Layouts folder.
             <p class="p-3">
                 <a data-toggle="tooltip" data-placement="top" data-html="true" title="Web Version: @ViewData["Version"]<br>Latest Update: 2/17/2021">
                     [Goliath @ViewData["Version"]] Last Updated: @DateTime.Now
-                    </a>
+                </a>
             </p>
-
         </div>
     </footer>
-    
 </body>
-
-
 </html>
 <script>
-
 </script>

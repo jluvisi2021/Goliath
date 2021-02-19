@@ -19,8 +19,6 @@
 }
 <div>
 
-    
-
     <div class="container parent-container">
 
         @RenderSection("AuthBanner")
@@ -63,87 +61,72 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
-
-
             </div>
-
 
             <!-- The content half -->
             <div class="col-md-6 bg-light round-right" id="RightContainer">
-            <!--<div class="container bg-light round parent-container" style="min-height: 100%;zoom: 1.15; margin-top: 3%" id="RightContainer">-->
+                <!--<div class="container bg-light round parent-container" style="min-height: 100%;zoom: 1.15; margin-top: 3%" id="RightContainer">-->
 
-            <div class="d-flex align-items-center py-5">
+                <div class="d-flex align-items-center py-5">
 
-                <!-- Header content-->
-                <div class="container-fluid">
-                    <div class="row justify-content-md-center">
-                        <div class="col-lg-10 col-xl-9 mx-auto">
-                            <div class="text-center">
-                                <!-- Radio Buttons -->
-                                <div class=" ht-tm-element btn-group btn-group-toggle" data-toggle="buttons">
+                    <!-- Header content-->
+                    <div class="container-fluid">
+                        <div class="row justify-content-md-center">
+                            <div class="col-lg-10 col-xl-9 mx-auto">
+                                <div class="text-center">
+                                    <!-- Radio Buttons -->
+                                    <div class=" ht-tm-element btn-group btn-group-toggle" data-toggle="buttons">
 
+                                        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-primary">
 
-                                    <a asp-controller="Home" asp-action="Index" class="btn btn-outline-primary">
-
-                                        <input type="radio" name="options" id="LoginRadioBtn" autocomplete="off">
-                                        Login
-
-                                    </a>
-                                    <a asp-controller="Home" asp-action="Register" class="btn btn-outline-primary">
-
-                                        <input type="radio" name="options" id="RegisterRadioBtn" autocomplete="off">
-                                        Register
-
-                                    </a>
-                                    <div class="btn-group btn btn-outline-primary" id="OtherHead">
-                                        <a id="OtherDrop" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <input type="radio" name="options" id="OtherRadioBtn" autocomplete="off">
-                                            Other
+                                            <input type="radio" name="options" id="LoginRadioBtn" autocomplete="off">
+                                            Login
                                         </a>
-                                        <div class="dropdown-menu" aria-labelledby="OtherDrop" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 38px, 0px);">
+                                        <a asp-controller="Home" asp-action="Register" class="btn btn-outline-primary">
 
-                                            <a asp-controller="Home" asp-action="ForgotPassword" id="Forgot_Password" class="dropdown-item">Forgot Password</a>
-                                            <a asp-controller="Home" asp-action="VerifyEmail" id="Verify_Email" class="dropdown-item">Verify Email</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item py-xl-1" href="#!"><i class="fab fa-google px-sm-1"></i>Sign in with Google</a>
-                                            <a class="dropdown-item" href="#!"><i class="fab fa-microsoft px-sm-1"></i>Sign in with Microsoft</a>
-                                            <a class="dropdown-item" href="#!"><i class="fab fa-github px-sm-1"></i>View GitHub</a>
+                                            <input type="radio" name="options" id="RegisterRadioBtn" autocomplete="off">
+                                            Register
+                                        </a>
+                                        <div class="btn-group btn btn-outline-primary" id="OtherHead">
+                                            <a id="OtherDrop" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <input type="radio" name="options" id="OtherRadioBtn" autocomplete="off">
+                                                Other
+                                            </a>
+                                            <div class="dropdown-menu" aria-labelledby="OtherDrop" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 38px, 0px);">
+
+                                                <a asp-controller="Home" asp-action="ForgotPassword" id="Forgot_Password" class="dropdown-item">Forgot Password</a>
+                                                <a asp-controller="Home" asp-action="VerifyEmail" id="Verify_Email" class="dropdown-item">Verify Email</a>
+                                                <div class="dropdown-divider"></div>
+                                                <a class="dropdown-item py-xl-1" href="#!"><i class="fab fa-google px-sm-1"></i>Sign in with Google</a>
+                                                <a class="dropdown-item" href="#!"><i class="fab fa-microsoft px-sm-1"></i>Sign in with Microsoft</a>
+                                                <a class="dropdown-item" href="#!"><i class="fab fa-github px-sm-1"></i>View GitHub</a>
+                                            </div>
                                         </div>
-
+                                        <a class="btn btn-outline-primary bg-primary" id="ShowGraphic" onclick="toggleGraphic()">
+                                            <i class="fas fa-eye text-white" id="ShowGraphicIcon"></i>
+                                        </a>
                                     </div>
-                                    <a class="btn btn-outline-primary bg-primary" id="ShowGraphic" onclick="toggleGraphic()" data-toggle="tooltip" data-placement="right"
-  title="" data-html="true" data-original-title="Click to enable Clear View.<br> Clear view is reccomended for unique screens.">
-                                        <i class="fas fa-eye text-white" id="ShowGraphicIcon"></i>
-                                    </a>
+                                    <!-- Radio Buttons End -->
+                                    <hr />
+                                    <div>
+                                        <!-- Right Panel Header -->
+                                        @RenderSection("AuthHeader")
+                                    </div>
                                 </div>
-                                <!-- Radio Buttons End -->
-                                <hr />
                                 <div>
-                                    <!-- Right Panel Header -->
-                                    @RenderSection("AuthHeader")
+                                    <!-- Right Panel Body -->
+                                    @RenderBody()
                                 </div>
-
-                            </div>
-                            <div>
-                                <!-- Right Panel Body -->
-                                @RenderBody()
                             </div>
                         </div>
-                    </div>
-                </div><!-- End -->
-
-            </div>
-        </div><!-- End -->
-
+                    </div><!-- End -->
+                </div>
+            </div><!-- End -->
         </div>
     </div>
 </div>
 <script>
-
-
-
 
     // Save the information if the user prefers hidden mode.
     if (localStorage.getItem("graphic") == null) {
@@ -152,9 +135,9 @@
     if (localStorage.getItem("graphic") == "disabled") {
         toggleGraphic();
     }
-
     // Change the layout.
     function toggleGraphic() {
+
         if ($("#ShowGraphicIcon").hasClass("fas fa-eye-slash")) {
             localStorage.setItem("graphic", "enabled");
             $("#ShowGraphicIcon").attr("class", "fas fa-eye text-white");
@@ -168,6 +151,7 @@
             $("#RightContainer").attr("class", "container bg-light round parent-container");
             $("#RightContainer").attr("style", "min-height: 100%;zoom: 1.15; margin-top: 3%");
         }
+
     }
 
     // This fixes a bug where the other dropdown radio button could be "clicked" even if the dropdown did not open.

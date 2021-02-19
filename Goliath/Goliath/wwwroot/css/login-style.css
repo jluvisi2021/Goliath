@@ -30,24 +30,20 @@ body {
     }
 }
 
+.round-left {
+    border-bottom-left-radius: 15%;
+    border-top-left-radius: 15%;
+}
 
-    .round-left {
-        border-bottom-left-radius: 15%;
-        border-top-left-radius: 15%;
-    }
+.round {
+    border-radius: 15%;
+}
 
-
-    .round {
-        border-radius: 15%;
-    }
-
-
-
-    /* Repersents the main login container. This also accounts for footers. */
-    .parent-container {
-        position: fixed; /* or absolute */
-        top: calc(50% - 30px);
-        left: calc(50% - 30px);
-        /* bring your own prefixes */
-        transform: translate(calc(-50% + 30px), -50%);
-    }
+/* Repersents the main login container. This also accounts for footers. */
+.parent-container {
+    position: fixed; /* or absolute */
+    top: calc(50% - 30px);
+    left: calc(50% - 30px);
+    /* bring your own prefixes */
+    transform: translate(calc(-50% + 30px), -50%);
+}
