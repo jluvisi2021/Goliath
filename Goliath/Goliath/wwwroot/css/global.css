@@ -1,4 +1,15 @@
-﻿.footer {
+﻿/* Makes all elements invisible on startup.
+   This is required to prevent flickering of webpage
+    while jQuery configures styling.
+    All elements can be loaded and turned visible by the
+    load() function in global.js.
+*/
+#RenderBody {
+    visibility: hidden;
+}
+
+
+.footer {
     font-family: 'Trebuchet MS';
     bottom: 0;
     border-top-width: 5px;
@@ -20,6 +31,7 @@
     z-index: 3;
 }
 
+
 /* For drop down menus */
 .drop-down {
     position: absolute;
@@ -28,3 +40,21 @@
     left: 0px;
     transform: translate3d(0px, 38px, 0px);
 }
+/** If mobile then we scale. */
+@media only screen and (pointer:none), (pointer:coarse) and (max-device-width: 768px) {
+
+    #center-banner {
+        position: relative;
+        max-width: 100%;
+        width: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 3;
+    }
+
+}
+
+#bad-browser {
+    visibility: hidden;
+}
+

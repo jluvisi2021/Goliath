@@ -12,8 +12,18 @@ namespace Goliath.Models
 
     public class AuthModel
     {
+        /// <summary>
+        /// Get/Set the current value of the selected button in the authentication window.
+        /// Ex. Register -> Color Register Button Blue
+        /// </summary>
         public AuthPage SelectedValue { get; set; }
 
+        /// <summary>
+        /// Returns the Enum value <see cref="AuthPage.enums.cs"/>
+        /// from a string.
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
         public AuthPage FromString(string str)
         {
             return str switch
@@ -26,6 +36,10 @@ namespace Goliath.Models
             };
         }
 
+        /// <summary>
+        /// Convert current select value item to string.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return SelectedValue switch

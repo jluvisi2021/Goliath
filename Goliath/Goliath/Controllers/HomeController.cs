@@ -28,6 +28,14 @@ namespace Goliath.Controllers
             });
         }
 
+        public IActionResult RegisterMethod()
+        {
+            return View(new AuthModel
+            {
+                SelectedValue = Models.Enums.AuthPage.Register
+            });
+        }
+
         public IActionResult ForgotPassword()
         {
             return View(new AuthModel

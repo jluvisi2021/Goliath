@@ -1,0 +1,31 @@
+﻿@{
+    ViewData["Title"] = "New Account";
+}
+<!-- Login Panel -->
+
+@section AuthHeader {
+    <h3 class="display-4">Select Method</h3>
+    <p class="text-muted mb-4">Select how you want to make your new account.<br />If you choose an external provider you must use them to login.</p>
+}
+<form>
+    
+    <article>
+        <hr />
+        <a asp-controller="Home" asp-action="Register" class="btn btn-block btn-success btn-block font-weight-bolder">Sign Up using Goliath</a>
+        <hr />
+
+        <a href="#!" class="btn btn-block btn-danger btn-block">
+            <span class="fab fa-google mr-1 fa-lg"></span>
+            Sign Up with Google Instead
+        </a>
+        <a href="#!" class="btn btn-block btn-secondary btn-block">
+            <span class="fab fa-microsoft mr-1 fa-lg"></span>
+            Sign Up with Microsoft Instead
+        </a>
+        <a href="#!" class="btn btn-block btn-primary btn-block">
+        <span class="fab fa-facebook-square mr-1 fa-lg"></span>
+            Sign Up with Facebook Instead
+        </a>
+    </article>
+    
+</form>

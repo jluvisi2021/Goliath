@@ -2,6 +2,7 @@
 
 $(window).ready(function (e) {
     checkToggled();
+
     // Fixes a bug with the "Other" radio button where it would be clicked
     // and selected but the button would not be registered.
     $("#OtherHead").click(function (e) {

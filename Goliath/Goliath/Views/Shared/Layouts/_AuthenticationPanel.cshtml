@@ -85,7 +85,7 @@
                                             <input type="radio" name="options" id="LoginRadioBtn" autocomplete="off">
                                             Login
                                         </a>
-                                        <a asp-controller="Home" asp-action="Register" class="btn btn-outline-primary">
+                                        <a asp-controller="Home" asp-action="RegisterMethod" class="btn btn-outline-primary">
 
                                             <input type="radio" name="options" id="RegisterRadioBtn" autocomplete="off">
                                             Register
@@ -129,6 +129,9 @@
         </div>
     </div>
 </div>
-<script>
-    loadButtonElements("@Model.SelectedValue.ToString()");
-</script>
+@if (Model != null)
+{
+    <script>
+        loadButtonElements("@Model.SelectedValue.ToString()");
+    </script>
+}

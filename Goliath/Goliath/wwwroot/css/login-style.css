@@ -20,7 +20,7 @@ body {
     border-top-right-radius: 15%;
 }
 
-/** Allow mobile devices. */
+/** Allow mobile devices to round corners. */
 @media screen and (max-width: 768px) {
     .round-right {
         border-bottom-left-radius: 15%;
@@ -46,4 +46,23 @@ body {
     left: calc(50% - 30px);
     /* bring your own prefixes */
     transform: translate(calc(-50% + 30px), -50%);
+}
+
+/** If the phone is in landscape mode we must adjust and tell them not to use landscape on mobile.*/
+@media only screen and (pointer:none), (pointer:coarse) and (max-device-width: 768px) and (orientation:landscape) {
+    #ZoomDiv {
+        visibility: hidden;
+    }
+
+    #footer {
+        visibility: hidden;
+    }
+    /*Show the bad browser message*/
+    #bad-browser {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        visibility: visible;
+    }
 }

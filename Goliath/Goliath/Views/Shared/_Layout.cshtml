@@ -29,14 +29,28 @@
     @RenderSection("UniqueHeader")
     <!----------------------------->
 </head>
-<body>
+<!-- RenderBody ID signals to prevent flickering. -->
+<body id="RenderBody">
     <!-- Adjustable Zoom Div at the parent -->
     <div id="ZoomDiv">
         <!-- Render the child HTML -->
         @RenderBody()
     </div>
+    <div id="bad-browser">
+        <div>
+            <h2>
+                <i class="fas fa-bomb fa-3x"></i>
+                Uh-Oh
+            </h2>
+            <h4 class="h4">
+                Goliath does not support mobile landscape for this page!
+                <br />
+                Turn your phone back to portrait!
+            </h4>
+        </div>
+    </div>
 
-    <footer class="footer fixed-bottom">
+    <footer class="footer fixed-bottom" id="footer">
         <div class="container text-center">
             <p class="p-3">
                 <a data-toggle="tooltip" data-placement="top" data-html="true" title="Web Version: @ViewData["Version"]<br>Latest Update: 2/17/2021">
@@ -53,4 +67,6 @@
     $(window).resize(function () {
         adjustViewport();
     });
+    // Required for elements to appear to user. [Anti-Flicker]
+    load();
 </script>

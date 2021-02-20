@@ -90,6 +90,23 @@ function displayNotification(textHeader, text, type, divParentID) {
 }
 
 /**
+ * Prevent flickering when the page loads.
+ * All CSS elements are hidden by default and when
+ * everything is ready we can use this function to load all
+ * elements into view.
+ * @param {number} timeout Amount of time to wait after function is called.
+ */
+function load(timeout = 0) {
+    setTimeout(
+        function () {
+            $(document).ready(function () {
+                $('#RenderBody').css("visibility", "visible");
+               
+            });
+        }, timeout);
+}
+
+/**
  * Returns the percentile difference between the users machine and
  * the developers machine.
  * This method is used for the view port method which scales
@@ -122,10 +139,15 @@ function adjustViewport(div = "") {
     const usualWindowWidth = 1920;
     const currWindowHeight = $(window).height();
     const currWindowWidth = $(window).width();
-
+    
     $("#" + div).css({
         "zoom": String(calculateDifference(usualWindowHeight, usualWindowWidth, currWindowHeight, currWindowWidth))
+        
     });
-
-    console.log("Your calculated zoom: " + String(calculateDifference(usualWindowHeight, usualWindowWidth, currWindowHeight, currWindowWidth)));
+    
+    //$("#" + div).append('<style type="text/css">@media (pointer:none), (pointer:coarse) { zoom: 0.2; }</style>');
+    
+        console.log("Your calculated zoom: " + String(calculateDifference(usualWindowHeight, usualWindowWidth, currWindowHeight, currWindowWidth)));
+    
+    
 }

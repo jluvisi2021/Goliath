@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Login";
+    ViewData["Title"] = "New Account";
 }
 <!-- Login Panel -->
 
@@ -58,15 +58,7 @@
     <hr />
     <button type="submit" class="btn btn-primary btn-block text-uppercase mb-2 rounded-pill shadow-sm">Send Verification Email</button>
     <div class="text-center">
-        <a href="#!" class="ht-tm-element btn btn-outline-danger mb-1">
-            <span class="fab fa-google"></span>
-            Sign Up with Google Instead
-        </a>
-
-        <a href="#!" class="ht-tm-element btn btn-outline-secondary">
-            <span class="fab fa-microsoft"></span>
-            Sign Up with Microsoft Instead
-        </a>
+        <p><a asp-controller="Home" asp-action="RegisterMethod">Go Back</a></p>
     </div>
 </form>
 
