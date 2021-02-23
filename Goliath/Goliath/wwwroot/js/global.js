@@ -100,6 +100,46 @@ function displayNotification(textHeader, text, type, divParentID) {
     );
 }
 
+
+/**
+ * Displays a modal to the user.
+ * The modal only has a close option and its buttons
+ * are set to the primary color.
+ * The modal is appended to the #RenderBody.
+ * 
+ * @param {string} title [Supports HTML(Use ``)]
+ * @param {string} body [Supports HTML(Use ``)]
+ */
+function displayModal(title, body) {
+
+
+
+        $("#RenderBody").append(`
+        <div class="modal fade" id="render-model" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">` + title + `</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        ` + body + `
+                </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div >
+        `
+        );
+        $('#render-model').modal('show');
+
+    
+}
+
 /**
  * Checks if the browser is supported.
  * If not then it sends a notification to the user.
@@ -151,17 +191,24 @@ function calculateDifference(uwh, uww, cwh, cww) {
 /**
  * < jQuery Function >
  * Adjusts the current view port of the display to match the developers display.
+ * This function can be called whenever and it will automatically scale the content of
+ * the display to the correct margins.
+ * The function ignores the user zooming in.
  * */
 function adjustViewport() {
     const usualWindowHeight = 969;
     const usualWindowWidth = 1920;
     const currWindowHeight = $(window).height();
     const currWindowWidth = $(window).width();
+
+    // Ignore the resize if the user is manually manipulating the browser zoom.
+    GlobalScript.updateBrowserZoom();
+    if (GlobalScript.getBrowserZoom() != GlobalScript.getDefaultBrowserZoom()) {
+        return;
+    }
+    // Adjust the backend zoom of the page.
     $("html").css({
         "zoom": String(calculateDifference(usualWindowHeight, usualWindowWidth, currWindowHeight, currWindowWidth))
     });
 
-    //$("#" + div).append('<style type="text/css">@media (pointer:none), (pointer:coarse) { zoom: 0.2; }</style>');
-
-    //console.log("Your calculated zoom: " + String(calculateDifference(usualWindowHeight, usualWindowWidth, currWindowHeight, currWindowWidth)));
 }

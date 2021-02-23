@@ -9,8 +9,18 @@
     <p class="text-muted mb-4">Make a new Goliath Account.</p>
 
 }
+
+<!-- Register Form -->
 <form asp-action="Register">
-    <div asp-validation-summary="All" class="text-danger"></div>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+    @*Display a validation model if the user inputs are incorrect.*@
+        <script>
+            displayModal('Correct Errors', `Please correct the errors to make your account:<br />@Html.ValidationSummary(false, "", new { @class = "text-danger" })`);
+        </script>
+    }
+
     <div class="ht-tm-element input-group mb-3">
         <div class="input-group-prepend">
             <button class="btn btn-outline-primary" type="button">
@@ -62,6 +72,3 @@
         <p><a asp-controller="Home" asp-action="RegisterMethod">Go Back</a></p>
     </div>
 </form>
-<!--
-
--->

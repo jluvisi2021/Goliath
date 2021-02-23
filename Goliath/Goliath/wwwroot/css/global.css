@@ -9,6 +9,12 @@
     visibility: hidden;
 }
 
+.modal-backdrop {
+
+    width: 100% !important;
+    height: 100% !important;
+}
+
 .footer {
     font-family: 'Trebuchet MS';
     bottom: 0;

@@ -127,7 +127,7 @@ function checkForPushBadResize() {
     GlobalScript.updateBrowserZoom();
     if (GlobalScript.getBrowserZoom() != GlobalScript.getDefaultBrowserZoom()) {
         if (AuthPanel.getBadZoomAlertShown() == false) {
-            displayNotification("Warning", "Browser zooming is not supported. We reccomend using the default zoom unless visual errors have occured.", GlobalScript.BannerTypes()["alert-danger"], "center-banner");
+            displayNotification("Warning", "Browser zooming is not supported. We recommend using the default zoom unless visual errors have occured.", GlobalScript.BannerTypes()["alert-danger"], "center-banner");
         }
         AuthPanel.setBadZoomAlertShown(true);
     }
