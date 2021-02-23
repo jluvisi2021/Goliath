@@ -4,11 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 namespace Goliath.Controllers
 {
     /// <summary>
-    /// Manages the Views for the Home.
+    /// Manages the Views for Authentication.
     /// </summary>
-    public sealed class HomeController : Controller
+    public sealed class AuthController : Controller
     {
-        public HomeController()
+        public AuthController()
         {
         }
 
@@ -20,14 +20,22 @@ namespace Goliath.Controllers
             });
         }
 
+        [Route("register")]
         public IActionResult Register()
         {
-            return View(new AuthModel
-            {
-                SelectedValue = Models.Enums.AuthPage.Register
-            });
+            return View();
         }
 
+        [Route("register")]
+        [HttpPost]
+        public IActionResult Register(SignUpUserModel model)
+        {
+            if(ModelState.IsValid)
+            {
+                ModelState.Clear();
+            }
+            return View();
+        }
         public IActionResult RegisterMethod()
         {
             return View(new AuthModel

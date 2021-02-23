@@ -1,22 +1,24 @@
-﻿@{
-    ViewData["Title"] = "New Account";
+﻿@model Goliath.Models.SignUpUserModel
+
+@{
+    ViewData["Title"] = "Register";
 }
-<!-- Login Panel -->
+
 
 @section AuthHeader {
     <h3 class="display-4">Register</h3>
-    <p class="text-muted mb-4">Make a new Goliath Account.<br />Once complete more settings can be changed inside the user panel.</p>
+    <p class="text-muted mb-4">Make a new Goliath Account.</p>
+    
 }
-
-<form>
-
+<form asp-action="Register">
+    <div asp-validation-summary="All" class="text-danger"></div>
     <div class="ht-tm-element input-group mb-3">
         <div class="input-group-prepend">
             <button class="btn btn-outline-primary" type="button">
                 <i class="fas fa-user-tag"></i>
             </button>
         </div>
-        <input id="inputUsername" type="text" placeholder="Username (6-18 Characters)" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
+        <input asp-for="Username" type="text" placeholder="Username (6-18 Characters)" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
     </div>
 
     <div class="ht-tm-element input-group mb-3">
@@ -25,7 +27,7 @@
                 <i class="fas fa-envelope"></i>
             </button>
         </div>
-        <input id="inputEmail" type="email" placeholder="Email address" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
+        <input asp-for="Email" type="email" placeholder="Email address" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
     </div>
 
     <div class="ht-tm-element input-group mb-3">
@@ -34,7 +36,7 @@
                 <i class="fas fa-envelope"></i>
             </button>
         </div>
-        <input id="inputEmailConfirm" type="email" placeholder="Confirm Email address" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
+        <input asp-for="ConfirmEmail" type="email" placeholder="Confirm Email address" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
     </div>
 
     <div class="ht-tm-element input-group mb-3">
@@ -43,7 +45,7 @@
                 <i class="fas fa-unlock"></i>
             </button>
         </div>
-        <input id="inputPassword" type="password" placeholder="Password" required="" class="form-control shadow-sm px-2 rounded-right text-primary" />
+        <input asp-for="Password" type="password" placeholder="Password" required="" class="form-control shadow-sm px-2 rounded-right text-primary" />
     </div>
 
     <div class="ht-tm-element input-group mb-3">
@@ -52,7 +54,7 @@
                 <i class="fas fa-unlock"></i>
             </button>
         </div>
-        <input id="inputPasswordConfirm" type="password" placeholder="Confirm Password" required="" class="form-control shadow-sm px-2 rounded-right text-primary" />
+        <input asp-for="ConfirmPassword" type="password" placeholder="Confirm Password" required="" class="form-control shadow-sm px-2 rounded-right text-primary" />
     </div>
 
     <hr />
@@ -61,8 +63,10 @@
         <p><a asp-controller="Home" asp-action="RegisterMethod">Go Back</a></p>
     </div>
 </form>
+<!--
+    
 
-<!-- Scripts to be run on Index page only -->
-<script>
-    testjQuery();
-</script>
+
+-->
+
+

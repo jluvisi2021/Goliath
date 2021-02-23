@@ -5,8 +5,10 @@
 
 /** Access data from global.js */
 const GLOBAL = (function () {
+    /** Private Variables */
 
-/** Private Variables */
+    let _browserZoom = window.devicePixelRatio;
+    const _defaultBrowserZoom = _browserZoom;
 
     const _bannerTypes = Object.freeze({
         "alert-primary": 0,
@@ -20,6 +22,15 @@ const GLOBAL = (function () {
         /** Returns the list of avaliable banner types. */
         BannerTypes: function () {
             return _bannerTypes;
+        },
+        getBrowserZoom: function () {
+            return _browserZoom;
+        },
+        updateBrowserZoom: function () {
+            _browserZoom = window.devicePixelRatio;
+        },
+        getDefaultBrowserZoom: function () {
+            return _defaultBrowserZoom;
         }
     };
 })();
@@ -52,7 +63,7 @@ function testjQuery() {
  * @param {GLOBAL.BannerTypes} type
  * @param {string} divParentID
  * @param {string} id (Optional)
- * 
+ *
  */
 function displayNotification(textHeader, text, type, divParentID) {
     let typeStr = "";
@@ -90,6 +101,20 @@ function displayNotification(textHeader, text, type, divParentID) {
 }
 
 /**
+ * Checks if the browser is supported.
+ * If not then it sends a notification to the user.
+ * */
+function checkBrowser() {
+    if (navigator.userAgent.search("Chrome") >= 0) {
+        return;
+    }
+    else if (navigator.userAgent.search("Safari") >= 0) {
+        return;
+    }
+    displayNotification("Warning", "Goliath does not support this browser. Goliath may continue to function but not all features may work.", GLOBAL.BannerTypes()["alert-danger"], "BodyDiv");
+}
+
+/**
  * Prevent flickering when the page loads.
  * All CSS elements are hidden by default and when
  * everything is ready we can use this function to load all
@@ -101,7 +126,6 @@ function load(timeout = 0) {
         function () {
             $(document).ready(function () {
                 $('#RenderBody').css("visibility", "visible");
-               
             });
         }, timeout);
 }
@@ -115,7 +139,7 @@ function load(timeout = 0) {
  * @param {number} uww
  * @param {number} cwh
  * @param {number} cww
- * @returns {number} 
+ * @returns {number}
  */
 function calculateDifference(uwh, uww, cwh, cww) {
     const whdiff = uwh - cwh;
@@ -127,27 +151,17 @@ function calculateDifference(uwh, uww, cwh, cww) {
 /**
  * < jQuery Function >
  * Adjusts the current view port of the display to match the developers display.
- * Optional param of div.
- * If no param is passed div = "ZoomDiv"
- * @param {string} div [Optional]
  * */
-function adjustViewport(div = "") {
-    if (div === "") {
-        div = "ZoomDiv";
-    }
+function adjustViewport() {
     const usualWindowHeight = 969;
     const usualWindowWidth = 1920;
     const currWindowHeight = $(window).height();
     const currWindowWidth = $(window).width();
-    
-    $("#" + div).css({
+    $("html").css({
         "zoom": String(calculateDifference(usualWindowHeight, usualWindowWidth, currWindowHeight, currWindowWidth))
-        
     });
-    
+
     //$("#" + div).append('<style type="text/css">@media (pointer:none), (pointer:coarse) { zoom: 0.2; }</style>');
-    
-        console.log("Your calculated zoom: " + String(calculateDifference(usualWindowHeight, usualWindowWidth, currWindowHeight, currWindowWidth)));
-    
-    
+
+    //console.log("Your calculated zoom: " + String(calculateDifference(usualWindowHeight, usualWindowWidth, currWindowHeight, currWindowWidth)));
 }

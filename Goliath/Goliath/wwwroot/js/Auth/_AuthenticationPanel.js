@@ -1,5 +1,27 @@
 ﻿/** RUNTIME PAGELOAD **/
 
+/** Access data from authpanel.js */
+const AuthPanel = (function () {
+    /** Private Variables */
+    let _zoomNotif = false;
+
+    return {
+        /**
+         * Get the current value for the zoom error notification.
+         * */
+        getZoomNotif: function () {
+            return _zoomNotif;
+        },
+        /**
+         * Set the value for the zoom warning.
+         * @param {boolean} val
+         */
+        setZoomNotif: function (val) {
+            _zoomNotif = val;
+        }
+    };
+})();
+
 $(window).ready(function (e) {
     checkToggled();
 
@@ -16,7 +38,6 @@ $(window).ready(function (e) {
 
 /** Access data from global.js */
 const _AuthenticationPanel = (function () {
-
     return {
         /** Checks if user has graphic enabled */
         isGraphicEnabled: function () {
@@ -77,6 +98,8 @@ function isGraphicEnabled() {
 }
 
 /**
+ *
+ *
  * Enables and disables the graphic.
  * Also allows to send the user a notification saying that there graphics have been changed.
  * @param {boolean} alert
@@ -84,18 +107,32 @@ function isGraphicEnabled() {
 function toggleGraphic(alert) {
     if ($("#ShowGraphicIcon").hasClass("fas fa-eye-slash")) {
         localStorage.setItem("graphic", "enabled");
-        $("#ShowGraphicIcon").attr("class", "fas fa-eye text-primary");
+        $("#ShowGraphicIcon").attr("class", "fas fa-eye");
         $("#RightContainer").attr("class", "col-md-6 bg-light round-right");
         $("#RightContainer").attr("style", "");
         $("#LeftContainer").removeClass("invisible");
     } else {
         localStorage.setItem("graphic", "disabled");
-        $("#ShowGraphicIcon").attr("class", "fas fa-eye-slash text-primary");
+        $("#ShowGraphicIcon").attr("class", "fas fa-eye-slash");
         $("#LeftContainer").addClass("invisible");
         $("#RightContainer").attr("class", "container bg-light round parent-container");
-        $("#RightContainer").attr("style", "min-height: 100%;zoom: 1.15; margin-top: 3%");
+        $("#RightContainer").attr("style", "min-height: 100%; margin-top: 3%");
     }
     if (alert) {
         displayNotification("You changed the view.", "Your data is saved; You can undo this anytime.", GLOBAL.BannerTypes()["alert-primary"], "center-banner", "ChangedGraphicAlert");
+    }
+}
+
+/**
+ * Checks if the user attempted to zoom into the login page.
+ * If they did then send them a notification only once.
+ * */
+function checkForPushBadResize() {
+    GLOBAL.updateBrowserZoom();
+    if (GLOBAL.getBrowserZoom() != GLOBAL.getDefaultBrowserZoom()) {
+        if (AuthPanel.getZoomNotif() == false) {
+            displayNotification("Warning", "Browser zooming is not supported. We reccomend using the default zoom unless visual errors have occured.", GLOBAL.BannerTypes()["alert-danger"], "center-banner");
+        }
+        AuthPanel.setZoomNotif(true);
     }
 }

@@ -16,10 +16,10 @@
 @* Specific to _AuthenticationPanel. *@
 @section UniqueHeader {
     <link href="~/css/login-style.css" rel="stylesheet" />
-    <script src="~/js/Home/_AuthenticationPanel.js"></script>
+    <script src="~/js/Auth/_AuthenticationPanel.js"></script>
 }
 
-<div id="PrimaryDiv">
+<main id="PrimaryDiv">
 
     <div id="center-banner">
         <!-- Dynamic Current Notifications -->
@@ -80,12 +80,12 @@
                                     <!-- Radio Buttons -->
                                     <div class=" ht-tm-element btn-group btn-group-toggle" data-toggle="buttons">
 
-                                        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-primary">
+                                        <a asp-controller="Auth" asp-action="Index" class="btn btn-outline-primary">
 
                                             <input type="radio" name="options" id="LoginRadioBtn" autocomplete="off">
                                             Login
                                         </a>
-                                        <a asp-controller="Home" asp-action="RegisterMethod" class="btn btn-outline-primary">
+                                        <a asp-controller="Auth" asp-action="RegisterMethod" class="btn btn-outline-primary">
 
                                             <input type="radio" name="options" id="RegisterRadioBtn" autocomplete="off">
                                             Register
@@ -97,17 +97,17 @@
                                             </a>
                                             <div class="dropdown-menu drop-down" aria-labelledby="OtherDrop" x-placement="bottom-start">
 
-                                                <a asp-controller="Home" asp-action="ForgotPassword" id="Forgot_Password" class="dropdown-item">Forgot Password</a>
-                                                <a asp-controller="Home" asp-action="VerifyEmail" id="Verify_Email" class="dropdown-item">Verify Email</a>
+                                                <a asp-controller="Auth" asp-action="ForgotPassword" id="Forgot_Password" class="dropdown-item">Forgot Password</a>
+                                                <a asp-controller="Auth" asp-action="VerifyEmail" id="Verify_Email" class="dropdown-item">Verify Email</a>
                                                 <div class="dropdown-divider"></div>
-                                                <a class="dropdown-item py-xl-1" href="#!"><i class="fab fa-google px-sm-1"></i>Sign in with Google</a>
-                                                <a class="dropdown-item" href="#!"><i class="fab fa-microsoft px-sm-1"></i>Sign in with Microsoft</a>
+                                                <a class="dropdown-item py-xl-1" href="#!"><i class="fab fa-google px-sm-2"></i>Sign in with Google</a>
+                                                <a class="dropdown-item" href="#!"><i class="fab fa-microsoft px-sm-2"></i>Sign in with Microsoft</a>
+                                                <a class="dropdown-item" href="#!"><i class="fab fa-facebook-square px-sm-2"></i>Sign in with Facebook</a>
                                                 <a class="dropdown-item" href="#!"><i class="fab fa-github px-sm-1"></i>View GitHub</a>
                                             </div>
                                         </div>
-                                        <a class="btn btn-outline-primary bg-white" id="ShowGraphic" onclick="toggleGraphic(true)">
-
-                                            <i class="fas fa-eye text-primary" id="ShowGraphicIcon"></i>
+                                        <a href="#!" class="btn btn-outline-primary" id="ShowGraphic" onclick="toggleGraphic(true)">
+                                            <span class="fas fa-eye" id="ShowGraphicIcon"></span>
                                         </a>
                                     </div>
                                     <!-- Radio Buttons End -->
@@ -128,10 +128,18 @@
             </div><!-- End -->
         </div>
     </div>
-</div>
+</main>
 @if (Model != null)
 {
     <script>
         loadButtonElements("@Model.SelectedValue.ToString()");
     </script>
 }
+<script>
+    // Adjust the view to fit screen.
+    adjustViewport();
+    $(window).resize(function () {
+        adjustViewport();
+        checkForPushBadResize();
+    });
+</script>

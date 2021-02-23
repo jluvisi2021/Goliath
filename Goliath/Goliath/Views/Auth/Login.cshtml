@@ -34,7 +34,7 @@
     <hr />
     <button type="submit" class="btn btn-primary btn-block text-uppercase mb-2 rounded-pill shadow-sm">Sign in</button>
     <div class="text-center">
-        <div class="btn-group">
+        <div class="btn-group" data-toggle="tooltip" data-placement="right" title="Login using an external provider.">
             <a href="#!" class="ht-tm-element btn btn-outline-danger">
                 <span class="fab fa-google"></span>
                 Google
@@ -48,19 +48,14 @@
                 Facebook
             </a>
         </div>
-        </div>
-        <div class="text-center d-flex justify-content-between mt-4">
-            <p>
+    </div>
+    <div class="text-center d-flex justify-content-between mt-4">
+        <p>
 
-                <a href="" data-toggle="tooltip" data-placement="right" title="Continue without logging in. You will not be able to access some utilities.">
-                    <i class="fas fa-user-slash text-dark"></i>
-                    Continue without logging in.
-                </a>
-            </p>
-        </div>
+            <a href="" data-toggle="tooltip" data-placement="right" title="Continue without logging in. You will not be able to access some utilities.">
+                <i class="fas fa-user-slash text-dark"></i>
+                Continue without logging in.
+            </a>
+        </p>
+    </div>
 </form>
-
-<!-- Scripts to be run on Index page only -->
-<script>
-    testjQuery();
-</script>
