@@ -3,21 +3,24 @@
 /** Access data from authpanel.js */
 const AuthPanel = (function () {
     /** Private Variables */
-    let _zoomNotif = false;
+    let _badZoomAlertShown = false;
 
     return {
         /**
          * Get the current value for the zoom error notification.
          * */
-        getZoomNotif: function () {
-            return _zoomNotif;
+        getBadZoomAlertShown: function () {
+            return _badZoomAlertShown;
         },
         /**
          * Set the value for the zoom warning.
          * @param {boolean} val
          */
-        setZoomNotif: function (val) {
-            _zoomNotif = val;
+        setBadZoomAlertShown: function (val) {
+            _badZoomAlertShown = val;
+        },
+        isGraphicEnabled: function () {
+            return isGraphicEnabled();
         }
     };
 })();
@@ -27,24 +30,15 @@ $(window).ready(function (e) {
 
     // Fixes a bug with the "Other" radio button where it would be clicked
     // and selected but the button would not be registered.
-    $("#OtherHead").click(function (e) {
-        if (e.target.id != "OtherDrop") {
-            $("#OtherDrop").trigger("click");
+    $("#other-head").click(function (e) {
+        if (e.target.id != "other-dropdown") {
+            $("#other-dropdown").trigger("click");
             e.stopImmediatePropagation();
         }
     });
 });
 /* Page load end */
 
-/** Access data from global.js */
-const _AuthenticationPanel = (function () {
-    return {
-        /** Checks if user has graphic enabled */
-        isGraphicEnabled: function () {
-            return isGraphicEnabled();
-        }
-    };
-})();
 
 /**
  * Loads the colors of the radio button the user clicked on.
@@ -55,16 +49,16 @@ function loadButtonElements(id) {
     const backgroundColor = "#0094ff";
 
     // Make the button colored
-    if ($("#" + id + "RadioBtn").length === 0) {
-        // The #OtherRadioBtn element does not change so we can leave it like this.
-        $("#OtherRadioBtn").prop("checked", true);
+    if ($("#" + id + "-radio-btn").length === 0) {
+        // The #other-radio-btn element does not change so we can leave it like this.
+        $("#other-radio-btn").prop("checked", true);
 
         $("#" + id).css({
             "background-color": backgroundColor,
             "font-weight": "bold"
         });
     } else {
-        $("#" + id + "RadioBtn").prop("checked", true);
+        $("#" + id + "-radio-btn").prop("checked", true);
     }
 }
 
@@ -98,28 +92,30 @@ function isGraphicEnabled() {
 }
 
 /**
- *
- *
  * Enables and disables the graphic.
  * Also allows to send the user a notification saying that there graphics have been changed.
  * @param {boolean} alert
  */
 function toggleGraphic(alert) {
-    if ($("#ShowGraphicIcon").hasClass("fas fa-eye-slash")) {
+    
+    if ($("#show-graphic-icon").hasClass("fas fa-eye-slash")) {
         localStorage.setItem("graphic", "enabled");
-        $("#ShowGraphicIcon").attr("class", "fas fa-eye");
-        $("#RightContainer").attr("class", "col-md-6 bg-light round-right");
-        $("#RightContainer").attr("style", "");
-        $("#LeftContainer").removeClass("invisible");
+        $("#show-graphic-icon").attr("class", "fas fa-eye");
+        $("#right-container").attr("class", "col-md-6 bg-light round-right");
+        $("#right-container").attr("style", "");
+        $("#left-container").removeClass("invisible");
+        
     } else {
         localStorage.setItem("graphic", "disabled");
-        $("#ShowGraphicIcon").attr("class", "fas fa-eye-slash");
-        $("#LeftContainer").addClass("invisible");
-        $("#RightContainer").attr("class", "container bg-light round parent-container");
-        $("#RightContainer").attr("style", "min-height: 100%; margin-top: 3%");
+        $("#show-graphic-icon").attr("class", "fas fa-eye-slash");
+        $("#left-container").addClass("invisible");
+        $("#right-container").attr("class", "container bg-light round parent-container");
+        $("#right-container").attr("style", "min-height: 100%; margin-top: 3%");
     }
+    
     if (alert) {
-        displayNotification("You changed the view.", "Your data is saved; You can undo this anytime.", GLOBAL.BannerTypes()["alert-primary"], "center-banner", "ChangedGraphicAlert");
+        displayNotification("You changed the view.", "Your data is saved; You can undo this anytime.", GlobalScript.BannerTypes()["alert-primary"], "center-banner");
+        $("#show-graphic").addClass("active");
     }
 }
 
@@ -128,11 +124,11 @@ function toggleGraphic(alert) {
  * If they did then send them a notification only once.
  * */
 function checkForPushBadResize() {
-    GLOBAL.updateBrowserZoom();
-    if (GLOBAL.getBrowserZoom() != GLOBAL.getDefaultBrowserZoom()) {
-        if (AuthPanel.getZoomNotif() == false) {
-            displayNotification("Warning", "Browser zooming is not supported. We reccomend using the default zoom unless visual errors have occured.", GLOBAL.BannerTypes()["alert-danger"], "center-banner");
+    GlobalScript.updateBrowserZoom();
+    if (GlobalScript.getBrowserZoom() != GlobalScript.getDefaultBrowserZoom()) {
+        if (AuthPanel.getBadZoomAlertShown() == false) {
+            displayNotification("Warning", "Browser zooming is not supported. We reccomend using the default zoom unless visual errors have occured.", GlobalScript.BannerTypes()["alert-danger"], "center-banner");
         }
-        AuthPanel.setZoomNotif(true);
+        AuthPanel.setBadZoomAlertShown(true);
     }
 }

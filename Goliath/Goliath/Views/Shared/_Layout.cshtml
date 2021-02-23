@@ -16,10 +16,21 @@
     <title>Goliath | @ViewData["Title"]</title>
 
     <!-- jQuery, Bootstrap 4 & FontAwesome -->
-    <script src="~/lib/jquery/jquery.min.js"></script>
-    <script src="~/lib/twitter-bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="@ViewBag.fontAwesome" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdn.discordapp.com/attachments/811080332937920522/811322563270803537/bootstrap4-bubblegum.css">
+    <environment exclude="Development">
+        <script src="~/lib/jquery/jquery.min.js"></script>
+        <script src="~/lib/twitter-bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src="@ViewBag.fontAwesome" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="~/lib/theme/bootstrap4-bubblegum.min.css">
+    </environment>
+    <environment include="Development">
+        <script>
+            console.log("--> Goliath is being run in Development mode. <--");
+        </script>
+        <script src="~/lib/jquery/jquery.js"></script>
+        <script src="~/lib/twitter-bootstrap/js/bootstrap.bundle.js"></script>
+        <script src="@ViewBag.fontAwesome" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdn.discordapp.com/attachments/811080332937920522/811322563270803537/bootstrap4-bubblegum.css">
+    </environment>
     <!--------------------------------------->
     <!-- Custom Files (Global) -->
     <link href="~/css/global.css" rel="stylesheet" />
@@ -31,12 +42,12 @@
 </head>
 <!-- RenderBody ID signals to prevent flickering. -->
 <body id="RenderBody">
-    <!-- Adjustable Zoom Div at the parent -->
-    <article id="BodyDiv">
+
+    <main id="primary-content">
         <!-- Render the child HTML -->
         @RenderBody()
-    </article>
-    <article id="bad-browser">
+    </main>
+    <main id="bad-browser">
         <div>
             <h2>
                 <i class="fas fa-bomb fa-3x"></i>
@@ -48,7 +59,7 @@
                 Turn your phone back to portrait!
             </h4>
         </div>
-    </article>
+    </main>
     <footer class="footer fixed-bottom" id="footer">
         <div class="container text-center">
             <p class="p-3">

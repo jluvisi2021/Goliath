@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Goliath.Models
 {
     public class SignUpUserModel
     {
-        [Required(ErrorMessage = "<strong>Please enter a username.</strong>")]
+        [Required(ErrorMessage = "Please enter a username.")]
         [DataType(DataType.Text)]
-        [Display(Name ="Username")]
-        [StringLength(18, MinimumLength = 6, ErrorMessage = "Username must be between 8 and 16 characters.")]
+        [Display(Name = "Username")]
+        [RegularExpression("^[a-zA-Z_]*$", ErrorMessage = "Username must be only letters and underscores.")]
+        [StringLength(18, MinimumLength = 6, ErrorMessage = "Username must be between 6 and 16 characters.")]
         public string Username { get; set; }
 
         [Required(ErrorMessage = "Please enter your email.")]
@@ -28,8 +25,9 @@ namespace Goliath.Models
         public string ConfirmEmail { get; set; }
 
         [Required(ErrorMessage = "Please enter a password.")]
-        [Compare("ConfirmPassword", ErrorMessage ="Password does not match.")]
+        [Compare("ConfirmPassword", ErrorMessage = "Password does not match.")]
         [DataType(DataType.Password)]
+        [StringLength(2048, MinimumLength = 6, ErrorMessage = "Password length must be 6-2048 characters.")]
         [Display(Name = "Password")]
         public string Password { get; set; }
 

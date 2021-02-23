@@ -4,7 +4,7 @@
  * */
 
 /** Access data from global.js */
-const GLOBAL = (function () {
+const GlobalScript = (function () {
     /** Private Variables */
 
     let _browserZoom = window.devicePixelRatio;
@@ -60,7 +60,7 @@ function testjQuery() {
  *
  * @param {string} textHeader (BOLD TEXT)
  * @param {string} text
- * @param {GLOBAL.BannerTypes} type
+ * @param {GlobalScript.BannerTypes} type
  * @param {string} divParentID
  * @param {string} id (Optional)
  *
@@ -111,7 +111,7 @@ function checkBrowser() {
     else if (navigator.userAgent.search("Safari") >= 0) {
         return;
     }
-    displayNotification("Warning", "Goliath does not support this browser. Goliath may continue to function but not all features may work.", GLOBAL.BannerTypes()["alert-danger"], "BodyDiv");
+    displayNotification("Warning", "Goliath does not support this browser. Goliath may continue to function but not all features may work.", GlobalScript.BannerTypes()["alert-danger"], "primary-content");
 }
 
 /**

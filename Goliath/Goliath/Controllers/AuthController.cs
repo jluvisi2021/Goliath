@@ -5,7 +5,9 @@ namespace Goliath.Controllers
 {
     /// <summary>
     /// Manages the Views for Authentication.
+    /// ButtonID indicates the radio button to be checked.
     /// </summary>
+
     public sealed class AuthController : Controller
     {
         public AuthController()
@@ -14,15 +16,14 @@ namespace Goliath.Controllers
 
         public IActionResult Index()
         {
-            return View("Login", new AuthModel
-            {
-                SelectedValue = Models.Enums.AuthPage.Login
-            });
+            ViewData["ButtonID"] = "login";
+            return View("Login");
         }
 
         [Route("register")]
         public IActionResult Register()
         {
+            ViewData["ButtonID"] = "register";
             return View();
         }
 
@@ -30,34 +31,33 @@ namespace Goliath.Controllers
         [HttpPost]
         public IActionResult Register(SignUpUserModel model)
         {
-            if(ModelState.IsValid)
+            ViewData["ButtonID"] = "register";
+            if (ModelState.IsValid)
             {
                 ModelState.Clear();
             }
             return View();
         }
+
+        [Route("register/method")]
         public IActionResult RegisterMethod()
         {
-            return View(new AuthModel
-            {
-                SelectedValue = Models.Enums.AuthPage.Register
-            });
+            ViewData["ButtonID"] = "register";
+            return View();
         }
 
+        [Route("forgotpassword")]
         public IActionResult ForgotPassword()
         {
-            return View(new AuthModel
-            {
-                SelectedValue = Models.Enums.AuthPage.Forgot_Password
-            });
+            ViewData["ButtonID"] = "forgot-password";
+            return View();
         }
 
+        [Route("verify")]
         public IActionResult VerifyEmail()
         {
-            return View(new AuthModel
-            {
-                SelectedValue = Models.Enums.AuthPage.Verify_Email
-            });
+            ViewData["ButtonID"] = "verify-email";
+            return View();
         }
     }
 }

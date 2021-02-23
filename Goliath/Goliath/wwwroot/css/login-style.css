@@ -1,6 +1,6 @@
 ﻿html, body {
     display: table;
-    position: absolute;
+    position: relative;
     height: 100%;
     width: 100%;
 }
@@ -39,6 +39,8 @@ body {
     border-radius: 15%;
 }
 
+
+
 /* Repersents the main login container. This also accounts for footers. */
 .parent-container {
     position: fixed; /* or absolute */
@@ -50,7 +52,7 @@ body {
 
 /** If the phone is in landscape mode we must adjust and tell them not to use landscape on mobile.*/
 @media only screen and (pointer:none), (pointer:coarse) and (max-device-width: 768px) and (orientation:landscape) {
-    #BodyDiv {
+    #primary-content {
         visibility: hidden;
     }
 
