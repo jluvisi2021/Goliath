@@ -7,9 +7,6 @@
 const GlobalScript = (function () {
     /** Private Variables */
 
-    let _browserZoom = window.devicePixelRatio;
-    const _defaultBrowserZoom = _browserZoom;
-
     const _bannerTypes = Object.freeze({
         "alert-primary": 0,
         "alert-secondary": 1,
@@ -22,18 +19,10 @@ const GlobalScript = (function () {
         /** Returns the list of avaliable banner types. */
         BannerTypes: function () {
             return _bannerTypes;
-        },
-        getBrowserZoom: function () {
-            return _browserZoom;
-        },
-        updateBrowserZoom: function () {
-            _browserZoom = window.devicePixelRatio;
-        },
-        getDefaultBrowserZoom: function () {
-            return _defaultBrowserZoom;
         }
     };
 })();
+
 
 /**
  * Tests if jQuery can be found and loaded at run time.
@@ -114,7 +103,7 @@ function displayModal(title, body) {
 
 
 
-        $("#RenderBody").append(`
+        $("#outer").append(`
         <div class="modal fade" id="render-model" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
@@ -150,65 +139,9 @@ function checkBrowser() {
     }
     else if (navigator.userAgent.search("Safari") >= 0) {
         return;
-    }
-    displayNotification("Warning", "Goliath does not support this browser. Goliath may continue to function but not all features may work.", GlobalScript.BannerTypes()["alert-danger"], "primary-content");
-}
-
-/**
- * Prevent flickering when the page loads.
- * All CSS elements are hidden by default and when
- * everything is ready we can use this function to load all
- * elements into view.
- * @param {number} timeout Amount of time to wait after function is called.
- */
-function load(timeout = 0) {
-    setTimeout(
-        function () {
-            $(document).ready(function () {
-                $('#RenderBody').css("visibility", "visible");
-            });
-        }, timeout);
-}
-
-/**
- * Returns the percentile difference between the users machine and
- * the developers machine.
- * This method is used for the view port method which scales
- * content based on the users screen.
- * @param {number} uwh
- * @param {number} uww
- * @param {number} cwh
- * @param {number} cww
- * @returns {number}
- */
-function calculateDifference(uwh, uww, cwh, cww) {
-    const whdiff = uwh - cwh;
-    const wwdiff = uww - cww;
-    const calcA = whdiff / uwh;
-    const calcB = wwdiff / cwh;
-    return calcA < calcB ? (1 - calcA) : (1 - calcB);
-}
-/**
- * < jQuery Function >
- * Adjusts the current view port of the display to match the developers display.
- * This function can be called whenever and it will automatically scale the content of
- * the display to the correct margins.
- * The function ignores the user zooming in.
- * */
-function adjustViewport() {
-    const usualWindowHeight = 969;
-    const usualWindowWidth = 1920;
-    const currWindowHeight = $(window).height();
-    const currWindowWidth = $(window).width();
-
-    // Ignore the resize if the user is manually manipulating the browser zoom.
-    GlobalScript.updateBrowserZoom();
-    if (GlobalScript.getBrowserZoom() != GlobalScript.getDefaultBrowserZoom()) {
+    } else if (navigator.userAgent.search("Firefox") >= 0) {
         return;
     }
-    // Adjust the backend zoom of the page.
-    $("html").css({
-        "zoom": String(calculateDifference(usualWindowHeight, usualWindowWidth, currWindowHeight, currWindowWidth))
-    });
-
+    displayNotification("Warning", "Goliath does not support this browser. Goliath may continue to function but not all features may work.", GlobalScript.BannerTypes()["alert-danger"], "center-banner");
 }
+

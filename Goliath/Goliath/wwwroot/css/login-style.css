@@ -1,32 +1,50 @@
-﻿html, body {
-    display: table;
-    position: relative;
-    height: 100%;
-    width: 100%;
-}
-
-body {
+﻿body {
+    /*Problem: Background becomes white when the user zooms in too much.*/
+    margin: 0;
+    background-position: center center;
     background: #CE6CE9;
     background: -webkit-linear-gradient(bottom right, #CE6CE9, #F8AF5A);
     background: -moz-linear-gradient(bottom right, #CE6CE9, #F8AF5A);
     background: linear-gradient(to top left, #CE6CE9, #F8AF5A);
-    background-repeat: no-repeat;
-    background-size: cover;
-    float: right;
+    background-repeat: repeat;
+    background-size: auto;
+
 }
+
+
 
 .round-right {
     border-bottom-right-radius: 15%;
     border-top-right-radius: 15%;
 }
 
-/** Allow mobile devices to round corners. */
-@media screen and (max-width: 768px) {
+@media (max-width: 767px) {
     .round-right {
         border-bottom-left-radius: 15%;
         border-top-left-radius: 15%;
         border-bottom-right-radius: 15%;
         border-top-right-radius: 15%;
+    }
+    #inner {
+        min-width: 80%;
+    }
+}
+
+/** Allow mobile devices to round corners. */
+@media only screen and (pointer:none), (pointer:coarse) and (max-device-width: 768px) and (orientation: portrait) {
+    .round-right {
+        border-bottom-left-radius: 15%;
+        border-top-left-radius: 15%;
+        border-bottom-right-radius: 15%;
+        border-top-right-radius: 15%;
+    }
+
+    .parent-container {
+        position: absolute; /* or absolute */
+        top: calc(50% - 30px);
+        left: calc(50% - 30px);
+        /* bring your own prefixes */
+        transform: translate(calc(-50% + 30px), -50%);
     }
 }
 
@@ -39,32 +57,22 @@ body {
     border-radius: 15%;
 }
 
-
-
-/* Repersents the main login container. This also accounts for footers. */
-.parent-container {
-    position: fixed; /* or absolute */
-    top: calc(50% - 30px);
-    left: calc(50% - 30px);
-    /* bring your own prefixes */
-    transform: translate(calc(-50% + 30px), -50%);
-}
-
 /** If the phone is in landscape mode we must adjust and tell them not to use landscape on mobile.*/
-@media only screen and (pointer:none), (pointer:coarse) and (max-device-width: 768px) and (orientation:landscape) {
-    #primary-content {
+@media only screen and (pointer:none), (pointer:coarse) and (max-device-width: 768px) and (orientation: landscape) {
+    #outer {
         visibility: hidden;
+        overflow: hidden;
     }
-
-    #footer {
-        visibility: hidden;
+    #inner {
+        overflow: hidden;
     }
     /*Show the bad browser message*/
     #bad-browser {
-        position: fixed;
+        display: block;
+        position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        visibility: visible;
     }
+    
 }

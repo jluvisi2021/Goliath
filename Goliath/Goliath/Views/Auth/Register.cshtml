@@ -15,7 +15,7 @@
 
     @if (!ViewData.ModelState.IsValid)
     {
-    @*Display a validation model if the user inputs are incorrect.*@
+        @*Display a validation model if the user inputs are incorrect.*@
         <script>
             displayModal('Correct Errors', `Please correct the errors to make your account:<br />@Html.ValidationSummary(false, "", new { @class = "text-danger" })`);
         </script>
@@ -27,7 +27,7 @@
                 <i class="fas fa-user-tag"></i>
             </button>
         </div>
-        <input asp-for="Username" type="text" placeholder="Username (6-18 Characters)" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
+        <input asp-for="Username" placeholder="Username (6-18 Characters)" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
     </div>
 
     <div class="ht-tm-element input-group mb-3">
@@ -36,7 +36,7 @@
                 <i class="fas fa-envelope"></i>
             </button>
         </div>
-        <input asp-for="Email" type="email" placeholder="Email address" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
+        <input asp-for="Email" placeholder="Email address" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
     </div>
 
     <div class="ht-tm-element input-group mb-3">
@@ -45,7 +45,7 @@
                 <i class="fas fa-envelope"></i>
             </button>
         </div>
-        <input asp-for="ConfirmEmail" type="email" placeholder="Confirm Email address" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
+        <input asp-for="ConfirmEmail" placeholder="Confirm Email address" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
     </div>
 
     <div class="ht-tm-element input-group mb-3">
@@ -54,7 +54,7 @@
                 <i class="fas fa-unlock"></i>
             </button>
         </div>
-        <input asp-for="Password" type="password" placeholder="Password" required="" class="form-control shadow-sm px-2 rounded-right text-primary" />
+        <input asp-for="Password" placeholder="Password" required="" class="form-control shadow-sm px-2 rounded-right text-primary" />
     </div>
 
     <div class="ht-tm-element input-group mb-3">
@@ -63,7 +63,7 @@
                 <i class="fas fa-unlock"></i>
             </button>
         </div>
-        <input asp-for="ConfirmPassword" type="password" placeholder="Confirm Password" required="" class="form-control shadow-sm px-2 rounded-right text-primary" />
+        <input asp-for="ConfirmPassword" placeholder="Confirm Password" required="" class="form-control shadow-sm px-2 rounded-right text-primary" />
     </div>
 
     <hr />
