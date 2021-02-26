@@ -17,7 +17,7 @@
     {
         @*Display a validation model if the user inputs are incorrect.*@
         <script>
-            displayModal('Correct Errors', `Please correct the errors to make your account:<br />@Html.ValidationSummary(false, "", new { @class = "text-danger" })`);
+            GlobalScript.displayModal('Correct Errors', `Please correct the errors to make your account:<br />@Html.ValidationSummary(false, "", new { @class = "text-danger" })`);
         </script>
     }
 
@@ -69,6 +69,6 @@
     <hr />
     <button type="submit" class="btn btn-primary btn-block text-uppercase mb-2 rounded-pill shadow-sm">Send Verification Email</button>
     <div class="text-center">
-        <p><a asp-controller="Home" asp-action="RegisterMethod">Go Back</a></p>
+        <p><a asp-controller="Auth" asp-action="RegisterMethod">Go Back</a></p>
     </div>
 </form>

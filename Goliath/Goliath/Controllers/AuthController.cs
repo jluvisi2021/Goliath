@@ -20,14 +20,14 @@ namespace Goliath.Controllers
             return View("Login");
         }
 
-        [Route("register")]
+        [Route("register/goliath")]
         public IActionResult Register()
         {
             ViewData["ButtonID"] = "register";
             return View();
         }
 
-        [Route("register")]
+        [Route("register/goliath")]
         [HttpPost]
         public IActionResult Register(SignUpUserModel model)
         {
