@@ -28,6 +28,7 @@ namespace Goliath.Models
         [Compare("ConfirmPassword", ErrorMessage = "Password does not match.")]
         [DataType(DataType.Password)]
         [StringLength(2048, MinimumLength = 6, ErrorMessage = "Password length must be 6-2048 characters.")]
+        [RegularExpression(@"^[^\s]+$", ErrorMessage = "Password cannot contain spaces.")]
         [Display(Name = "Password")]
         public string Password { get; set; }
 

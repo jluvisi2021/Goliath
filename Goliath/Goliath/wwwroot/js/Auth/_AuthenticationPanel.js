@@ -10,6 +10,7 @@ $(window).ready(function (e) {
         }
     });
 });
+
 /* Page load end */
 
 

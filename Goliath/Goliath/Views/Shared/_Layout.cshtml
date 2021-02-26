@@ -42,22 +42,23 @@
 </head>
 
 <body>
+        <main id="outer">
 
-    <main id="outer">
+            <!-- Render the child HTML -->
+            @RenderBody()
 
-        <!-- Render the child HTML -->
-        @RenderBody()
-
-        <footer class="footer fixed-bottom" id="footer">
-            <div class="container text-center">
-                <p class="p-3">
-                    <a id="footer-text" data-toggle="tooltip" data-placement="top" data-html="true" title="Web Version: @ViewData["Version"]<br>Latest Update: 2/17/2021">
-                        [Goliath @ViewData["Version"]] Last Updated: @DateTime.Now
-                    </a>
-                </p>
-            </div>
-        </footer>
-    </main>
+            <footer class="footer fixed-bottom" id="footer">
+                <div class="container text-center">
+                    <p class="p-3">
+                        <a id="footer-text" data-toggle="tooltip" data-placement="top" data-html="true" title="Web Version: @ViewData["Version"]<br>Latest Update: 2/17/2021">
+                            [Goliath @ViewData["Version"]] Last Updated: @DateTime.Now
+                        </a>
+                    </p>
+                </div>
+            </footer>
+        </main>
+    
+    
 
     <main id="bad-browser">
         <div>
@@ -83,6 +84,7 @@
         });
 
     });
+
 
     GlobalScript.checkBrowser();
 </script>

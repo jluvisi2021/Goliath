@@ -1,14 +1,13 @@
 ﻿body {
-    /*Problem: Background becomes white when the user zooms in too much.*/
     margin: 0;
     background-position: center center;
     background: #CE6CE9;
     background: -webkit-linear-gradient(bottom right, #CE6CE9, #F8AF5A);
     background: -moz-linear-gradient(bottom right, #CE6CE9, #F8AF5A);
     background: linear-gradient(to top left, #CE6CE9, #F8AF5A);
-    background-repeat: repeat;
-    background-size: auto;
-
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
 }
 
 .round-right {
