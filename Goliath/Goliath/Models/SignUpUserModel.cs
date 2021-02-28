@@ -7,7 +7,7 @@ namespace Goliath.Models
         [Required(ErrorMessage = "Please enter a username.")]
         [DataType(DataType.Text)]
         [Display(Name = "Username")]
-        [RegularExpression("^[a-zA-Z_]*$", ErrorMessage = "Username must be only letters and underscores.")]
+        [RegularExpression("^[a-zA-Z0-9_]*$", ErrorMessage = "Username must be only letters, numbers, and underscores.")]
         [StringLength(18, MinimumLength = 6, ErrorMessage = "Username must be between 6 and 16 characters.")]
         public string Username { get; set; }
 

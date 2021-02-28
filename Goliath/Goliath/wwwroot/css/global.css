@@ -1,11 +1,4 @@
-﻿/* Makes all elements invisible on startup.
-   This is required to prevent flickering of webpage
-    while jQuery configures styling.
-    All elements can be loaded and turned visible by the
-    load() function in global.js.
-*/
-
-
+﻿
 #outer {
     width: 100%;
     height: calc(100vh - 3.55rem);
