@@ -9,8 +9,8 @@ namespace Goliath.Repository
 {
     public class AccountRepository : IAccountRepository
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        public AccountRepository(UserManager<IdentityUser> userManager) 
+        private readonly UserManager<ApplicationUser> _userManager;
+        public AccountRepository(UserManager<ApplicationUser> userManager) 
         {
             this._userManager = userManager;
         }
@@ -22,7 +22,7 @@ namespace Goliath.Repository
         /// <returns></returns>
         public async Task<IdentityResult> CreateUserAsync(SignUpUserModel userModel)
         {
-            IdentityUser user = new IdentityUser()
+            ApplicationUser user = new ApplicationUser()
             {
                 UserName = userModel.Username,
                 Email = userModel.Email,
@@ -30,5 +30,7 @@ namespace Goliath.Repository
             };
             return await (_userManager.CreateAsync(user, userModel.Password));
         }
+
+
     }
 }

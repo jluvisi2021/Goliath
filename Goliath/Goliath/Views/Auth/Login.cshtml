@@ -8,6 +8,13 @@
     <p class="text-muted mb-4">Enter your Goliath credentials.</p>
 }
 
+@if(TempData["Redirect"] != null && TempData["Redirect"].Equals(true))
+{
+    <script>
+        GlobalScript.displayModal("Success!", "Your account has been created.<br />-You can adjust more security and personal settings in your User Panel!");
+    </script>
+}
+
 <form>
     <div class="ht-tm-element input-group mb-3">
         <div class="input-group-prepend">

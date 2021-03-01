@@ -48,12 +48,14 @@ namespace Goliath.Controllers
                     {
                         ModelState.AddModelError("", errorMessage.Description);
                     }
-
+                    
                     return View(model);
                 }
                 ModelState.Clear();
             }
-            return View();
+            // Send the user back to the login screen with a message.
+            TempData["Redirect"] = true;
+            return RedirectToAction("Index");
         }
 
         [Route("register/method")]

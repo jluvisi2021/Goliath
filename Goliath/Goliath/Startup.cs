@@ -1,4 +1,5 @@
 using Goliath.Data;
+using Goliath.Models;
 using Goliath.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -27,9 +28,19 @@ namespace Goliath
                 options => options.UseSqlServer(_config.GetConnectionString("DefaultConnection"))
             );
             
-            services.AddIdentity<IdentityUser, IdentityRole>()
+            services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<GoliathContext>();
-            
+
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequireDigit = true;
+                options.Password.RequiredLength = 6;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireNonAlphanumeric = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireDigit = true;
+                options.User.RequireUniqueEmail = true;
+            });
 
             // Enable MVC Design
             services.AddControllersWithViews();
