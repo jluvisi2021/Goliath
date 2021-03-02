@@ -22,6 +22,7 @@
         border-bottom-right-radius: 15%;
         border-top-right-radius: 15%;
     }
+
     #inner {
         min-width: 80%;
     }
@@ -60,6 +61,7 @@
         visibility: hidden;
         overflow: hidden;
     }
+
     #inner {
         overflow: hidden;
     }
@@ -71,5 +73,4 @@
         left: 50%;
         transform: translate(-50%, -50%);
     }
-    
 }

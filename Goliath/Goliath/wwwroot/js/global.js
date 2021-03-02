@@ -20,35 +20,35 @@ const GlobalScript = (function () {
         BannerTypes: function () {
             return _bannerTypes;
         },
-    /**
-* Tests if jQuery can be found and loaded at run time.
-* */
+        /**
+    * Tests if jQuery can be found and loaded at run time.
+    * */
         testjQuery: function () {
             $(document).ready(function () {
                 console.log("jQuery has been found and enabled.");
             });
         },
-    /**
-* Automatically displays a notification alert at a parent div.
-* This function makes a new child banner immediatly below the parent div
-*
-* Types:
-* 1- Primary (Dark Blue)
-* 2- Secondary (Blue)
-* 3- Success (Green)
-* 4- Error (Red)
-* 5- Primary Dark (Dark)
-*
-* NOTE:
-* - Requires that the type be in range
-*
-* @param {string} textHeader (BOLD TEXT)
-* @param {string} text
-* @param {GlobalScript.BannerTypes} type
-* @param {string} divParentID
-* @param {string} id (Optional)
-*
-*/
+        /**
+    * Automatically displays a notification alert at a parent div.
+    * This function makes a new child banner immediatly below the parent div
+    *
+    * Types:
+    * 1- Primary (Dark Blue)
+    * 2- Secondary (Blue)
+    * 3- Success (Green)
+    * 4- Error (Red)
+    * 5- Primary Dark (Dark)
+    *
+    * NOTE:
+    * - Requires that the type be in range
+    *
+    * @param {string} textHeader (BOLD TEXT)
+    * @param {string} text
+    * @param {GlobalScript.BannerTypes} type
+    * @param {string} divParentID
+    * @param {string} id (Optional)
+    *
+    */
         displayNotification: function (textHeader, text, type, divParentID) {
             let typeStr = "";
             switch (type) {
@@ -83,15 +83,15 @@ const GlobalScript = (function () {
                 + '</div>'
             );
         },
-    /**
-* Displays a modal to the user.
-* The modal only has a close option and its buttons
-* are set to the primary color.
-* The modal is appended to the #RenderBody.
-*
-* @param {string} title [Supports HTML(Use ``)]
-* @param {string} body [Supports HTML(Use ``)]
-*/
+        /**
+    * Displays a modal to the user.
+    * The modal only has a close option and its buttons
+    * are set to the primary color.
+    * The modal is appended to the #RenderBody.
+    *
+    * @param {string} title [Supports HTML(Use ``)]
+    * @param {string} body [Supports HTML(Use ``)]
+    */
         displayModal: function (title, body) {
             $("#outer").append(`
         <div class="modal fade" id="render-model" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -107,7 +107,7 @@ const GlobalScript = (function () {
                         ` + body + `
                 </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Okay</button>
                     </div>
                 </div>
             </div>
@@ -116,11 +116,11 @@ const GlobalScript = (function () {
             );
             $('#render-model').modal('show');
         },
-    /**
-     * Checks if the browser is supported.
-     * If not then it sends a notification to the user.
-     * Officially Supported Browsers: Chrome, all Chromium-based browsers, Safari, Firefox
-     * */
+        /**
+         * Checks if the browser is supported.
+         * If not then it sends a notification to the user.
+         * Officially Supported Browsers: Chrome, all Chromium-based browsers, Safari, Firefox
+         * */
         checkBrowser: function () {
             if (navigator.userAgent.search("Chrome") >= 0) {
                 return;

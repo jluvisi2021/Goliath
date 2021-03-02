@@ -27,7 +27,7 @@ namespace Goliath
             services.AddDbContext<GoliathContext>(
                 options => options.UseSqlServer(_config.GetConnectionString("DefaultConnection"))
             );
-            
+
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<GoliathContext>();
 

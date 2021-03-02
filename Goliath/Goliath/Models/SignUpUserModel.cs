@@ -14,13 +14,11 @@ namespace Goliath.Models
         [Required(ErrorMessage = "Please enter your email.")]
         [EmailAddress(ErrorMessage = "Please enter a valid email.")]
         [Compare("ConfirmEmail", ErrorMessage = "Email does not match.")]
-        [DataType(DataType.EmailAddress)]
         [Display(Name = "Email")]
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Please confirm your email.")]
         [EmailAddress(ErrorMessage = "Please confirm your email.")]
-        [DataType(DataType.EmailAddress)]
         [Display(Name = "Confirm Email")]
         public string ConfirmEmail { get; set; }
 

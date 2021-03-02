@@ -13,7 +13,6 @@ $(window).ready(function (e) {
 
 /* Page load end */
 
-
 /**
  * Loads the colors of the radio button the user clicked on.
  * If the user clicked on a dropdown then it colors the dropdown elements.
@@ -35,4 +34,3 @@ function loadButtonElements(id) {
         $("#" + id + "-radio-btn").prop("checked", true);
     }
 }
-

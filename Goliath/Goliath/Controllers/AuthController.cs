@@ -12,7 +12,6 @@ namespace Goliath.Controllers
 
     public sealed class AuthController : Controller
     {
-
         private readonly IAccountRepository _accountRepository;
 
         public AuthController(IAccountRepository accountRepository)
@@ -20,12 +19,31 @@ namespace Goliath.Controllers
             _accountRepository = accountRepository;
         }
 
+        // Refereed to as "Login" as well.
         public IActionResult Index()
         {
             ViewData["ButtonID"] = "login";
             return View("Login");
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Index(SignInModel signInModel)
+        {
+            ViewData["ButtonID"] = "login";
+            if (ModelState.IsValid)
+            {
+                System.Diagnostics.Debug.WriteLine("Received Model.");
+                System.Diagnostics.Debug.WriteLine("Username: " + signInModel.Username);
+                var result = await _accountRepository.PasswordSignInAsync(signInModel);
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("Index", "UserPanel");
+                }
+
+                ModelState.AddModelError("", "Invalid Credentials.");
+            }
+            return View("Login", signInModel);
+        }
 
         [Route("register/goliath")]
         public IActionResult Register()
@@ -42,13 +60,13 @@ namespace Goliath.Controllers
             if (ModelState.IsValid)
             {
                 var result = await _accountRepository.CreateUserAsync(model);
-                if(!result.Succeeded)
+                if (!result.Succeeded)
                 {
-                    foreach(var errorMessage in result.Errors)
+                    foreach (var errorMessage in result.Errors)
                     {
                         ModelState.AddModelError("", errorMessage.Description);
                     }
-                    
+
                     return View(model);
                 }
                 ModelState.Clear();

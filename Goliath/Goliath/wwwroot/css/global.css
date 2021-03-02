@@ -1,5 +1,4 @@
-﻿
-#outer {
+﻿#outer {
     width: 100%;
     height: calc(100vh - 3.55rem);
     display: flex;
@@ -8,7 +7,6 @@
 #inner {
     margin: auto;
 }
-
 
 .modal-backdrop {
     width: 100% !important;

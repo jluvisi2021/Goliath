@@ -1,8 +1,5 @@
 ﻿using Goliath.Models;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Goliath.Repository
@@ -10,10 +7,14 @@ namespace Goliath.Repository
     public class AccountRepository : IAccountRepository
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        public AccountRepository(UserManager<ApplicationUser> userManager) 
+        private readonly SignInManager<ApplicationUser> _signInManager;
+
+        public AccountRepository(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
         {
-            this._userManager = userManager;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
+
         /// <summary>
         /// Creates the user and adds them to
         /// the database using Identity core.
@@ -26,11 +27,13 @@ namespace Goliath.Repository
             {
                 UserName = userModel.Username,
                 Email = userModel.Email,
-                
             };
             return await (_userManager.CreateAsync(user, userModel.Password));
         }
 
-
+        public async Task<SignInResult> PasswordSignInAsync(SignInModel signInModel)
+        {
+            return await _signInManager.PasswordSignInAsync(signInModel.Username, signInModel.Password, signInModel.RememberMe, false);
+        }
     }
 }
