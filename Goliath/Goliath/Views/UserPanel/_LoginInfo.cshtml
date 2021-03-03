@@ -1,0 +1,17 @@
+﻿@using Goliath.Models
+@inject Microsoft.AspNetCore.Identity.SignInManager<ApplicationUser> _signInManager;
+
+@if (_signInManager.IsSignedIn(User))
+{
+    <form class="form-inline my-2 my-lg-0">
+        <a asp-action="Index" class="nav-item text-dark font-weight-bold">Welcome Back, @User.Identity.Name</a>
+        <a asp-action="Logout" class="btn btn-secondary ml-2 px-3">Logout</a>
+    </form>
+}
+else
+{
+    <form class="form-inline my-2 my-lg-0">
+        <a asp-controller="Auth" asp-action="RegisterMethod" class="btn btn-secondary px-3">Register</a>
+        <a asp-controller="Auth" asp-action="Index" class="btn btn-secondary ml-2 px-3">Login</a>
+    </form>
+}

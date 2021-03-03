@@ -23,7 +23,7 @@ namespace Goliath.Repository
         /// <returns></returns>
         public async Task<IdentityResult> CreateUserAsync(SignUpUserModel userModel)
         {
-            ApplicationUser user = new ApplicationUser()
+            ApplicationUser user = new()
             {
                 UserName = userModel.Username,
                 Email = userModel.Email,
@@ -34,6 +34,11 @@ namespace Goliath.Repository
         public async Task<SignInResult> PasswordSignInAsync(SignInModel signInModel)
         {
             return await _signInManager.PasswordSignInAsync(signInModel.Username, signInModel.Password, signInModel.RememberMe, false);
+        }
+
+        public async Task SignOutAsync()
+        {
+            await _signInManager.SignOutAsync();
         }
     }
 }
