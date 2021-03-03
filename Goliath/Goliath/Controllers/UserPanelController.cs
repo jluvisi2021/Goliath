@@ -1,4 +1,5 @@
 ﻿using Goliath.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -23,7 +24,7 @@ namespace Goliath.Controllers
         public async Task<IActionResult> Logout()
         {
             await _accountRepository.SignOutAsync();
-            return RedirectToAction("Index", "UserPanel");
+            return RedirectToAction("Index", "Auth");
         }
 
         public IActionResult Database()

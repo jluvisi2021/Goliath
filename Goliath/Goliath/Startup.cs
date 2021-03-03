@@ -78,6 +78,9 @@ namespace Goliath
             // Enable ASP.NET Core Identity
             app.UseAuthentication();
 
+            // Require user accounts
+            app.UseAuthorization();
+
             /* Starts at ~/Views/Auth/Login.cshtml */
             app.UseEndpoints(endpoints =>
             {
