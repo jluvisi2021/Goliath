@@ -19,7 +19,7 @@ $(window).ready(function (e) {
  * @param {string} id
  */
 function loadButtonElements(id) {
-    const backgroundColor = "#0094ff";
+    const backgroundColor = "#3e5af1";
 
     // Make the button colored
     if ($("#" + id + "-radio-btn").length === 0) {

@@ -20,6 +20,16 @@ namespace Goliath.Controllers
             return View("Profile");
         }
 
+        /// <summary>
+        /// Returns a specific partial view in Ajax.
+        /// </summary>
+        /// <param name="partialName"></param>
+        /// <returns></returns>
+        public ActionResult GetModule(string partialName)
+        {
+            return PartialView("~/Views/UserPanel/" + partialName + ".cshtml");
+        }
+
         [Route("logout")]
         public async Task<IActionResult> Logout()
         {

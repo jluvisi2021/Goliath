@@ -1,5 +1,10 @@
 ﻿body {
-    background-color: white;
+    min-height: 100vh;
+    background-color: #f2f2f2;
+}
+
+header {
+    min-width: 55rem;
 }
 
 .navbar-brand {
@@ -13,6 +18,33 @@
     padding-left: 10%;
 }
 
+#primary-container {
+    width: 45rem;
+    height: 35rem;
+    background-color: white;
+}
+
+@media all and (max-width: 1000px) {
+    #primary-container {
+        width: 35rem;
+        height: 28rem;
+        background-color: white;
+    }
+}
+
+@media only screen and (pointer:none), (pointer:coarse) and (max-device-width: 768px) and (orientation: portrait) {
+    #profile-nav {
+        min-width: 40%;
+        max-width: 60%;
+    }
+}
+
+
+
 .navbar-nav {
     font-size: large;
+}
+
+.vertical-center {
+    min-height: 100%;
 }

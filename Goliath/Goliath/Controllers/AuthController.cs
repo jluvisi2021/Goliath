@@ -32,8 +32,6 @@ namespace Goliath.Controllers
             ViewData["ButtonID"] = "login";
             if (ModelState.IsValid)
             {
-                System.Diagnostics.Debug.WriteLine("Received Model.");
-                System.Diagnostics.Debug.WriteLine("Username: " + signInModel.Username);
                 var result = await _accountRepository.PasswordSignInAsync(signInModel);
                 if (result.Succeeded)
                 {
@@ -69,11 +67,12 @@ namespace Goliath.Controllers
 
                     return View(model);
                 }
+                // Registration is Valid.
                 ModelState.Clear();
+                TempData["Redirect"] = true;
+                return RedirectToAction("Index");
             }
-            // Send the user back to the login screen with a message.
-            TempData["Redirect"] = true;
-            return RedirectToAction("Index");
+            return View();
         }
 
         [Route("register/method")]
@@ -87,6 +86,13 @@ namespace Goliath.Controllers
         public IActionResult ForgotPassword()
         {
             ViewData["ButtonID"] = "forgot-password";
+            return View();
+        }
+
+        [Route("forgotusername")]
+        public IActionResult ForgotUsername()
+        {
+            ViewData["ButtonID"] = "forgot-username";
             return View();
         }
 

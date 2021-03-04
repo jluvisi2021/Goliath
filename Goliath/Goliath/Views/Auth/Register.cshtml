@@ -15,8 +15,10 @@
 
     @if (!ViewData.ModelState.IsValid)
     {
+        
         @*Display a validation model if the user inputs are incorrect.*@
         <script>
+            console.log("Invalid Account Details.");
             GlobalScript.displayModal('Correct Errors', `Please correct the errors to make your account:<br />@Html.ValidationSummary(false, "", new { @class = "text-danger" })`);
         </script>
     }
