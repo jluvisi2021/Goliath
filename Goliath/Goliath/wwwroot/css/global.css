@@ -13,8 +13,7 @@
     height: 100% !important;
 }
 
-.footer {
-    font-family: 'Trebuchet MS';
+#footer {
     bottom: 0;
     height: 3.5rem;
     position: fixed;

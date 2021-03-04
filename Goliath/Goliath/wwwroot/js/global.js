@@ -2,7 +2,26 @@
  * Closure Scope
  *
  * */
-
+// When the user scrolls to the bottom remove the footer.
+$(window).on("scroll", () => {
+    if (!($(document).height() > $(window).height())) {
+        $("#footer").css({
+            "visibility": "visible"
+        });
+        return;
+    }
+    var scrollHeight = $(document).height();
+    var scrollPosition = $(window).height() + $(window).scrollTop();
+    if (scrollHeight - scrollPosition <= 1) {
+        $("#footer").css({
+            "visibility": "hidden"
+        });
+    } else {
+        $("#footer").css({
+            "visibility": "visible"
+        });
+    }
+});
 /** Access data from global.js */
 const GlobalScript = (function () {
     /** Private Variables */
@@ -15,18 +34,13 @@ const GlobalScript = (function () {
         "alert-dark": 4
     });
 
+    
+    
+
     return {
         /** Returns the list of avaliable banner types. */
         BannerTypes: function () {
             return _bannerTypes;
-        },
-        /**
-    * Tests if jQuery can be found and loaded at run time.
-    * */
-        testjQuery: function () {
-            $(document).ready(function () {
-                console.log("jQuery has been found and enabled.");
-            });
         },
         /**
     * Automatically displays a notification alert at a parent div.
@@ -138,4 +152,4 @@ const GlobalScript = (function () {
             $("#footer-text").attr("title", $("#footer-text").attr("title").toString() + ' <div class="font-weight-bold text-danger">WARNING: You are using an unsupported browser. Not all features may function correctly.</div>');
         }
     };
-})();
+})(); 
