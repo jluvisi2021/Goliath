@@ -40,7 +40,22 @@ namespace Goliath.Controllers
 
         public IActionResult Database()
         {
-            //ViewBag.config = _config.Serialize();
+            return View();
+        }
+        public IActionResult Utilities()
+        {
+            return View();
+        }
+        public IActionResult Help()
+        {
+            return View();
+        }
+        public IActionResult About()
+        {
+            return View();
+        }
+        public IActionResult BuildInfo()
+        {
             return View();
         }
     }

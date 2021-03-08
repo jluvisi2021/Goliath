@@ -28,7 +28,7 @@ function loadButtonElements(id) {
 
         $("#" + id).css({
             "background-color": backgroundColor,
-            "font-weight": "bold"
+            "color": "white"
         });
     } else {
         $("#" + id + "-radio-btn").prop("checked", true);

@@ -14,6 +14,7 @@
 
 @section UniqueHeader {
     <link href="~/css/userpanel-style.css" rel="stylesheet" />
+    <script src="~/js/UserPanel/_UserPanel.js"></script>
 }
 <main>
     <header>
@@ -29,26 +30,26 @@
             </a>
             <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
                 <ul class="navbar-nav mr-auto mt-2 mt-md-0">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="#!">Profile</a>
+                    <li class="nav-item" id="profile-nav">
+                        <a class="nav-link" asp-action="Index">Profile</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#!">Database</a>
+                    <li class="nav-item" id="database-nav">
+                        <a class="nav-link" asp-action="Database">Database</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#!">Utilities</a>
+                    <li class="nav-item" id="utilities-nav">
+                        <a class="nav-link" asp-action="Utilities">Utilities</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#!">Help (Q&A)</a>
+                    <li class="nav-item" id="help-nav">
+                        <a class="nav-link" asp-action="Help">Help (Q&A)</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#!">About Goliath</a>
+                    <li class="nav-item" id="about-nav">
+                        <a class="nav-link" asp-action="About">About Goliath</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#!">Build Info</a>
+                    <li class="nav-item" id="build-nav">
+                        <a class="nav-link" asp-action="BuildInfo">Build Info</a>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <li class="nav-item dropdown" id="other-nav">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" id="navbarDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Other
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -63,10 +64,12 @@
                 </ul>
                 <partial name="_LoginInfo" />
             </div>
-
         </nav>
     </header>
     <section class="text-center">
         @RenderBody()
     </section>
 </main>
+<script>
+    updateNav("@ViewData["Title"].ToString().ToLower().Split(" ")[0]");
+</script>

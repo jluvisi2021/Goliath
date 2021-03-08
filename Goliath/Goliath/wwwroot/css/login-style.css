@@ -55,6 +55,11 @@
     border-radius: 15%;
 }
 
+.dropdown-bottom-icons {
+    margin-left: -12px;
+    padding-left: 0%;
+}
+
 /** If the phone is in landscape mode we must adjust and tell them not to use landscape on mobile.*/
 @media only screen and (pointer:none), (pointer:coarse) and (max-device-width: 768px) and (orientation: landscape) {
     #outer {
