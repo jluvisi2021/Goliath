@@ -4,7 +4,7 @@
 /*
  * Ajax // Manage clicking the profile
  * nav items.
- * When a nav item is clicked it gets redirected.
+ * When a nav item is clicked we load a partial view.
  */
 $(window).ready(() => {
     $(".list-group .list-group-item").click(function (e) {

@@ -1,5 +1,6 @@
 ﻿using Goliath.Models;
 using Goliath.Repository;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -13,15 +14,21 @@ namespace Goliath.Controllers
     public sealed class AuthController : Controller
     {
         private readonly IAccountRepository _accountRepository;
-
-        public AuthController(IAccountRepository accountRepository)
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        public AuthController(IAccountRepository accountRepository, SignInManager<ApplicationUser> signInManager)
         {
             _accountRepository = accountRepository;
+            _signInManager = signInManager;
         }
 
         // Refereed to as "Login" as well.
         public IActionResult Index()
         {
+            // If the user is signed in redirect them to the user panel.
+            if(_signInManager.IsSignedIn(User))
+            {
+                return RedirectToAction("Index", "UserPanel");
+            }
             ViewData["ButtonID"] = "login";
             return View("Login");
         }
@@ -30,9 +37,11 @@ namespace Goliath.Controllers
         public async Task<IActionResult> Index(SignInModel signInModel)
         {
             ViewData["ButtonID"] = "login";
+            // If the user has signed in with valid data.
             if (ModelState.IsValid)
             {
                 var result = await _accountRepository.PasswordSignInAsync(signInModel);
+                // If the user name and password match.
                 if (result.Succeeded)
                 {
                     return RedirectToAction("Index", "UserPanel");
@@ -69,7 +78,8 @@ namespace Goliath.Controllers
                 }
                 // Registration is Valid.
                 ModelState.Clear();
-                TempData["Redirect"] = true;
+                // Send the user to the index with register tempdata.
+                TempData["Redirect"] = "register";
                 return RedirectToAction("Index");
             }
             return View();

@@ -125,7 +125,11 @@
 
 <script>
 
-        loadButtonElements("@ViewData["ButtonID"]");
+    loadButtonElements("@ViewData["ButtonID"]");
+    $(".nav-item").click(function (e) {
+        $(".nav-item").removeClass("active");
+        $(e.target).addClass("active");
+    });
     // Adjust the view to fit screen.
     /*
     adjustViewport();

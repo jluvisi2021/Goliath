@@ -34,6 +34,7 @@ namespace Goliath.Controllers
         public async Task<IActionResult> Logout()
         {
             await _accountRepository.SignOutAsync();
+            TempData["Redirect"] = "logout";
             return RedirectToAction("Index", "Auth");
         }
 
