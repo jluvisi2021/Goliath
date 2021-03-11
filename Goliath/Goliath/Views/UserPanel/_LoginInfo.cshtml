@@ -4,7 +4,8 @@
 @if (_signInManager.IsSignedIn(User))
 {
     <form class="form-inline my-2 my-lg-0">
-        <a asp-action="Index" class="nav-item text-dark font-weight-bold">Welcome Back, @User.Identity.Name</a>
+        <a asp-action="Index" class="nav-item text-white">Welcome Back, @User.Identity.Name</a>
+        <span class="pl-1" style="color: gray; font-size: 1.75rem">|</span>
         <a asp-action="Logout" class="btn btn-secondary ml-2 px-3">Logout</a>
     </form>
 }

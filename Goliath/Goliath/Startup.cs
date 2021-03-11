@@ -31,6 +31,7 @@ namespace Goliath
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<GoliathContext>();
 
+            services.Configure<SMTPConfigModel>(_config.GetSection("SMTPConfig"));
             services.Configure<IdentityOptions>(options =>
             {
                 options.Password.RequireDigit = true;
