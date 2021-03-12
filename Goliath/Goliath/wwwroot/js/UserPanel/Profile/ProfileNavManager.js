@@ -1,5 +1,4 @@
 ﻿const ProfileNav = (() => {
-
 });
 /*
  * Ajax // Manage clicking the profile
@@ -12,10 +11,10 @@ $(window).ready(() => {
         $(e.target).addClass("active");
     });
     $("#profile-nav-general").click(function () {
-        $("#view").load("/UserPanel/GetModule?partialName=Profile/_General");     
+        $("#view").load("/UserPanel/GetModule?partialName=Profile/_General");
     });
     $("#profile-nav-colors").click(function () {
-        $("#view").load("/UserPanel/GetModule?partialName=Profile/_Colors");     
+        $("#view").load("/UserPanel/GetModule?partialName=Profile/_Colors");
     });
     $("#profile-nav-security").click(function () {
         $("#view").load("/UserPanel/GetModule?partialName=Profile/_Security");

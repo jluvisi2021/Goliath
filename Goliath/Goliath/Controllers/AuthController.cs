@@ -18,6 +18,7 @@ namespace Goliath.Controllers
         private readonly IAccountRepository _accountRepository;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailService _emailService;
+
         public AuthController(IAccountRepository accountRepository, SignInManager<ApplicationUser> signInManager, IEmailService emailService)
         {
             _accountRepository = accountRepository;
@@ -25,13 +26,11 @@ namespace Goliath.Controllers
             _emailService = emailService;
         }
 
-
-
         // Refereed to as "Login" as well.
         public IActionResult Index()
         {
             // If the user is signed in redirect them to the user panel.
-            if(_signInManager.IsSignedIn(User))
+            if (_signInManager.IsSignedIn(User))
             {
                 return RedirectToAction("Index", "UserPanel");
             }
@@ -52,13 +51,12 @@ namespace Goliath.Controllers
                 {
                     UserEmailOptions options = new()
                     {
-                        ToEmails = new List<string>() { "jluvisi2021@gmail.com" }
+                        ToEmails = new List<string>() { _signInManager.UserManager.FindByNameAsync(signInModel.Username).Result.Email }
                     };
                     // Send the email
                     _ = _emailService.SendTestEmail(options);
 
                     return RedirectToAction("Index", "UserPanel");
-
                 }
 
                 ModelState.AddModelError("", "Invalid Credentials.");

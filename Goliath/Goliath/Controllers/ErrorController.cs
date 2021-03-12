@@ -8,10 +8,8 @@ namespace Goliath.Controllers
 {
     public class ErrorController : Controller
     {
-
         public ErrorController()
         {
-
         }
     }
 }

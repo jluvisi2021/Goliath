@@ -34,9 +34,6 @@ const GlobalScript = (function () {
         "alert-dark": 4
     });
 
-    
-    
-
     return {
         /** Returns the list of avaliable banner types. */
         BannerTypes: function () {

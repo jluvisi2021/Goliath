@@ -4,24 +4,36 @@ using Microsoft.Extensions.Options;
 using MimeKit;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Goliath.Services
 {
+    /// <summary>
+    /// The service for sending emails to clients through Goliath.
+    /// </summary>
     public class EmailService : IEmailService
     {
         private readonly SMTPConfigModel _smtpConfig;
+
         public EmailService(IOptions<SMTPConfigModel> options)
         {
             _smtpConfig = options.Value;
         }
 
+        /// <summary>
+        /// Send a test email.
+        /// </summary>
+        /// <param name="options"></param>
+        /// <returns></returns>
         public async Task<bool> SendTestEmail(UserEmailOptions options)
         {
             options.Subject = "Test Email";
-            options.Body = GetTemplate("Default");
+            options.Body = GetTemplateWithPlaceholders("Default",
+                new Dictionary<string, string> {
+                    { "[DateTime]", DateTime.Now.ToString()}
+                }.ToImmutableDictionary());
 
             return await SendEmail(options);
         }
@@ -33,6 +45,7 @@ namespace Goliath.Services
         /// <returns>If the email was sent successfully.</returns>
         private async Task<bool> SendEmail(UserEmailOptions options)
         {
+            // Setup the mail message.
             MimeMessage message = new()
             {
                 Subject = options.Subject,
@@ -42,7 +55,7 @@ namespace Goliath.Services
                 }
             };
             message.From.Add(new MailboxAddress(_smtpConfig.DisplayName, _smtpConfig.Address));
-
+            // Send the email message to all recipients.
             foreach (string toEmail in options.ToEmails)
             {
                 message.To.Add(new MailboxAddress("User", toEmail));
@@ -66,7 +79,6 @@ namespace Goliath.Services
                     System.Diagnostics.Debug.WriteLine("! --------------------------- !");
                     return false;
                 }
-
             }
         }
 
@@ -80,5 +92,20 @@ namespace Goliath.Services
             return File.ReadAllText(@$"Services/EmailTemplate/{name}.html");
         }
 
+        /// <summary>
+        /// Gets a specified template and replaces all the placeholders with new data.
+        /// </summary>
+        /// <param name="template"></param>
+        /// <param name="placeholders"></param>
+        /// <returns></returns>
+        private static string GetTemplateWithPlaceholders(string template, ImmutableDictionary<string, string> placeholders)
+        {
+            string str = GetTemplate(template);
+            foreach(string p in placeholders.Keys)
+            {
+                str = str.Replace(p, placeholders[p]);
+            }
+            return str;
+        }
     }
 }

@@ -28,7 +28,7 @@ namespace Goliath
             services.AddDbContext<GoliathContext>(
                 options => options.UseSqlServer(_config.GetConnectionString("DefaultConnection"))
             );
-
+            // Setup custom Identity Core.
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<GoliathContext>();
 
@@ -53,6 +53,7 @@ namespace Goliath
 #if DEBUG
             services.AddRazorPages().AddRazorRuntimeCompilation();
 #endif
+            // Enable services to use in Controllers.
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IAccountRepository, AccountRepository>();
         }

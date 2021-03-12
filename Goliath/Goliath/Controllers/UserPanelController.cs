@@ -1,5 +1,4 @@
 ﻿using Goliath.Repository;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -42,18 +41,22 @@ namespace Goliath.Controllers
         {
             return View();
         }
+
         public IActionResult Utilities()
         {
             return View();
         }
+
         public IActionResult Help()
         {
             return View();
         }
+
         public IActionResult About()
         {
             return View();
         }
+
         public IActionResult BuildInfo()
         {
             return View();
