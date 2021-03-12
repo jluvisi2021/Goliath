@@ -1,6 +1,7 @@
 using Goliath.Data;
 using Goliath.Models;
 using Goliath.Repository;
+using Goliath.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -52,6 +53,7 @@ namespace Goliath
 #if DEBUG
             services.AddRazorPages().AddRazorRuntimeCompilation();
 #endif
+            services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IAccountRepository, AccountRepository>();
         }
 

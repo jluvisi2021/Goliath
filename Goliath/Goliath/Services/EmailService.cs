@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Goliath.Services
 {
-    public class EmailService
+    public class EmailService : IEmailService
     {
         private readonly SMTPConfigModel _smtpConfig;
         public EmailService(IOptions<SMTPConfigModel> options)
@@ -18,12 +18,20 @@ namespace Goliath.Services
             _smtpConfig = options.Value;
         }
 
+        public async Task<bool> SendTestEmail(UserEmailOptions options)
+        {
+            options.Subject = "Test Email";
+            options.Body = GetTemplate("Default");
+
+            return await SendEmail(options);
+        }
+
         /// <summary>
         /// Send an email to user(s).
         /// </summary>
         /// <param name="options"></param>
-        /// <returns></returns>
-        private async Task SendEmail(UserEmailOptions options)
+        /// <returns>If the email was sent successfully.</returns>
+        private async Task<bool> SendEmail(UserEmailOptions options)
         {
             MimeMessage message = new()
             {
@@ -35,7 +43,7 @@ namespace Goliath.Services
             };
             message.From.Add(new MailboxAddress(_smtpConfig.DisplayName, _smtpConfig.Address));
 
-            foreach(string toEmail in options.ToEmails)
+            foreach (string toEmail in options.ToEmails)
             {
                 message.To.Add(new MailboxAddress("User", toEmail));
             }
@@ -48,7 +56,7 @@ namespace Goliath.Services
                     await client.SendAsync(message);
                     await client.DisconnectAsync(true);
                     client.Timeout = 20000;
-                    
+                    return true;
                 }
                 catch (Exception e)
                 {
@@ -56,6 +64,7 @@ namespace Goliath.Services
                     System.Diagnostics.Debug.WriteLine("Error sending email");
                     System.Diagnostics.Debug.WriteLine(e.Message);
                     System.Diagnostics.Debug.WriteLine("! --------------------------- !");
+                    return false;
                 }
 
             }
@@ -66,7 +75,7 @@ namespace Goliath.Services
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        private string GetTemplate(string name)
+        private static string GetTemplate(string name)
         {
             return File.ReadAllText(@$"Services/EmailTemplate/{name}.html");
         }

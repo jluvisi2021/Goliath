@@ -1,7 +1,9 @@
 ﻿using Goliath.Models;
 using Goliath.Repository;
+using Goliath.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Goliath.Controllers
@@ -15,11 +17,15 @@ namespace Goliath.Controllers
     {
         private readonly IAccountRepository _accountRepository;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        public AuthController(IAccountRepository accountRepository, SignInManager<ApplicationUser> signInManager)
+        private readonly IEmailService _emailService;
+        public AuthController(IAccountRepository accountRepository, SignInManager<ApplicationUser> signInManager, IEmailService emailService)
         {
             _accountRepository = accountRepository;
             _signInManager = signInManager;
+            _emailService = emailService;
         }
+
+
 
         // Refereed to as "Login" as well.
         public IActionResult Index()
@@ -44,7 +50,15 @@ namespace Goliath.Controllers
                 // If the user name and password match.
                 if (result.Succeeded)
                 {
+                    UserEmailOptions options = new()
+                    {
+                        ToEmails = new List<string>() { "jluvisi2021@gmail.com" }
+                    };
+                    // Send the email
+                    _ = _emailService.SendTestEmail(options);
+
                     return RedirectToAction("Index", "UserPanel");
+
                 }
 
                 ModelState.AddModelError("", "Invalid Credentials.");
