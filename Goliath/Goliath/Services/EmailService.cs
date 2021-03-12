@@ -30,10 +30,7 @@ namespace Goliath.Services
         public async Task<bool> SendTestEmail(UserEmailOptions options)
         {
             options.Subject = "Test Email";
-            options.Body = GetTemplateWithPlaceholders("Default",
-                new Dictionary<string, string> {
-                    { "[DateTime]", DateTime.Now.ToString()}
-                }.ToImmutableDictionary());
+            options.Body = GetTemplate("Default", options);
 
             return await SendEmail(options);
         }
@@ -87,25 +84,16 @@ namespace Goliath.Services
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        private static string GetTemplate(string name)
+        private static string GetTemplate(string name, UserEmailOptions options)
         {
-            return File.ReadAllText(@$"Services/EmailTemplate/{name}.html");
+            string template = File.ReadAllText(@$"Services/EmailTemplate/{name}.html");
+            foreach(string s in options.Placeholders.Keys)
+            {
+                template = template.Replace(s, options.Placeholders[s]);
+            }
+            return template;
         }
 
-        /// <summary>
-        /// Gets a specified template and replaces all the placeholders with new data.
-        /// </summary>
-        /// <param name="template"></param>
-        /// <param name="placeholders"></param>
-        /// <returns></returns>
-        private static string GetTemplateWithPlaceholders(string template, ImmutableDictionary<string, string> placeholders)
-        {
-            string str = GetTemplate(template);
-            foreach(string p in placeholders.Keys)
-            {
-                str = str.Replace(p, placeholders[p]);
-            }
-            return str;
-        }
+        
     }
 }

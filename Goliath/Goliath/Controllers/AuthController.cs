@@ -3,7 +3,9 @@ using Goliath.Repository;
 using Goliath.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Threading.Tasks;
 
 namespace Goliath.Controllers
@@ -51,7 +53,12 @@ namespace Goliath.Controllers
                 {
                     UserEmailOptions options = new()
                     {
-                        ToEmails = new List<string>() { _signInManager.UserManager.FindByNameAsync(signInModel.Username).Result.Email }
+                        ToEmails = new List<string>() { _signInManager.UserManager.FindByNameAsync(signInModel.Username).Result.Email },
+                        Placeholders = new Dictionary<string, string> {
+                            { 
+                                "{{DateTime}}", DateTime.Now.ToString()
+                            }
+                        }.ToImmutableDictionary()
                     };
                     // Send the email
                     _ = _emailService.SendTestEmail(options);
