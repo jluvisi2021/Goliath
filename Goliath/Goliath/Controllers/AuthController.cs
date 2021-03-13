@@ -155,7 +155,7 @@ namespace Goliath.Controllers
                     return RedirectToAction("Index");
                 }
             }
-            
+            TempData["Redirect"] = "verified-failure";
             return RedirectToAction("Index");
         }
     }
