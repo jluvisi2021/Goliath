@@ -128,5 +128,16 @@ namespace Goliath.Repository
             }) ;
 
         }
+
+        /// <summary>
+        /// Confirms the email with the users ID and a token.
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public async Task<IdentityResult> ConfirmEmailAsync(string uid, string token)
+        {
+            return await _userManager.ConfirmEmailAsync(await _userManager.FindByIdAsync(uid), token);
+        }
     }
 }

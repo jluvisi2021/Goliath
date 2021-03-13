@@ -11,5 +11,7 @@ namespace Goliath.Repository
         Task<SignInResult> PasswordSignInAsync(SignInModel signInModel);
 
         Task SignOutAsync();
+
+        Task<IdentityResult> ConfirmEmailAsync(string uid, string token);
     }
 }

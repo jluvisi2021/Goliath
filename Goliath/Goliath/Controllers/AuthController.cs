@@ -89,7 +89,7 @@ namespace Goliath.Controllers
             ViewData["ButtonID"] = "register";
             if (ModelState.IsValid)
             {
-                
+                // Pass in the information for the confirmation email.
                 var result = await _accountRepository.CreateUserAsync(model, new string[] { Request.Headers["User-Agent"].ToString(), HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString() });
                 if (!result.Succeeded)
                 {
@@ -136,6 +136,27 @@ namespace Goliath.Controllers
         {
             ViewData["ButtonID"] = "verify-email";
             return View();
+        }
+
+        [HttpGet("confirm-email")]
+        public async Task<IActionResult> ConfirmEmail(string uid, string token)
+        {
+
+            // If the unique ID as well as the user exist.
+            if(!string.IsNullOrWhiteSpace(uid) && !string.IsNullOrWhiteSpace(token))
+            {
+                token = token.Replace(" ", "+");
+                // Check to make sure the token has not expired or is invalid.
+               var result = await _accountRepository.ConfirmEmailAsync(uid, token);
+                if(result.Succeeded)
+                {
+                    // If the email confirmation is a success then we can pass that info into the view.
+                    TempData["Redirect"] = "verified";
+                    return RedirectToAction("Index");
+                }
+            }
+            
+            return RedirectToAction("Index");
         }
     }
 }

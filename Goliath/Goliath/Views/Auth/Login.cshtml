@@ -1,4 +1,4 @@
-﻿@using System.Web; 
+﻿@using System.Web;
 @model Goliath.Models.SignInModel
 @{
     ViewData["Title"] = "Login";
@@ -24,6 +24,12 @@
     {
         <script>
             GlobalScript.displayNotification("Success", "You have been logged out at " + @DateTime.Now, GlobalScript.BannerTypes()["alert-success"], "center-banner");
+        </script>
+    }
+    else if (TempData["Redirect"].Equals("verified"))
+    {
+        <script>
+            GlobalScript.displayNotification("Success", "Your account has been verified. You may now log in!", GlobalScript.BannerTypes()["alert-success"], "center-banner");
         </script>
     }
 

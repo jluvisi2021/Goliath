@@ -1,0 +1,36 @@
+﻿
+@{
+    ViewData["Title"] = "Verification";
+    Layout = null;
+
+    async Task RedirectToLogin()
+    {
+        await Task.Delay(10000);
+
+        @Url.Action("Index", "Auth");
+    }
+
+}
+<article class="text-center pt-2" style="font-size: 2.35rem">
+
+    @if (ViewData["IsValid"].Equals(true))
+    {
+        <p>
+            Your email has been verified.
+        </p>
+        <p>
+            You can now login!
+        </p>
+        <p class="text-info">You will be redirected in 10 seconds.</p>
+        await RedirectToLogin();
+
+    }
+    else
+    {
+        <div class="text-danger">
+            <h2>Token is invalid or expired please try again.</h2>
+        </div>
+
+    }
+
+</article>
