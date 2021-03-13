@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Net;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace Goliath.Controllers
@@ -51,22 +53,24 @@ namespace Goliath.Controllers
                 // If the user name and password match.
                 if (result.Succeeded)
                 {
-                    UserEmailOptions options = new()
-                    {
-                        ToEmails = new List<string>() { _signInManager.UserManager.FindByNameAsync(signInModel.Username).Result.Email },
-                        Placeholders = new Dictionary<string, string> {
-                            { 
-                                "{{DateTime}}", DateTime.Now.ToString()
-                            }
-                        }.ToImmutableDictionary()
-                    };
-                    // Send the email
-                    _ = _emailService.SendTestEmail(options);
 
                     return RedirectToAction("Index", "UserPanel");
+                }else if(result.IsLockedOut)
+                {
+                    ModelState.AddModelError("", "Please try again later.");
+                }else if(result.IsNotAllowed)
+                {
+                    ModelState.AddModelError("", "You must verify your email!");
+                    
+                }else if(result.RequiresTwoFactor)
+                {
+                    ModelState.AddModelError("", "You must login through 2FA.");
                 }
-
-                ModelState.AddModelError("", "Invalid Credentials.");
+                else
+                {
+                    ModelState.AddModelError("", "Invalid Credentials.");
+                }
+                
             }
             return View("Login", signInModel);
         }
@@ -85,7 +89,8 @@ namespace Goliath.Controllers
             ViewData["ButtonID"] = "register";
             if (ModelState.IsValid)
             {
-                var result = await _accountRepository.CreateUserAsync(model);
+                
+                var result = await _accountRepository.CreateUserAsync(model, new string[] { Request.Headers["User-Agent"].ToString(), HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString() });
                 if (!result.Succeeded)
                 {
                     foreach (var errorMessage in result.Errors)
@@ -95,6 +100,7 @@ namespace Goliath.Controllers
 
                     return View(model);
                 }
+                
                 // Registration is Valid.
                 ModelState.Clear();
                 // Send the user to the index with register tempdata.

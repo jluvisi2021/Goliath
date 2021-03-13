@@ -6,7 +6,7 @@ namespace Goliath.Repository
 {
     public interface IAccountRepository
     {
-        Task<IdentityResult> CreateUserAsync(SignUpUserModel userModel);
+        Task<IdentityResult> CreateUserAsync(SignUpUserModel userModel, string[] data);
 
         Task<SignInResult> PasswordSignInAsync(SignInModel signInModel);
 

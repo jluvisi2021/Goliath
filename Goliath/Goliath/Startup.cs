@@ -30,7 +30,7 @@ namespace Goliath
             );
             // Setup custom Identity Core.
             services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<GoliathContext>();
+                .AddEntityFrameworkStores<GoliathContext>().AddDefaultTokenProviders();
 
             services.Configure<SMTPConfigModel>(_config.GetSection("SMTPConfig"));
             services.Configure<IdentityOptions>(options =>
@@ -42,6 +42,7 @@ namespace Goliath
                 options.Password.RequireUppercase = true;
                 options.Password.RequireDigit = true;
                 options.User.RequireUniqueEmail = true;
+                options.SignIn.RequireConfirmedEmail = true;
             });
 
             // Enable MVC Design

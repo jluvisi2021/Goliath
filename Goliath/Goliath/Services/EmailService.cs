@@ -34,6 +34,18 @@ namespace Goliath.Services
 
             return await SendEmail(options);
         }
+        /// <summary>
+        /// Send a confirmation link to a user.
+        /// </summary>
+        /// <param name="options"></param>
+        /// <returns>If the email was sent.</returns>
+        public async Task<bool> SendConfirmationEmail(UserEmailOptions options)
+        {
+            options.Subject = "Confirm Your Account";
+            options.Body = GetTemplate("ConfirmEmail", options);
+
+            return await SendEmail(options);
+        }
 
         /// <summary>
         /// Send an email to user(s).
