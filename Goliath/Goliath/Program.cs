@@ -34,6 +34,9 @@ namespace Goliath
 
     Bootstrap Layouts:
     -> https://jluvisi2021.github.io/Bubblegum/
+
+    To modify this project and make your own fork of Goliath there is documentation on the Wiki
+    -> https://github.com/jluvisi2021/Goliath/wiki
     */
 
     public class Program

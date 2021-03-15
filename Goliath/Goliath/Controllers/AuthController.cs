@@ -14,7 +14,9 @@ namespace Goliath.Controllers
 {
     /// <summary>
     /// Manages the Views for Authentication.
+    /// <br />
     /// ButtonID indicates the radio button to be checked.
+    /// 
     /// </summary>
 
     public sealed class AuthController : Controller
@@ -55,6 +57,7 @@ namespace Goliath.Controllers
                 {
 
                     return RedirectToAction("Index", "UserPanel");
+                // Else we send the specified errors to the user.
                 }else if(result.IsLockedOut)
                 {
                     ModelState.AddModelError("", "Please try again later.");
@@ -93,6 +96,7 @@ namespace Goliath.Controllers
                 var result = await _accountRepository.CreateUserAsync(model, new string[] { Request.Headers["User-Agent"].ToString(), HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString() });
                 if (!result.Succeeded)
                 {
+                    // For every error that is created during registration we add that to the eventual bootstrap modal.
                     foreach (var errorMessage in result.Errors)
                     {
                         ModelState.AddModelError("", errorMessage.Description);

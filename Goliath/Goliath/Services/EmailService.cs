@@ -12,6 +12,8 @@ namespace Goliath.Services
 {
     /// <summary>
     /// The service for sending emails to clients through Goliath.
+    /// <br />
+    /// Uses the <strong>MailKit</strong> NuGet package for sending emails.
     /// </summary>
     public class EmailService : IEmailService
     {

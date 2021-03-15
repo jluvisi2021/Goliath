@@ -17,6 +17,14 @@ namespace Goliath.Repository
         private readonly IEmailService _emailService;
         private readonly IConfiguration _config;
 
+        /// <summary>
+        /// The account repository is used for directly interacting
+        /// with the ApplicationUser class.
+        /// </summary>
+        /// <param name="userManager"></param>
+        /// <param name="signInManager"></param>
+        /// <param name="emailService"></param>
+        /// <param name="config"></param>
         public AccountRepository(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailService emailService, IConfiguration config)
         {
             _userManager = userManager;
@@ -45,9 +53,10 @@ namespace Goliath.Repository
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 if(!string.IsNullOrWhiteSpace(token))
                 {
-                    // data[0] = Browser Info
+                    // The data passed in represents the following information.
+                    // data[0] = Browser Info (User Agent)
                     // data[1] = Computer Info
-                    // data[2] = IP Address
+                    // data[2] = IP Address (IPv4 Mapped)
                     await SendEmailConfirmationToken(userModel, user, data[0], data[1], token);
                 }
             }
@@ -90,6 +99,16 @@ namespace Goliath.Repository
             return j;
         }
 
+        /// <summary>
+        /// Send an email to a user with a confirmation token as well
+        /// as information about the computer sending the email.
+        /// </summary>
+        /// <param name="signUpModel"></param>
+        /// <param name="user"></param>
+        /// <param name="computer"></param>
+        /// <param name="ip"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         private async Task SendEmailConfirmationToken(SignUpUserModel signUpModel, ApplicationUser user, string computer, string ip, string token)
         {
             string appDomain = _config["Application:AppDomain"];
