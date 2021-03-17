@@ -22,6 +22,7 @@
         <script src="@ViewBag.fontAwesome" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="~/lib/theme/bootstrap4-bubblegum.min.css">
     </environment>
+    @*Under code is run if the application is being run in debugger.*@
     <environment include="Development">
         <script>
             console.log("--> Goliath is being run in Development mode. <--");
@@ -42,20 +43,20 @@
 </head>
 
 <body>
-    <!-- Render the child HTML -->
+    <!-- Primary Layout Child HTML -->
     @RenderBody()
-
+    <!-- Primary Layout Child HTML End-->
     <footer class="footer fixed-bottom" id="footer">
         <div class="container text-center">
             <p class="p-3">
-                <a id="footer-text" data-toggle="tooltip" data-placement="top" data-html="true" title="Web Version: @ViewData["Version"]<br>Latest Update: 2/17/2021">
+                <a id="footer-text" data-toggle="tooltip" data-placement="top" data-html="true" title="Web Version: @ViewData["Version"]<br>Latest Update: 3/17/2021">
                     [Goliath @ViewData["Version"]] Last Updated: @DateTime.Now
                 </a>
             </p>
         </div>
     </footer>
 
-    <!-- If the browser orientation is not supported. -->
+    <!-- If the browser orientation (mobile) is not supported. -->
     <main id="bad-browser">
         <article>
             <h2>

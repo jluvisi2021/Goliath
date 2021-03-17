@@ -14,6 +14,9 @@ namespace Goliath
 {
     public class Startup
     {
+        /// <summary>
+        /// <b>appsettings.json</b> object.
+        /// </summary>
         private readonly IConfiguration _config;
 
         public Startup(IConfiguration config)
@@ -32,17 +35,19 @@ namespace Goliath
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<GoliathContext>().AddDefaultTokenProviders();
 
+            // Setup the SMTPConfig model to use values directly from the appsettings.
             services.Configure<SMTPConfigModel>(_config.GetSection("SMTPConfig"));
+            // General Identity Core settings.
             services.Configure<IdentityOptions>(options =>
             {
-                options.Password.RequireDigit = true;
-                options.Password.RequiredLength = 6;
-                options.Password.RequireLowercase = true;
-                options.Password.RequireNonAlphanumeric = true;
-                options.Password.RequireUppercase = true;
-                options.Password.RequireDigit = true;
-                options.User.RequireUniqueEmail = true;
-                options.SignIn.RequireConfirmedEmail = true;
+                options.Password.RequireDigit = true; // Password must have at least one digit.
+                options.Password.RequiredLength = 6; // Password min length is 6.
+                options.Password.RequireLowercase = true; // Password must have at least one lower case character.
+                options.Password.RequireNonAlphanumeric = true; // Password must have at least one non-alphanumeric character.
+                options.Password.RequireUppercase = true; // Password must have at least one upper case character.
+                options.Password.RequireDigit = true; // Password must have digit
+                options.User.RequireUniqueEmail = true; // All emails unique
+                options.SignIn.RequireConfirmedEmail = true; // Require activated accounts.
             });
 
             // Enable MVC Design
@@ -52,9 +57,10 @@ namespace Goliath
             services.AddRouting(options => options.LowercaseQueryStrings = true);
             services.AddRouting(options => options.AppendTrailingSlash = true);
 #if DEBUG
+            // Allow Razor pages to update upon browser refresh.
             services.AddRazorPages().AddRazorRuntimeCompilation();
 #endif
-            // Enable services to use in Controllers.
+            // Enable services to use in Controllers through DI.
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IAccountRepository, AccountRepository>();
         }

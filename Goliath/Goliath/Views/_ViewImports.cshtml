@@ -1,3 +1,7 @@
-﻿@inject Microsoft.Extensions.Configuration.IConfiguration config
+﻿@*
+  Allow appsettings to be accessed from all Views.
+  Enable tag helpers.
+    *@
+@inject Microsoft.Extensions.Configuration.IConfiguration config
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers

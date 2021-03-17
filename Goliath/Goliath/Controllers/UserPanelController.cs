@@ -10,6 +10,9 @@ namespace Goliath.Controllers
     /// </summary>
     public sealed class UserPanelController : Controller
     {
+        /// <summary>
+        /// For interfacing with the ApplicationUser.
+        /// </summary>
         private readonly IAccountRepository _accountRepository;
 
         public UserPanelController(IAccountRepository accountRepository)

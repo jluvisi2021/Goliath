@@ -16,8 +16,17 @@ namespace Goliath.Controllers
 
     public sealed class AuthController : Controller
     {
+        /// <summary>
+        /// For interfacing with the application user.
+        /// </summary>
         private readonly IAccountRepository _accountRepository;
+        /// <summary>
+        /// Manage if the user is signed in as well as authentication.
+        /// </summary>
         private readonly SignInManager<ApplicationUser> _signInManager;
+        /// <summary>
+        /// Send emails.
+        /// </summary>
         private readonly IEmailService _emailService;
 
         public AuthController(IAccountRepository accountRepository, SignInManager<ApplicationUser> signInManager, IEmailService emailService)
@@ -142,23 +151,24 @@ namespace Goliath.Controllers
         public async Task<IActionResult> VerifyEmail(EmailConfirmModel model)
         {
             ViewData["ButtonID"] = "verify-email";
-
+            // Verify that the user exists with the specified email.
             var user = await _accountRepository.FindByEmailAsync(model.Email);
-            if(user != null)
+            if (user != null)
             {
-                if(user.EmailConfirmed)
+                // If the email is already confirmed.
+                if (user.EmailConfirmed)
                 {
                     model.IsConfirmed = true;
                     ModelState.AddModelError("", "Account already verified.");
                     return View(model);
                 }
-
+                // Generate a token as well as a user agent.
                 await _accountRepository.GenerateEmailConfirmationToken(user, new string[] { Request.Headers["User-Agent"].ToString(), HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString() });
+                // Indicate to the View that the email was sent.
                 model.IsEmailSent = true;
-                
+                // Clear all fields.
                 ModelState.Clear();
-                
-                
+
                 return View(model);
             }
             else
@@ -169,13 +179,17 @@ namespace Goliath.Controllers
             return View();
         }
 
-
-
-
+        /// <summary>
+        /// Verifies an email given a UID and TOKEN.<br />
+        /// Does not contain a view and redirects to index view.<br />
+        /// The result of the method call is returned by the Bootstrap modal.
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         [HttpGet("verify-email")]
         public async Task<IActionResult> VerifyEmail(string uid, string token)
         {
-
             // If the unique ID as well as the user exist.
             if (!string.IsNullOrWhiteSpace(uid) && !string.IsNullOrWhiteSpace(token))
             {
@@ -189,10 +203,9 @@ namespace Goliath.Controllers
                     return RedirectToAction("Index");
                 }
             }
+            // Alert to the view that the verification failed.
             TempData["Redirect"] = "verified-failure";
             return RedirectToAction("Index");
         }
-
-
     }
 }

@@ -11,9 +11,21 @@ namespace Goliath.Repository
 {
     public class AccountRepository : IAccountRepository
     {
+        /// <summary>
+        /// The object which manages interacting directly with the Identity core methods for the user.
+        /// </summary>
         private readonly UserManager<ApplicationUser> _userManager;
+        /// <summary>
+        /// Manages the sign in process for the user and can check the state of the user.
+        /// </summary>
         private readonly SignInManager<ApplicationUser> _signInManager;
+        /// <summary>
+        /// The object which can send direct emails to clients using HTML templates.
+        /// </summary>
         private readonly IEmailService _emailService;
+        /// <summary>
+        /// The configuration for <b>appsettings.json</b>
+        /// </summary>
         private readonly IConfiguration _config;
 
         /// <summary>
@@ -41,27 +53,36 @@ namespace Goliath.Repository
         /// <returns></returns>
         public async Task<IdentityResult> CreateUserAsync(SignUpUserModel userModel, string[] data)
         {
+            // Create a new application user.
             ApplicationUser user = new()
             {
                 UserName = userModel.Username,
                 Email = userModel.Email,
             };
+            // Use Identity Core to create the user.
             var result = await (_userManager.CreateAsync(user, userModel.Password));
             if (result.Succeeded)
             {
+                // Send them a token.
                 await GenerateEmailConfirmationToken(userModel, user, data);
             }
             return result;
         }
 
         /// <summary>
-        /// Sends an email to the user with a token.
+        /// Sends an email to a client with a generated token.
+        /// <br />
+        /// This version of the method should only be used at registration due to its dependency of SignUpUserModel
         /// </summary>
-        /// <param name="user"></param>
+        /// <param name="signUpModel"></param>
+        /// <param name="userModel"></param>
+        /// <param name="data"></param>
         /// <returns></returns>
         public async Task GenerateEmailConfirmationToken(SignUpUserModel signUpModel, ApplicationUser userModel, string[] data)
         {
+            // Generate a token using Identity Core.
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(userModel);
+            // If the token is valid.
             if (!string.IsNullOrWhiteSpace(token))
             {
                 // The data passed in represents the following information.
@@ -78,7 +99,9 @@ namespace Goliath.Repository
         /// <returns></returns>
         public async Task GenerateEmailConfirmationToken(ApplicationUser userModel, string[] data)
         {
+            // Generate a token using Identity Core.
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(userModel);
+            // If the token is valid.
             if (!string.IsNullOrWhiteSpace(token))
             {
                 // The data passed in represents the following information.
@@ -137,19 +160,20 @@ namespace Goliath.Repository
 
         /// <summary>
         /// Send an email to a user with a confirmation token as well
-        /// as information about the computer sending the email.
+        /// as information about the computer sending the email.<br />
         /// This method does not use the SignUp model. [USE FOR RESENDS]
         /// </summary>
         /// <param name="user"></param>
-        /// <param name="computer"></param>
-        /// <param name="ip"></param>
+        /// <param name="computer">User Agent</param>
+        /// <param name="ip">IPv4 Address</param>
         /// <param name="token"></param>
         /// <returns></returns>
         private async Task ResendEmailConfirmationToken(ApplicationUser user, string computer, string ip, string token)
         {
+            // Get the information required to send the email from the appsettings.json.
             string appDomain = _config["Application:AppDomain"];
             string verifyLink = _config["Application:EmailConfirmation"];
-
+            // Send an email while replacing all placeholders.
             await _emailService.SendConfirmationEmail(new()
             {
                 ToEmails = new List<string>() { user.Email },
@@ -180,17 +204,18 @@ namespace Goliath.Repository
         /// Send an email to a user with a confirmation token as well
         /// as information about the computer sending the email.
         /// </summary>
-        /// <param name="signUpModel"></param>
-        /// <param name="user"></param>
-        /// <param name="computer"></param>
-        /// <param name="ip"></param>
-        /// <param name="token"></param>
+        /// <param name="signUpModel">Register Model.</param>
+        /// <param name="user">Current client.</param>
+        /// <param name="computer">UserAgent info.</param>
+        /// <param name="ip">Mapped IPv4 address.</param>
+        /// <param name="token">Generated .NET Core token.</param>
         /// <returns></returns>
         private async Task SendEmailConfirmationToken(SignUpUserModel signUpModel, ApplicationUser user, string computer, string ip, string token)
         {
+            // Get values from appsettings.json
             string appDomain = _config["Application:AppDomain"];
             string verifyLink = _config["Application:EmailConfirmation"];
-
+            // Generate email with placeholders.
             await _emailService.SendConfirmationEmail(new()
             {
                 ToEmails = new List<string>() { user.Email },
@@ -221,7 +246,7 @@ namespace Goliath.Repository
         }
 
         /// <summary>
-        /// Confirms the email with the users ID and a token.
+        /// Confirms that a clients email and token match.
         /// </summary>
         /// <param name="uid"></param>
         /// <param name="token"></param>

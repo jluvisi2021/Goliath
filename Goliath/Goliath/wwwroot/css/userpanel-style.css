@@ -1,29 +1,35 @@
-﻿body {
+﻿/*Make body stretch.*/
+body {
     min-height: 100vh;
     background-color: #f2f2f2;
 }
 
+/*Set a limit to how small the navbar can get. (TODO: Update to be more flexible)*/
 header {
     min-width: 55rem;
 }
 
+/*Customization for navbar logo.*/
 .navbar-brand {
     font-size: x-large;
     font-weight: bold;
 }
 
+/*General navbar customization*/
 .navbar {
     padding-top: 0.3%;
     padding-bottom: 0.3%;
     padding-left: 10%;
 }
 
+/**The primary container for the profile. (TODO: Look into updating)*/
 #primary-container {
     width: 45rem;
     height: 35rem;
     background-color: white;
 }
 
+/*Make the container smaller to a certain point depending on media.*/
 @media all and (max-width: 1000px) {
     #primary-container {
         width: 35rem;
@@ -32,6 +38,7 @@ header {
     }
 }
 
+/*Do not allow the nav to shrink/grow past a certain point no matter the media width.*/
 @media only screen and (pointer:none), (pointer:coarse) and (max-device-width: 768px) and (orientation: portrait) {
     #profile-nav {
         min-width: 40%;
@@ -39,10 +46,12 @@ header {
     }
 }
 
+/*Make the navbar font large.*/
 .navbar-nav {
     font-size: large;
 }
 
+/*Make an element always be 100% of its height. (Static)*/
 .vertical-center {
     min-height: 100%;
 }

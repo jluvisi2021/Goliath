@@ -1,11 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Goliath.Models
 {
+    /// <summary>
+    /// Manages the email verification page. <br />
+    /// Keeps track of if the user: <br />
+    /// * Entered an Email<br/>
+    /// * Entered an Email that has already been confirmed.<br/>
+    /// * Has had an email sent to them.
+    /// </summary>
     public class EmailConfirmModel
     {
         [Required(ErrorMessage = "Please enter your email.")]

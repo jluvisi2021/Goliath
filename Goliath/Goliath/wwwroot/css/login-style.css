@@ -1,4 +1,5 @@
-﻿body {
+﻿/*Background Gradient + Centering*/
+body {
     margin: 0;
     background-position: center center;
     background: #CE6CE9;
@@ -10,11 +11,13 @@
     background-attachment: fixed;
 }
 
+/*Round the corners of the right side of a container.*/
 .round-right {
     border-bottom-right-radius: 15%;
     border-top-right-radius: 15%;
 }
 
+/*If the media is narrow then round all of the corners not just the right ones.*/
 @media (max-width: 767px) {
     .round-right {
         border-bottom-left-radius: 15%;
@@ -36,7 +39,7 @@
         border-bottom-right-radius: 15%;
         border-top-right-radius: 15%;
     }
-
+    /*Absolute Centering for mobile phones.*/
     .parent-container {
         position: absolute; /* or absolute */
         top: calc(50% - 30px);
@@ -46,15 +49,18 @@
     }
 }
 
+/*Round the left side of containers.*/
 .round-left {
     border-bottom-left-radius: 15%;
     border-top-left-radius: 15%;
 }
 
+/*Round all corners of a container.*/
 .round {
     border-radius: 15%;
 }
 
+/*Position drop down icons to appear straight and align them to the left.*/
 .dropdown-bottom-icons {
     margin-left: -12px;
     padding-left: 0%;
@@ -62,6 +68,7 @@
 
 /** If the phone is in landscape mode we must adjust and tell them not to use landscape on mobile.*/
 @media only screen and (pointer:none), (pointer:coarse) and (max-device-width: 768px) and (orientation: landscape) {
+    /*Hide all content*/
     #outer {
         visibility: hidden;
         overflow: hidden;

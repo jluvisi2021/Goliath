@@ -18,16 +18,18 @@
 }
 
 <main>
+    <!-- Navbar Start -->
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark bg-primary ht-tm-element">
             <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
+            <!-- Navbar Icon Start -->
             <a class="navbar-brand" href="#!">
                 <img src="~/images/icon.svg" height="40" width="40" />
                 Goliath
             </a>
+            <!-- Navbar Icon End -->
             <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
                 <ul class="navbar-nav mr-auto mt-2 mt-md-0">
                     <li class="nav-item" id="profile-nav">
@@ -48,6 +50,7 @@
                     <li class="nav-item" id="build-nav">
                         <a class="nav-link" asp-action="BuildInfo">Build Info</a>
                     </li>
+                    @*Dropdown Menu. These do not contain individual pages (Use redirections).*@
                     <li class="nav-item dropdown" id="other-nav">
                         <a class="nav-link dropdown-toggle" href="#" role="button" id="navbarDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Other
@@ -62,14 +65,19 @@
                         </div>
                     </li>
                 </ul>
+                @*Load the top right header indicating the user is logged in.*@
                 <partial name="_LoginInfo" />
             </div>
         </nav>
     </header>
+    <!-- Navbar End -->
     <section class="text-center">
+        <!-- UserPanel Body Start -->
         @RenderBody()
+        <!-- UserPanel Body End -->
     </section>
 </main>
 <script>
+    @*Highlight the different nav items depending on what page the user is viewing.*@
     updateNav("@ViewData["Title"].ToString().ToLower().Split(" ")[0]");
 </script>

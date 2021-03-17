@@ -15,6 +15,10 @@ namespace Goliath.Services
     /// </summary>
     public class EmailService : IEmailService
     {
+
+        /// <summary>
+        /// Configure the settings of the email such as the subject.
+        /// </summary>
         private readonly SMTPConfigModel _smtpConfig;
 
         public EmailService(IOptions<SMTPConfigModel> options)
@@ -62,7 +66,10 @@ namespace Goliath.Services
         }
 
         /// <summary>
-        /// Send an email to user(s).
+        /// Send an email to a user while using a template from UserEmailOptions.
+        /// <br />
+        /// This method is not directly called to send an email rather it is passed through
+        /// one of the public async methods of this class.
         /// </summary>
         /// <param name="options"></param>
         /// <returns>If the email was sent successfully.</returns>
@@ -88,9 +95,13 @@ namespace Goliath.Services
             {
                 try
                 {
+                    // Async connect to the SMTP host and validate it exists.
                     await client.ConnectAsync(_smtpConfig.Host, _smtpConfig.Port, MailKit.Security.SecureSocketOptions.StartTls);
+                    // Attempt to login to the SMTP using the settings from appsettings.json
                     await client.AuthenticateAsync(_smtpConfig.Address, _smtpConfig.Password);
+                    // Send the message to the client.
                     await client.SendAsync(message);
+                    // Disconnect from the session.
                     await client.DisconnectAsync(true);
                     client.Timeout = 20000;
                     return true;
@@ -108,14 +119,18 @@ namespace Goliath.Services
 
         /// <summary>
         /// Get the HTML template for sending emails.
+        /// Templates are located in <b>~/Services/EmailTemplate/</b>
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
         private static string GetTemplate(string name, UserEmailOptions options)
         {
+            // Read all of the raw text data from the file.
             string template = File.ReadAllText(@$"Services/EmailTemplate/{name}.html");
+            // Go through each of the individual keys in the placeholder (values to replace).
             foreach (string s in options.Placeholders.Keys)
             {
+                // Replace each key in the HTML with the placeholders value.
                 template = template.Replace(s, options.Placeholders[s]);
             }
             return template;

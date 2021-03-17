@@ -1,18 +1,22 @@
-﻿#outer {
+﻿/* Tool for centering */
+#outer {
     width: 100%;
     height: calc(100vh - 3.55rem);
     display: flex;
 }
 
+/* Tool for centering */
 #inner {
     margin: auto;
 }
 
+/* Make the modal backdrop cover all of the screen no matter what.*/
 .modal-backdrop {
     width: 100% !important;
     height: 100% !important;
 }
 
+/*Specific values for the bottom footer.*/
 #footer {
     bottom: 0;
     height: 3.5rem;
@@ -56,6 +60,7 @@
     }
 }
 
+/*Set the bad browser notification to be invisible by default.*/
 #bad-browser {
     display: none;
 }

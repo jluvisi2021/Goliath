@@ -1,5 +1,4 @@
-﻿
-@model Goliath.Models.SignInModel
+﻿@model Goliath.Models.SignInModel
 @{
     ViewData["Title"] = "Login";
 }
@@ -16,30 +15,35 @@
 {
     if (TempData["Redirect"].Equals("register"))
     {
+        @*User has been redirected; They have just made an account.*@
         <script>
             GlobalScript.displayModal('<strong><span style="color: green;">Success!</span></strong>', "Your account has been created.<br />Please check your email and verify your account! If you cannot find a verification email then <a href=\"/verify\" class=\"alert-link\">request a resend.</a>");
         </script>
     }
     else if (TempData["Redirect"].Equals("logout"))
     {
+        @*User has been redirected; They just logged out.*@
         <script>
             GlobalScript.displayNotification("Success", "You have been logged out at " + @DateTime.Now, GlobalScript.BannerTypes()["alert-success"], "center-banner");
         </script>
     }
     else if (TempData["Redirect"].Equals("verified"))
     {
+        @*User has been redirected; They just activated their account.*@
         <script>
             GlobalScript.displayNotification("Success", "Your account has been verified. You may now log in!", GlobalScript.BannerTypes()["alert-success"], "center-banner");
         </script>
     }
     else if (TempData["Redirect"].Equals("verified-failure"))
     {
+        @*User has been redirected; They attempted to activate their account and failed.*@
         <script>
             GlobalScript.displayNotification("Error", "Your account could not be verified. Try again later.", GlobalScript.BannerTypes()["alert-danger"], "center-banner");
         </script>
     }
 
 }
+
 
 <form asp-action="Index">
     <div asp-validation-summary="All" class="text-danger"></div>
@@ -67,6 +71,7 @@
     </div>
     <hr />
     <button type="submit" class="btn btn-primary btn-block text-uppercase mb-2 rounded-pill shadow-sm">Sign in</button>
+    @*OAuth Login Methods*@
     <div class="text-center">
         <div class="btn-group" data-toggle="tooltip" data-placement="right" title="Login using an external provider.">
             <a href="#!" class="ht-tm-element btn btn-outline-danger">

@@ -1,6 +1,7 @@
 ﻿@using Goliath.Models
 @inject Microsoft.AspNetCore.Identity.SignInManager<ApplicationUser> _signInManager;
 
+<!-- Login Greeting Start -->
 @if (_signInManager.IsSignedIn(User))
 {
     <form class="form-inline my-2 my-lg-0">
@@ -16,3 +17,4 @@ else
         <a asp-controller="Auth" asp-action="Index" class="btn btn-secondary ml-2 px-3">Login</a>
     </form>
 }
+<!--Login Greeting End -->

@@ -20,6 +20,7 @@
 <section id="center-banner" style="position: absolute;">
     <!-- Dynamic Current Notifications -->
 </section>
+@*Center Content*@
 <main id="outer">
     <section id="inner" class="container parent-container">
         <div class="row">
@@ -72,6 +73,7 @@
                     <div class="container-fluid">
                         <div class="row justify-content-md-center">
                             <div class="col-lg-10 col-xl-9 mx-auto">
+                                
                                 <div class="text-center">
                                     <!-- Top Radio Buttons -->
                                     <div class=" ht-tm-element btn-group btn-group-toggle" data-toggle="buttons">
@@ -91,17 +93,19 @@
                                                 <input type="radio" name="options" id="other-radio-btn" autocomplete="off">
                                                 Other
                                             </a>
+                                            <!-- Other Drop Down Start -->
                                             <div class="dropdown-menu drop-down" aria-labelledby="other-dropdown" x-placement="bottom-start">
                                                 <a asp-controller="Auth" asp-action="ForgotUsername" id="forgot-username" class="dropdown-item">Forgot Username</a>
                                                 <a asp-controller="Auth" asp-action="ForgotPassword" id="forgot-password" class="dropdown-item">Forgot Password</a>
                                                 <a asp-controller="Auth" asp-action="VerifyEmail" id="verify-email" class="dropdown-item">Verify Email</a>
                                                 <div class="dropdown-divider"></div>
-
+                                                @*OAuth Login Methods*@
                                                 <a class="dropdown-item py-xl-1" href="#!"><i class="fab fa-google px-sm-2 dropdown-bottom-icons"></i>Sign in with Google</a>
                                                 <a class="dropdown-item" href="#!"><i class="fab fa-microsoft px-sm-2 dropdown-bottom-icons"></i>Sign in with Microsoft</a>
                                                 <a class="dropdown-item" href="#!"><i class="fab fa-facebook-square px-sm-2 dropdown-bottom-icons"></i>Sign in with Facebook</a>
                                                 <a class="dropdown-item" href="https://github.com/jluvisi2021/Goliath"><i class="fab fa-github px-sm-2 dropdown-bottom-icons"></i>View GitHub</a>
                                             </div>
+                                            <!-- Other Drop Down End -->
                                         </div>
                                     </div>
                                     <!-- Radio Buttons End -->
@@ -109,11 +113,14 @@
                                     <div>
                                         <!-- Right Panel Header -->
                                         @RenderSection("RightContainerHeader")
+                                        <!-- Right Panel Header End -->
                                     </div>
                                 </div>
+
                                 <div>
                                     <!-- Right Panel Body -->
                                     @RenderBody()
+                                    <!-- Right Panel Body End -->
                                 </div>
                             </div>
                         </div>
@@ -126,17 +133,12 @@
 
 <script>
 
+    @*Highlight individual button elements depending on the current page*@
     loadButtonElements("@ViewData["ButtonID"]");
+    // Remove highlighting for a clicked nav item.
     $(".nav-item").click(function (e) {
         $(".nav-item").removeClass("active");
         $(e.target).addClass("active");
     });
-    // Adjust the view to fit screen.
-    /*
-    adjustViewport();
-    $(window).resize(function () {
-        adjustViewport();
-        checkForPushBadResize();
-    });
-    */
+
 </script>

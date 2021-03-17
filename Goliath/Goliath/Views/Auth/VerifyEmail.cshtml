@@ -10,7 +10,11 @@
     <p class="text-muted mb-4">Enter your email below and click "Resend Email".</p>
 }
 
-@*If the user pressed the submit button then run the Model != null code.*@
+<!-- Verify Email Panel -->
+@*
+    If the page is registered and the back-end does not have a correct model then load the
+        input fields.
+*@
 @if (Model != null)
 {
     if (Model.IsConfirmed)
@@ -33,6 +37,7 @@
 }
 else
 {
+    @*Accept data for EmailConfirmModel*@
     <form asp-action="VerifyEmail">
         <div asp-validation-summary="All" class="text-danger"></div>
         <p>Request to Resend Email Verification</p>
@@ -50,4 +55,3 @@ else
         </div>
     </form>
 }
-

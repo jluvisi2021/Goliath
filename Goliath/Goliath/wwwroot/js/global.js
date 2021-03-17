@@ -2,8 +2,8 @@
  * Closure Scope
  *
  * */
-// When the user scrolls to the bottom remove the footer.
 
+// When the user scrolls to the bottom of a scrollable page remove the footer.
 $(window).on("scroll", () => {
     if (!($(document).height() > $(window).height())) {
         $("#footer").css({
@@ -13,7 +13,7 @@ $(window).on("scroll", () => {
     }
     var scrollHeight = $(document).height();
     var scrollPosition = $(window).height() + $(window).scrollTop();
-    
+
     if (scrollHeight - scrollPosition <= 1) {
         $("#footer").css({
             "visibility": "hidden"
