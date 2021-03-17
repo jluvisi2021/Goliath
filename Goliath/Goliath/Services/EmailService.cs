@@ -15,7 +15,6 @@ namespace Goliath.Services
     /// </summary>
     public class EmailService : IEmailService
     {
-
         /// <summary>
         /// Configure the settings of the email such as the subject.
         /// </summary>

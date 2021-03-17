@@ -15,14 +15,17 @@ namespace Goliath.Repository
         /// The object which manages interacting directly with the Identity core methods for the user.
         /// </summary>
         private readonly UserManager<ApplicationUser> _userManager;
+
         /// <summary>
         /// Manages the sign in process for the user and can check the state of the user.
         /// </summary>
         private readonly SignInManager<ApplicationUser> _signInManager;
+
         /// <summary>
         /// The object which can send direct emails to clients using HTML templates.
         /// </summary>
         private readonly IEmailService _emailService;
+
         /// <summary>
         /// The configuration for <b>appsettings.json</b>
         /// </summary>

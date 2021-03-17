@@ -51,6 +51,7 @@ namespace Goliath.Controllers
         [HttpPost]
         public async Task<IActionResult> Index(SignInModel signInModel)
         {
+
             ViewData["ButtonID"] = "login";
             // If the user has signed in with valid data.
             if (ModelState.IsValid)
