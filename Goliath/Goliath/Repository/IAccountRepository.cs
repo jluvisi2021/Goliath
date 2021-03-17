@@ -13,5 +13,11 @@ namespace Goliath.Repository
         Task SignOutAsync();
 
         Task<IdentityResult> ConfirmEmailAsync(string uid, string token);
+
+        Task<ApplicationUser> FindByEmailAsync(string email);
+
+        Task GenerateEmailConfirmationToken(SignUpUserModel signUpModel, ApplicationUser userModel, string[] data);
+
+        Task GenerateEmailConfirmationToken(ApplicationUser userModel, string[] data);
     }
 }

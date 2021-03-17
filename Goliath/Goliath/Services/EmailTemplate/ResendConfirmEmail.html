@@ -1,0 +1,50 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <h3>Hello, {{Username}}!</h3>
+    <h4>Thank you for choosing Goliath!</h4>
+    <p>
+        Here is your requested verification email.
+        <br />
+        You must click the link below to activate your account.
+
+    </p>
+    <h4>
+        <a href="{{VerifyLink}}">Click to Verify your account!</a>
+    </h4>
+
+
+    <hr />
+    Sender Information:
+    <span style="color: dimgray">
+        <br />
+        - IP Address: {{IPAddress}}
+        <br />
+        - Computer/Browser Info: {{ComputerInfo}}
+        <br />
+    </span>
+    <hr />
+    <br />
+    <em>Find out more about Goliath:</em>
+    <ul>
+        <li>
+            <a href="#!">View the Source Code</a>
+        </li>
+        <li>
+            <a href="#!">View the Documentation</a>
+        </li>
+        <li>
+            <a href="#!">View Common Questions &Aacute; answers</a>
+        </li>
+    </ul>
+
+    Email Sent from Server at: {{DateTime}}
+    <br />
+    <em>GNU General Public License v3.0- Jacob LuVisi @ 2021</em>
+
+</body>
+</html>

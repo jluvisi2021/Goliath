@@ -6,6 +6,7 @@ namespace Goliath.Services
     public interface IEmailService
     {
         Task<bool> SendTestEmail(UserEmailOptions options);
+
         Task<bool> SendConfirmationEmail(UserEmailOptions options);
     }
 }

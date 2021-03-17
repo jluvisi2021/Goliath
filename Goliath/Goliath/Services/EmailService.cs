@@ -3,8 +3,6 @@ using MailKit.Net.Smtp;
 using Microsoft.Extensions.Options;
 using MimeKit;
 using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -36,6 +34,7 @@ namespace Goliath.Services
 
             return await SendEmail(options);
         }
+
         /// <summary>
         /// Send a confirmation link to a user.
         /// </summary>
@@ -45,6 +44,19 @@ namespace Goliath.Services
         {
             options.Subject = "Confirm Your Account";
             options.Body = GetTemplate("ConfirmEmail", options);
+
+            return await SendEmail(options);
+        }
+
+        /// <summary>
+        /// Sends a resend verification email to a user.
+        /// </summary>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        public async Task<bool> ResendConfirmationEmail(UserEmailOptions options)
+        {
+            options.Subject = "Confirm Your Account";
+            options.Body = GetTemplate("ResendConfirmEmail", options);
 
             return await SendEmail(options);
         }
@@ -71,6 +83,7 @@ namespace Goliath.Services
             {
                 message.To.Add(new MailboxAddress("User", toEmail));
             }
+
             using (SmtpClient client = new())
             {
                 try
@@ -101,13 +114,11 @@ namespace Goliath.Services
         private static string GetTemplate(string name, UserEmailOptions options)
         {
             string template = File.ReadAllText(@$"Services/EmailTemplate/{name}.html");
-            foreach(string s in options.Placeholders.Keys)
+            foreach (string s in options.Placeholders.Keys)
             {
                 template = template.Replace(s, options.Placeholders[s]);
             }
             return template;
         }
-
-        
     }
 }

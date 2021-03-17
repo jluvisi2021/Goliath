@@ -1,6 +1,5 @@
 ﻿using Goliath.Models;
 using Goliath.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -48,19 +47,56 @@ namespace Goliath.Repository
                 Email = userModel.Email,
             };
             var result = await (_userManager.CreateAsync(user, userModel.Password));
-            if(result.Succeeded)
+            if (result.Succeeded)
             {
-                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                if(!string.IsNullOrWhiteSpace(token))
-                {
-                    // The data passed in represents the following information.
-                    // data[0] = Browser Info (User Agent)
-                    // data[1] = Computer Info
-                    // data[2] = IP Address (IPv4 Mapped)
-                    await SendEmailConfirmationToken(userModel, user, data[0], data[1], token);
-                }
+                await GenerateEmailConfirmationToken(userModel, user, data);
             }
             return result;
+        }
+
+        /// <summary>
+        /// Sends an email to the user with a token.
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public async Task GenerateEmailConfirmationToken(SignUpUserModel signUpModel, ApplicationUser userModel, string[] data)
+        {
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(userModel);
+            if (!string.IsNullOrWhiteSpace(token))
+            {
+                // The data passed in represents the following information.
+                // data[0] = Browser Info/Computer Info (User Agent)
+                // data[1] = IP Address (IPv4 Mapped)
+                await SendEmailConfirmationToken(signUpModel, userModel, data[0], data[1], token);
+            }
+        }
+
+        /// <summary>
+        /// Sends an email to the user with a token.
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public async Task GenerateEmailConfirmationToken(ApplicationUser userModel, string[] data)
+        {
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(userModel);
+            if (!string.IsNullOrWhiteSpace(token))
+            {
+                // The data passed in represents the following information.
+                // data[0] = Browser Info/Computer Info (User Agent)
+                // data[1] = IP Address (IPv4 Mapped)
+                await ResendEmailConfirmationToken(userModel, data[0], data[1], token);
+            }
+        }
+
+        /// <summary>
+        /// Returns the application user which is found from
+        /// a specified email address.
+        /// </summary>
+        /// <param name="email">Email Address</param>
+        /// <returns>Application User (async)</returns>
+        public async Task<ApplicationUser> FindByEmailAsync(string email)
+        {
+            return await _userManager.FindByEmailAsync(email);
         }
 
         /// <summary>
@@ -92,11 +128,52 @@ namespace Goliath.Repository
         {
             string j = string.Empty;
             int l = str.Length;
-            for(int i = 0; i < l; i++)
+            for (int i = 0; i < l; i++)
             {
                 j += "*";
             }
             return j;
+        }
+
+        /// <summary>
+        /// Send an email to a user with a confirmation token as well
+        /// as information about the computer sending the email.
+        /// This method does not use the SignUp model. [USE FOR RESENDS]
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="computer"></param>
+        /// <param name="ip"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        private async Task ResendEmailConfirmationToken(ApplicationUser user, string computer, string ip, string token)
+        {
+            string appDomain = _config["Application:AppDomain"];
+            string verifyLink = _config["Application:EmailConfirmation"];
+
+            await _emailService.SendConfirmationEmail(new()
+            {
+                ToEmails = new List<string>() { user.Email },
+                Placeholders = new Dictionary<string, string> {
+                    {
+                        "{{Username}}", user.UserName
+                    },
+                    {
+                        "{{Email}}", user.Email
+                    },
+                    {
+                        "{{IPAddress}}", ip
+                    },
+                    {
+                        "{{ComputerInfo}}", computer
+                    },
+                    {
+                        "{{VerifyLink}}", string.Format(appDomain + verifyLink, user.Id, token)
+                    },
+                    {
+                        "{{DateTime}}", DateTime.Now.ToString()
+                    }
+                        }.ToImmutableDictionary()
+            });
         }
 
         /// <summary>
@@ -114,7 +191,6 @@ namespace Goliath.Repository
             string appDomain = _config["Application:AppDomain"];
             string verifyLink = _config["Application:EmailConfirmation"];
 
-           
             await _emailService.SendConfirmationEmail(new()
             {
                 ToEmails = new List<string>() { user.Email },
@@ -127,7 +203,6 @@ namespace Goliath.Repository
                     },
                     {
                         "{{Password}}", ConvertToAstrisk(signUpModel.Password)
-                        
                     },
                     {
                         "{{IPAddress}}", ip
@@ -141,11 +216,8 @@ namespace Goliath.Repository
                     {
                         "{{DateTime}}", DateTime.Now.ToString()
                     }
-
-
                         }.ToImmutableDictionary()
-            }) ;
-
+            });
         }
 
         /// <summary>

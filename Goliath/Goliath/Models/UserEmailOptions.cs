@@ -9,6 +9,5 @@ namespace Goliath.Models
         public string Subject { get; set; }
         public string Body { get; set; }
         public ImmutableDictionary<string, string> Placeholders { get; set; }
-        
     }
 }

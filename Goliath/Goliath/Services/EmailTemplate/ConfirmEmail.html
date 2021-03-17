@@ -8,38 +8,66 @@
     <h3>Hello, {{Username}}!</h3>
     <h4>Thank you for choosing Goliath!</h4>
     <p>
-        In order to use your account you must verify that this email address belongs to you!
-        If you created a Goliath account and the following information matches please click on the verify link below.
+        Security for Goliath is a top priority, and as a result we require email accounts to be verified (activated) before they can be used to store
+        sensitive information.
+        <br />
+        Please <strong><em>carefully</em></strong> verify the information below.
+        <br />
+        If the information below is correct then click the <q>Verify your account</q> link.
+
     </p>
-    <p>
-        -------------------------
-        <br />
-        <strong>Username: {{Username}}</strong>
-        <br />
-        <strong>Email: {{Email}}</strong>
-        <br />
-        <strong>Password: {{Password}}</strong>
-        <br />
-        -------------------------
-    </p>
+
+
+    <hr />
+    <em>Account Information:</em>
     <span style="color: dimgray">
-        -------------------------
-        <br />
-        Other Information:
-        <br />
-        - IP Address: {{IPAddress}}
-        <br />
-        - Computer/Browser Info: {{ComputerInfo}}
-        <br />
-        -------------------------
+        <code>
+            <br />
+            - Username: {{Username}}
+            <br />
+            - Email: {{Email}}
+            <br />
+            - Password: {{Password}}
+            <br />
+        </code>
+
     </span>
     <hr />
+    <em>Sender Information:</em>
+    <span style="color: dimgray">
+        <code>
+            <br />
+            - IP Address: {{IPAddress}}
+            <br />
+            - Computer/Browser Info: {{ComputerInfo}}
+            <br />
+        </code>
+
+    </span>
+    <hr />
+    <span style="color: forestgreen">If the above information matches then click below to activate your Goliath account.</span>
+    <h4>
+        <a href="{{VerifyLink}}">Click to Verify your account!</a>
+    </h4>
+    <p><em>Once you have verified your account Goliath recommends looking into additional security options such as Two-Factor Authentication.</em></p>
     <br />
-    <a href="{{VerifyLink}}">Click to Verify your account!</a>
+    <hr />
+    <em>Find out more about Goliath:</em>
+    <ul>
+        <li>
+            <a href="#!">View the Source Code</a>
+        </li>
+        <li>
+            <a href="#!">View the Documentation</a>
+        </li>
+        <li>
+            <a href="#!">View Common Questions and Answers</a>
+        </li>
+    </ul>
+
+    Email Sent from Server at: <strong>{{DateTime}}</strong>
     <br />
-    <p>
-        Email Sent at: {{DateTime}}
-    </p>
+    <em>GNU General Public License v3.0- Jacob LuVisi @ 2021</em>
 
 </body>
 </html>

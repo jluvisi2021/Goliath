@@ -1,4 +1,4 @@
-﻿@using System.Web;
+﻿
 @model Goliath.Models.SignInModel
 @{
     ViewData["Title"] = "Login";
@@ -17,7 +17,7 @@
     if (TempData["Redirect"].Equals("register"))
     {
         <script>
-            GlobalScript.displayModal('<strong><span style="color: green;">Success!</span></strong>', "Your account has been created.<br />You can adjust more security and personal settings in your User Panel!");
+            GlobalScript.displayModal('<strong><span style="color: green;">Success!</span></strong>', "Your account has been created.<br />Please check your email and verify your account! If you cannot find a verification email then <a href=\"/verify\" class=\"alert-link\">request a resend.</a>");
         </script>
     }
     else if (TempData["Redirect"].Equals("logout"))
@@ -31,12 +31,13 @@
         <script>
             GlobalScript.displayNotification("Success", "Your account has been verified. You may now log in!", GlobalScript.BannerTypes()["alert-success"], "center-banner");
         </script>
-    }else if(TempData["Redirect"].Equals("verified-failure"))
-                {
- <script>
-    GlobalScript.displayNotification("Error", "Your account could not be verified. Try again later.", GlobalScript.BannerTypes()["alert-danger"], "center-banner");
-</script>
-                }
+    }
+    else if (TempData["Redirect"].Equals("verified-failure"))
+    {
+        <script>
+            GlobalScript.displayNotification("Error", "Your account could not be verified. Try again later.", GlobalScript.BannerTypes()["alert-danger"], "center-banner");
+        </script>
+    }
 
 }
 

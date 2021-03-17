@@ -3,11 +3,6 @@ using Goliath.Repository;
 using Goliath.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Net;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace Goliath.Controllers
@@ -16,7 +11,7 @@ namespace Goliath.Controllers
     /// Manages the Views for Authentication.
     /// <br />
     /// ButtonID indicates the radio button to be checked.
-    /// 
+    ///
     /// </summary>
 
     public sealed class AuthController : Controller
@@ -55,17 +50,18 @@ namespace Goliath.Controllers
                 // If the user name and password match.
                 if (result.Succeeded)
                 {
-
                     return RedirectToAction("Index", "UserPanel");
-                // Else we send the specified errors to the user.
-                }else if(result.IsLockedOut)
+                    // Else we send the specified errors to the user.
+                }
+                else if (result.IsLockedOut)
                 {
                     ModelState.AddModelError("", "Please try again later.");
-                }else if(result.IsNotAllowed)
+                }
+                else if (result.IsNotAllowed)
                 {
                     ModelState.AddModelError("", "You must verify your email!");
-                    
-                }else if(result.RequiresTwoFactor)
+                }
+                else if (result.RequiresTwoFactor)
                 {
                     ModelState.AddModelError("", "You must login through 2FA.");
                 }
@@ -73,7 +69,6 @@ namespace Goliath.Controllers
                 {
                     ModelState.AddModelError("", "Invalid Credentials.");
                 }
-                
             }
             return View("Login", signInModel);
         }
@@ -104,7 +99,7 @@ namespace Goliath.Controllers
 
                     return View(model);
                 }
-                
+
                 // Registration is Valid.
                 ModelState.Clear();
                 // Send the user to the index with register tempdata.
@@ -142,17 +137,52 @@ namespace Goliath.Controllers
             return View();
         }
 
-        [HttpGet("confirm-email")]
-        public async Task<IActionResult> ConfirmEmail(string uid, string token)
+        [Route("verify")]
+        [HttpPost]
+        public async Task<IActionResult> VerifyEmail(EmailConfirmModel model)
+        {
+            ViewData["ButtonID"] = "verify-email";
+
+            var user = await _accountRepository.FindByEmailAsync(model.Email);
+            if(user != null)
+            {
+                if(user.EmailConfirmed)
+                {
+                    model.IsConfirmed = true;
+                    ModelState.AddModelError("", "Account already verified.");
+                    return View(model);
+                }
+
+                await _accountRepository.GenerateEmailConfirmationToken(user, new string[] { Request.Headers["User-Agent"].ToString(), HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString() });
+                model.IsEmailSent = true;
+                
+                ModelState.Clear();
+                
+                
+                return View(model);
+            }
+            else
+            {
+                ModelState.AddModelError("", "We could not find user: " + model.Email);
+            }
+
+            return View();
+        }
+
+
+
+
+        [HttpGet("verify-email")]
+        public async Task<IActionResult> VerifyEmail(string uid, string token)
         {
 
             // If the unique ID as well as the user exist.
-            if(!string.IsNullOrWhiteSpace(uid) && !string.IsNullOrWhiteSpace(token))
+            if (!string.IsNullOrWhiteSpace(uid) && !string.IsNullOrWhiteSpace(token))
             {
                 token = token.Replace(" ", "+");
                 // Check to make sure the token has not expired or is invalid.
-               var result = await _accountRepository.ConfirmEmailAsync(uid, token);
-                if(result.Succeeded)
+                var result = await _accountRepository.ConfirmEmailAsync(uid, token);
+                if (result.Succeeded)
                 {
                     // If the email confirmation is a success then we can pass that info into the view.
                     TempData["Redirect"] = "verified";
@@ -162,5 +192,7 @@ namespace Goliath.Controllers
             TempData["Redirect"] = "verified-failure";
             return RedirectToAction("Index");
         }
+
+
     }
 }

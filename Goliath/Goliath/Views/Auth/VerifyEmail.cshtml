@@ -1,4 +1,5 @@
-﻿@{
+﻿@model Goliath.Models.EmailConfirmModel
+@{
 
     ViewData["Title"] = "Verify";
 
@@ -6,5 +7,47 @@
 
 @section RightContainerHeader {
     <h3 class="display-4">Verify Email</h3>
-    <p class="text-muted mb-4">Enter your email below and click "Send".</p>
+    <p class="text-muted mb-4">Enter your email below and click "Resend Email".</p>
 }
+
+@*If the user pressed the submit button then run the Model != null code.*@
+@if (Model != null)
+{
+    if (Model.IsConfirmed)
+    {
+        <div class="alert alert-danger" role="alert">
+            <strong>@Model.Email</strong> is already a verified account.
+        </div>
+        <hr />
+        <a asp-action="Index">Continue to Login.</a>
+    }
+    if (Model.IsEmailSent)
+    {
+
+        <div class="alert alert-success" role="alert">
+            An email was sent to <strong>@Model.Email</strong>. Check your Junk/Spam folders if you cannot find it.
+        </div>
+        <hr />
+        <a asp-action="Index">Continue to Login.</a>
+    }
+}
+else
+{
+    <form asp-action="VerifyEmail">
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <p>Request to Resend Email Verification</p>
+        <div class="ht-tm-element input-group mb-3">
+            <div class="input-group-prepend">
+                <button class="btn btn-outline-primary" type="button">
+                    <i class="fas fa-envelope"></i>
+                </button>
+            </div>
+            <input asp-for="Email" placeholder="Email address" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
+        </div>
+        <div class="form-group">
+            <hr />
+            <input type="submit" class="btn btn-block btn-secondary" value="Resend Email" />
+        </div>
+    </form>
+}
+
