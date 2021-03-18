@@ -17,20 +17,20 @@
 
     <!-- jQuery, Bootstrap 4 & FontAwesome -->
     <environment exclude="Development">
-        <script src="~/lib/jquery/jquery.min.js"></script>
-        <script src="~/lib/twitter-bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src="@ViewData["jQuery"]"></script>
+        <script src="@ViewData["Bootstrap"]"></script>
         <script src="@ViewBag.fontAwesome" crossorigin="anonymous"></script>
-        <link rel="stylesheet" href="~/lib/theme/bootstrap4-bubblegum.min.css">
+        <link rel="stylesheet" href="@ViewData["BootstrapTheme"]">
     </environment>
     @*Under code is run if the application is being run in debugger.*@
     <environment include="Development">
         <script>
             console.log("--> Goliath is being run in Development mode. <--");
         </script>
-        <script src="~/lib/jquery/jquery.js"></script>
-        <script src="~/lib/twitter-bootstrap/js/bootstrap.bundle.js"></script>
+        <script src="@ViewData["jQueryDevelopment"]"></script>
+        <script src="@ViewData["BootstrapDevelopment"]"></script>
         <script src="@ViewBag.fontAwesome" crossorigin="anonymous"></script>
-        <link rel="stylesheet" href="https://cdn.discordapp.com/attachments/811080332937920522/811322563270803537/bootstrap4-bubblegum.css">
+        <link rel="stylesheet" href="@ViewData["BootstrapThemeDevelopment"]">
     </environment>
     <!--------------------------------------->
     <!-- Custom Files (Global) -->
@@ -72,15 +72,24 @@
     </main>
 </body>
 </html>
-<script>
-    // Load tooltips.
-    $(document).ready(function () {
 
-        $('[data-toggle="tooltip"]').tooltip({
-            container: 'body'
-        });
+    @if(bool.Parse(config["General:CheckBrowserCompatibility"]))
+            {
+        <script>
+            // Check if the browser is compatible.
+            GlobalScript.checkBrowser();
+        </script>
+            }
+     @if(bool.Parse(config["General:EnableTooltips"]))
+            {
+         <script>
+             // Load tooltips.
+             $(document).ready(function () {
 
-    });
-    // Check if the browser is compatible.
-    GlobalScript.checkBrowser();
-</script>
+                 $('[data-toggle="tooltip"]').tooltip({
+                     container: 'body'
+                 });
+
+             });
+         </script>
+            }

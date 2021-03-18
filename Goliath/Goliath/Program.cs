@@ -27,7 +27,7 @@ namespace Goliath
     - User Accounts
     - Encryption
     - Bootstrap CSS (4.6)
-    - Microsoft Azure Database
+    - Microsoft Azure Database (MSSQL)
     - Themes
     - 2 Factor Authentication
     - Categories for secure information

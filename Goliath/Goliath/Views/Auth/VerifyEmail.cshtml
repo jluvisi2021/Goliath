@@ -19,7 +19,7 @@
 {
     if (Model.IsConfirmed)
     {
-        <div class="alert alert-danger" role="alert">
+        <div id="color-textbox" class="alert alert-danger" role="alert">
             <strong>@Model.Email</strong> is already a verified account.
         </div>
         <hr />
@@ -28,7 +28,7 @@
     if (Model.IsEmailSent)
     {
 
-        <div class="alert alert-success" role="alert">
+        <div id="color-textbox" class="alert alert-success" role="alert">
             An email was sent to <strong>@Model.Email</strong>. Check your Junk/Spam folders if you cannot find it.
         </div>
         <hr />
@@ -38,6 +38,7 @@
 else
 {
     @*Accept data for EmailConfirmModel*@
+    <hr />
     <form asp-action="VerifyEmail">
         <div asp-validation-summary="All" class="text-danger"></div>
         <p>Request to Resend Email Verification</p>
@@ -51,7 +52,10 @@ else
         </div>
         <div class="form-group">
             <hr />
-            <input type="submit" class="btn btn-block btn-secondary" value="Resend Email" />
+            <button type="submit" class="btn btn-block btn-secondary">
+                <i class="fas fa-paper-plane mr-2"></i>
+                Resend Email
+            </button>
         </div>
     </form>
 }

@@ -17,6 +17,14 @@ body {
     border-top-right-radius: 15%;
 }
 
+/*  Require a small black padding around the carousel. This helps keep the look cleaner for
+    views which are shorter.
+*/
+.carousel-inner {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
 /*If the media is narrow then round all of the corners not just the right ones.*/
 @media (max-width: 767px) {
     .round-right {
@@ -58,6 +66,11 @@ body {
 /*Round all corners of a container.*/
 .round {
     border-radius: 15%;
+}
+
+/*Make the colored textbox go below the drop down.*/
+#color-textbox {
+    z-index: 0;
 }
 
 /*Position drop down icons to appear straight and align them to the left.*/

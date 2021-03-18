@@ -8,5 +8,9 @@ namespace Goliath.Services
         Task<bool> SendTestEmail(UserEmailOptions options);
 
         Task<bool> SendConfirmationEmail(UserEmailOptions options);
+
+        Task<bool> ResendConfirmationEmail(UserEmailOptions options);
+
+        Task<bool> SendForgotPasswordEmail(UserEmailOptions options);
     }
 }

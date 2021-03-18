@@ -19,5 +19,9 @@ namespace Goliath.Repository
         Task GenerateEmailConfirmationToken(SignUpUserModel signUpModel, ApplicationUser userModel, string[] data);
 
         Task GenerateEmailConfirmationToken(ApplicationUser userModel, string[] data);
+
+        Task GenerateForgotPasswordToken(ApplicationUser userModel, string[] data);
+
+        Task<IdentityResult> ResetPasswordAsync(ResetPasswordModel model);
     }
 }

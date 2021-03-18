@@ -1,4 +1,5 @@
-﻿using Goliath.Models;
+﻿using Goliath.Helper;
+using Goliath.Models;
 using Goliath.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -56,20 +57,33 @@ namespace Goliath.Repository
         /// <returns></returns>
         public async Task<IdentityResult> CreateUserAsync(SignUpUserModel userModel, string[] data)
         {
-            // Create a new application user.
-            ApplicationUser user = new()
+            try
             {
-                UserName = userModel.Username,
-                Email = userModel.Email,
-            };
-            // Use Identity Core to create the user.
-            var result = await (_userManager.CreateAsync(user, userModel.Password));
-            if (result.Succeeded)
-            {
-                // Send them a token.
-                await GenerateEmailConfirmationToken(userModel, user, data);
+                // Create a new application user.
+                ApplicationUser user = new()
+                {
+                    UserName = userModel.Username,
+                    Email = userModel.Email,
+                };
+                // Use Identity Core to create the user.
+                IdentityResult result = await (_userManager.CreateAsync(user, userModel.Password));
+                if (result.Succeeded)
+                {
+                    // Send them a token.
+                    await GenerateEmailConfirmationToken(userModel, user, data);
+                }
+                return result;
             }
-            return result;
+            catch (Exception e)
+            {
+                GoliathHelper.PrintDebugger(GoliathHelper.PrintType.Error, "CreateUserAsync: Failed to execute.");
+                return IdentityResult.Failed(
+                    new IdentityError()
+                    {
+                        Code = e.TargetSite.Name,
+                        Description = "Could not create account."
+                    });
+            }
         }
 
         /// <summary>
@@ -84,7 +98,7 @@ namespace Goliath.Repository
         public async Task GenerateEmailConfirmationToken(SignUpUserModel signUpModel, ApplicationUser userModel, string[] data)
         {
             // Generate a token using Identity Core.
-            var token = await _userManager.GenerateEmailConfirmationTokenAsync(userModel);
+            string token = await _userManager.GenerateEmailConfirmationTokenAsync(userModel);
             // If the token is valid.
             if (!string.IsNullOrWhiteSpace(token))
             {
@@ -103,7 +117,7 @@ namespace Goliath.Repository
         public async Task GenerateEmailConfirmationToken(ApplicationUser userModel, string[] data)
         {
             // Generate a token using Identity Core.
-            var token = await _userManager.GenerateEmailConfirmationTokenAsync(userModel);
+            string token = await _userManager.GenerateEmailConfirmationTokenAsync(userModel);
             // If the token is valid.
             if (!string.IsNullOrWhiteSpace(token))
             {
@@ -111,6 +125,26 @@ namespace Goliath.Repository
                 // data[0] = Browser Info/Computer Info (User Agent)
                 // data[1] = IP Address (IPv4 Mapped)
                 await ResendEmailConfirmationToken(userModel, data[0], data[1], token);
+            }
+        }
+
+        /// <summary>
+        /// Sends an email to the user with a token to reset password.
+        /// </summary>
+        /// <param name="userModel"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public async Task GenerateForgotPasswordToken(ApplicationUser userModel, string[] data)
+        {
+            // Generate a token using Identity Core.
+            string token = await _userManager.GeneratePasswordResetTokenAsync(userModel);
+            // If the token is valid.
+            if (!string.IsNullOrWhiteSpace(token))
+            {
+                // The data passed in represents the following information.
+                // data[0] = Browser Info/Computer Info (User Agent)
+                // data[1] = IP Address (IPv4 Mapped)
+                await SendForgotPasswordToken(userModel, data[0], data[1], token);
             }
         }
 
@@ -177,7 +211,7 @@ namespace Goliath.Repository
             string appDomain = _config["Application:AppDomain"];
             string verifyLink = _config["Application:EmailConfirmation"];
             // Send an email while replacing all placeholders.
-            await _emailService.SendConfirmationEmail(new()
+            await _emailService.ResendConfirmationEmail(new()
             {
                 ToEmails = new List<string>() { user.Email },
                 Placeholders = new Dictionary<string, string> {
@@ -195,6 +229,46 @@ namespace Goliath.Repository
                     },
                     {
                         "{{VerifyLink}}", string.Format(appDomain + verifyLink, user.Id, token)
+                    },
+                    {
+                        "{{DateTime}}", DateTime.Now.ToString()
+                    }
+                        }.ToImmutableDictionary()
+            });
+        }
+
+        /// <summary>
+        /// Sends an email to a client with a link to reset their password.
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="computer"></param>
+        /// <param name="ip"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        private async Task SendForgotPasswordToken(ApplicationUser user, string computer, string ip, string token)
+        {
+            // Get the information required to send the email from the appsettings.json.
+            string appDomain = _config["Application:AppDomain"];
+            string verifyLink = _config["Application:ForgotPassword"];
+            // Send an email while replacing all placeholders.
+            await _emailService.SendForgotPasswordEmail(new()
+            {
+                ToEmails = new List<string>() { user.Email },
+                Placeholders = new Dictionary<string, string> {
+                    {
+                        "{{Username}}", user.UserName
+                    },
+                    {
+                        "{{Email}}", user.Email
+                    },
+                    {
+                        "{{IPAddress}}", ip
+                    },
+                    {
+                        "{{ComputerInfo}}", computer
+                    },
+                    {
+                        "{{Link}}", string.Format(appDomain + verifyLink, user.Id, token)
                     },
                     {
                         "{{DateTime}}", DateTime.Now.ToString()
@@ -256,7 +330,30 @@ namespace Goliath.Repository
         /// <returns></returns>
         public async Task<IdentityResult> ConfirmEmailAsync(string uid, string token)
         {
-            return await _userManager.ConfirmEmailAsync(await _userManager.FindByIdAsync(uid), token);
+            // If the email cannot be confirmed then return a failed attempt.
+            try
+            {
+                return await _userManager.ConfirmEmailAsync(await _userManager.FindByIdAsync(uid), token);
+            }
+            catch (Exception)
+            {
+                GoliathHelper.PrintDebugger(GoliathHelper.PrintType.Error, "ConfirmEmailAsync: Failed to execute.");
+                return IdentityResult.Failed();
+            }
+        }
+
+        public async Task<IdentityResult> ResetPasswordAsync(ResetPasswordModel model)
+        {
+            // If the email cannot be confirmed then return a failed attempt.
+            try
+            {
+                return await _userManager.ResetPasswordAsync(await _userManager.FindByIdAsync(model.UserId), model.Token, model.NewPassword);
+            }
+            catch (Exception)
+            {
+                GoliathHelper.PrintDebugger(GoliathHelper.PrintType.Error, "ResetPasswordAsync: Failed to execute.");
+                return IdentityResult.Failed();
+            }
         }
     }
 }

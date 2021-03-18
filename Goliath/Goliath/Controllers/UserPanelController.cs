@@ -1,4 +1,5 @@
-﻿using Goliath.Repository;
+﻿using Goliath.Enums;
+using Goliath.Repository;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -42,7 +43,7 @@ namespace Goliath.Controllers
         {
             await _accountRepository.SignOutAsync();
             // Redirect the user to the main login screen with information that the user has just been logged out.
-            TempData["Redirect"] = "logout";
+            TempData["Redirect"] = RedirectPurpose.LogoutSuccess;
             return RedirectToAction("Index", "Auth");
         }
 

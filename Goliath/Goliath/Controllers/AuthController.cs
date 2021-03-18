@@ -1,8 +1,13 @@
-﻿using Goliath.Models;
+﻿using Goliath.Enums;
+using Goliath.Helper;
+using Goliath.Models;
 using Goliath.Repository;
 using Goliath.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Goliath.Controllers
@@ -20,10 +25,12 @@ namespace Goliath.Controllers
         /// For interfacing with the application user.
         /// </summary>
         private readonly IAccountRepository _accountRepository;
+
         /// <summary>
         /// Manage if the user is signed in as well as authentication.
         /// </summary>
         private readonly SignInManager<ApplicationUser> _signInManager;
+
         /// <summary>
         /// Send emails.
         /// </summary>
@@ -36,7 +43,7 @@ namespace Goliath.Controllers
             _emailService = emailService;
         }
 
-        // Refereed to as "Login" as well.
+        // Referred to as "Login" as well.
         public IActionResult Index()
         {
             // If the user is signed in redirect them to the user panel.
@@ -44,19 +51,19 @@ namespace Goliath.Controllers
             {
                 return RedirectToAction("Index", "UserPanel");
             }
-            ViewData["ButtonID"] = "login";
+
+            ViewData["ButtonID"] = ButtonID.Login;
             return View("Login");
         }
 
         [HttpPost]
         public async Task<IActionResult> Index(SignInModel signInModel)
         {
-
-            ViewData["ButtonID"] = "login";
+            ViewData["ButtonID"] = ButtonID.Login;
             // If the user has signed in with valid data.
             if (ModelState.IsValid)
             {
-                var result = await _accountRepository.PasswordSignInAsync(signInModel);
+                Microsoft.AspNetCore.Identity.SignInResult result = await _accountRepository.PasswordSignInAsync(signInModel);
                 // If the user name and password match.
                 if (result.Succeeded)
                 {
@@ -65,19 +72,19 @@ namespace Goliath.Controllers
                 }
                 else if (result.IsLockedOut)
                 {
-                    ModelState.AddModelError("", "Please try again later.");
+                    ModelState.AddModelError(string.Empty, "Please try again later.");
                 }
                 else if (result.IsNotAllowed)
                 {
-                    ModelState.AddModelError("", "You must verify your email!");
+                    ModelState.AddModelError(string.Empty, "You must verify your email!");
                 }
                 else if (result.RequiresTwoFactor)
                 {
-                    ModelState.AddModelError("", "You must login through 2FA.");
+                    ModelState.AddModelError(string.Empty, "You must login through 2FA.");
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Invalid Credentials.");
+                    ModelState.AddModelError(string.Empty, "Invalid Credentials.");
                 }
             }
             return View("Login", signInModel);
@@ -86,7 +93,7 @@ namespace Goliath.Controllers
         [Route("register/goliath")]
         public IActionResult Register()
         {
-            ViewData["ButtonID"] = "register";
+            ViewData["ButtonID"] = ButtonID.Register;
             return View();
         }
 
@@ -94,17 +101,17 @@ namespace Goliath.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(SignUpUserModel model)
         {
-            ViewData["ButtonID"] = "register";
+            ViewData["ButtonID"] = ButtonID.Register;
             if (ModelState.IsValid)
             {
                 // Pass in the information for the confirmation email.
-                var result = await _accountRepository.CreateUserAsync(model, new string[] { Request.Headers["User-Agent"].ToString(), HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString() });
+                IdentityResult result = await _accountRepository.CreateUserAsync(model, new string[] { Request.Headers["User-Agent"].ToString(), HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString() });
                 if (!result.Succeeded)
                 {
                     // For every error that is created during registration we add that to the eventual bootstrap modal.
-                    foreach (var errorMessage in result.Errors)
+                    foreach (IdentityError errorMessage in result.Errors)
                     {
-                        ModelState.AddModelError("", errorMessage.Description);
+                        ModelState.AddModelError(string.Empty, errorMessage.Description);
                     }
 
                     return View(model);
@@ -113,7 +120,7 @@ namespace Goliath.Controllers
                 // Registration is Valid.
                 ModelState.Clear();
                 // Send the user to the index with register tempdata.
-                TempData["Redirect"] = "register";
+                TempData["Redirect"] = RedirectPurpose.RegisterSuccess;
                 return RedirectToAction("Index");
             }
             return View();
@@ -122,28 +129,67 @@ namespace Goliath.Controllers
         [Route("register/method")]
         public IActionResult RegisterMethod()
         {
-            ViewData["ButtonID"] = "register";
+            ViewData["ButtonID"] = ButtonID.Register;
             return View();
         }
 
         [Route("forgotpassword")]
         public IActionResult ForgotPassword()
         {
-            ViewData["ButtonID"] = "forgot-password";
+            ViewData["ButtonID"] = ButtonID.ForgotPassword;
+            return View();
+        }
+
+        [Route("forgotpassword")]
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordModel model)
+        {
+            ViewData["ButtonID"] = ButtonID.ForgotPassword;
+            // Verify that the user exists with the specified email.
+            ApplicationUser user = await _accountRepository.FindByEmailAsync(model.Email);
+
+            if (user != null)
+            {
+                // If the username does not match.
+                if (!(user.UserName.Equals(model.Username)))
+                {
+                    ModelState.AddModelError(string.Empty, $"Invalid Username \"{model.Username}\" for {model.Email}");
+                    return View();
+                }
+                // If the email is not confirmed
+                if (!user.EmailConfirmed)
+                {
+                    ModelState.AddModelError(string.Empty, "Confirm your account before resetting your password.");
+                    return View();
+                }
+                // Generate a token as well as a user agent.
+                await _accountRepository.GenerateForgotPasswordToken(user, new string[] { Request.Headers["User-Agent"].ToString(), HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString() });
+                // Indicate to the View that the email was sent.
+                model.IsEmailSent = true;
+                // Clear all fields.
+                ModelState.Clear();
+
+                return View(model);
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "We could not find user: " + model.Email);
+            }
+
             return View();
         }
 
         [Route("forgotusername")]
         public IActionResult ForgotUsername()
         {
-            ViewData["ButtonID"] = "forgot-username";
+            ViewData["ButtonID"] = ButtonID.ForgotUsername;
             return View();
         }
 
         [Route("verify")]
         public IActionResult VerifyEmail()
         {
-            ViewData["ButtonID"] = "verify-email";
+            ViewData["ButtonID"] = ButtonID.VerifyEmail;
             return View();
         }
 
@@ -151,16 +197,16 @@ namespace Goliath.Controllers
         [HttpPost]
         public async Task<IActionResult> VerifyEmail(EmailConfirmModel model)
         {
-            ViewData["ButtonID"] = "verify-email";
+            ViewData["ButtonID"] = ButtonID.VerifyEmail;
             // Verify that the user exists with the specified email.
-            var user = await _accountRepository.FindByEmailAsync(model.Email);
+            ApplicationUser user = await _accountRepository.FindByEmailAsync(model.Email);
             if (user != null)
             {
                 // If the email is already confirmed.
                 if (user.EmailConfirmed)
                 {
                     model.IsConfirmed = true;
-                    ModelState.AddModelError("", "Account already verified.");
+                    ModelState.AddModelError(string.Empty, "Account already verified.");
                     return View(model);
                 }
                 // Generate a token as well as a user agent.
@@ -174,7 +220,7 @@ namespace Goliath.Controllers
             }
             else
             {
-                ModelState.AddModelError("", "We could not find user: " + model.Email);
+                ModelState.AddModelError(string.Empty, "We could not find user: " + model.Email);
             }
 
             return View();
@@ -188,6 +234,7 @@ namespace Goliath.Controllers
         /// <param name="uid"></param>
         /// <param name="token"></param>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet("verify-email")]
         public async Task<IActionResult> VerifyEmail(string uid, string token)
         {
@@ -196,16 +243,76 @@ namespace Goliath.Controllers
             {
                 token = token.Replace(" ", "+");
                 // Check to make sure the token has not expired or is invalid.
-                var result = await _accountRepository.ConfirmEmailAsync(uid, token);
+                IdentityResult result = await _accountRepository.ConfirmEmailAsync(uid, token);
                 if (result.Succeeded)
                 {
                     // If the email confirmation is a success then we can pass that info into the view.
-                    TempData["Redirect"] = "verified";
+                    TempData["Redirect"] = RedirectPurpose.VerifiedEmailSuccess;
                     return RedirectToAction("Index");
                 }
             }
             // Alert to the view that the verification failed.
-            TempData["Redirect"] = "verified-failure";
+            TempData["Redirect"] = RedirectPurpose.VerifiedEmailFailure;
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet("forgot-password")]
+        public IActionResult ResetPassword(string uid, string token)
+        {
+            ViewData["ButtonID"] = ButtonID.ForgotPassword;
+            // Add the userID and token from the url.
+            ResetPasswordModel model = new()
+            {
+                UserId = uid,
+                Token = token
+            };
+            // Tell the view we are redirecting to make a new password.
+            TempData["Redirect"] = RedirectPurpose.ResetPasswordModal;
+            // Serialize the model and pass it.
+            TempData["Model"] = JsonConvert.SerializeObject(model);
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ResetPassword(ResetPasswordModel model)
+        {
+            ViewData["ButtonID"] = ButtonID.ForgotPassword;
+            List<string> errors = new();
+            if (ModelState.IsValid)
+            {
+                model.Token = model.Token.Replace(' ', '+');
+                IdentityResult result = await _accountRepository.ResetPasswordAsync(model);
+                if (result.Succeeded)
+                {
+                    ModelState.Clear();
+                    model.IsCompleted = true;
+                    // Completed Successfully
+                    TempData["Redirect"] = RedirectPurpose.ResetPasswordSuccess;
+                    return RedirectToAction("Index");
+                }
+
+                // Go through all errors and add them to the view.
+                foreach (IdentityError error in result.Errors)
+                {
+                    GoliathHelper.PrintDebugger(error.Description);
+                    errors.Add(error.Description);
+                    //ModelState.AddModelError(string.Empty, error.Description);
+                }
+            }
+            foreach (KeyValuePair<string, Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateEntry> error in ViewData.ModelState)
+            {
+                if (error.Value.Errors.Count > 0)
+                {
+                    foreach (Microsoft.AspNetCore.Mvc.ModelBinding.ModelError propertyError in error.Value.Errors)
+                    {
+                        errors.Add(propertyError.ErrorMessage);
+                    }
+                }
+            }
+
+            TempData["Redirect"] = RedirectPurpose.ResetPasswordModal;
+            TempData["Model"] = JsonConvert.SerializeObject(model); // Pass the model to the view.
+            TempData["Errors"] = errors.ToArray();
             return RedirectToAction("Index");
         }
     }

@@ -74,11 +74,17 @@ namespace Goliath
             }
             else
             {
-                app.UseHsts();
+                if (bool.Parse(_config["General:HTTPSRedirection"]) == true)
+                {
+                    app.UseHsts();
+                }
             }
 
-            // Always require HTTPS connections.
-            app.UseHttpsRedirection();
+            if (bool.Parse(_config["General:HTTPSRedirection"]) == true)
+            {
+                // Always require HTTPS connections.
+                app.UseHttpsRedirection();
+            }
 
             // Use wwwroot folder.
             app.UseStaticFiles();

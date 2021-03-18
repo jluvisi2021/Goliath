@@ -65,6 +65,19 @@ namespace Goliath.Services
         }
 
         /// <summary>
+        /// Sends a forgot password email to the user.
+        /// </summary>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        public async Task<bool> SendForgotPasswordEmail(UserEmailOptions options)
+        {
+            options.Subject = "Forgot Password";
+            options.Body = GetTemplate("ForgotPasswordEmail", options);
+
+            return await SendEmail(options);
+        }
+
+        /// <summary>
         /// Send an email to a user while using a template from UserEmailOptions.
         /// <br />
         /// This method is not directly called to send an email rather it is passed through
