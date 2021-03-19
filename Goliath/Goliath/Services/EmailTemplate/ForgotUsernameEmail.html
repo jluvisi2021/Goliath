@@ -1,0 +1,40 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <h3>Hello, {{Email}}!</h3>
+    <h4>We have recieved your request for your username.</h4>
+    <p>Your username is: <strong>{{Username}}</strong></p>
+
+    <hr />
+    Sender Information:
+    <span style="color: dimgray">
+        <br />
+        - IP Address: {{IPAddress}}
+        <br />
+        Computer/Browser Info: {{ComputerInfo}}
+        <br />
+    </span>
+    <hr />
+    <br />
+    <em>Find out more about Goliath:</em>
+    <ul>
+        <li>
+            <a href="#!">View the Source Code</a>
+        </li>
+        <li>
+            <a href="#!">View the Documentation</a>
+        </li>
+        <li>
+            <a href="#!">View Common Questions and Answers</a>
+        </li>
+    </ul>
+
+    Email Sent from Server at: <strong>{{DateTime}}</strong>
+    <br />
+    Goliath licensed under <em>GNU General Public License v3.0- Jacob LuVisi @ 2021</em>
+</body>
+</html>

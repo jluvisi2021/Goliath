@@ -189,6 +189,32 @@ namespace Goliath.Controllers
             return View();
         }
 
+        [Route("forgotusername")]
+        [HttpPost]
+        public async Task<IActionResult> ForgotUsername(ForgotUsernameModel model)
+        {
+            ViewData["ButtonID"] = ButtonID.ForgotUsername;
+            ApplicationUser user = await _accountRepository.FindByEmailAsync(model.Email);
+            if(user != null)
+            {
+                if (!user.EmailConfirmed)
+                {
+                    ModelState.AddModelError(string.Empty, "Please confirm your account before doing this.");
+                    return View(model);
+                }
+                await _accountRepository.GenerateUsername(user, new DeviceParser(Request.Headers["User-Agent"].ToString(), HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()));
+                model.IsEmailSent = true;
+                ModelState.Clear();
+                return View(model);
+                    }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "We could not find user: " + model.Email);
+            }
+
+            return View();
+        }
+
         [Route("verify")]
         public IActionResult VerifyEmail()
         {
@@ -288,17 +314,17 @@ namespace Goliath.Controllers
                 IdentityResult result = await _accountRepository.ResetPasswordAsync(model);
                 if (result.Succeeded)
                 {
+               
                     ModelState.Clear();
                     model.IsCompleted = true;
                     // Completed Successfully
                     TempData["Redirect"] = RedirectPurpose.ResetPasswordSuccess;
                     return RedirectToAction("Index");
                 }
-
+             
                 // Go through all errors and add them to the view.
                 foreach (IdentityError error in result.Errors)
                 {
-                    GoliathHelper.PrintDebugger(error.Description);
                     errors.Add(error.Description);
                     //ModelState.AddModelError(string.Empty, error.Description);
                 }
@@ -309,6 +335,7 @@ namespace Goliath.Controllers
                 {
                     foreach (Microsoft.AspNetCore.Mvc.ModelBinding.ModelError propertyError in error.Value.Errors)
                     {
+                        
                         errors.Add(propertyError.ErrorMessage);
                     }
                 }

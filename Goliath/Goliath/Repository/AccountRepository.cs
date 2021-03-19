@@ -110,6 +110,20 @@ namespace Goliath.Repository
         }
 
         /// <summary>
+        /// Sends an email to a client with their username.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="device"></param>
+        /// <returns></returns>
+        public async Task GenerateUsername(ApplicationUser user, DeviceParser device)
+        {
+            if(!(string.IsNullOrWhiteSpace(user?.UserName))) {
+                await SendEmailWithUsername(user, device);
+            }
+
+        }
+
+        /// <summary>
         /// Sends an email to the user with a token.
         /// </summary>
         /// <param name="user"></param>
@@ -314,6 +328,32 @@ namespace Goliath.Repository
                     },
                     {
                         "{{VerifyLink}}", string.Format(appDomain + verifyLink, user.Id, token)
+                    },
+                    {
+                        "{{DateTime}}", DateTime.Now.ToString()
+                    }
+                        }.ToImmutableDictionary()
+            });
+        }
+
+        private async Task SendEmailWithUsername(ApplicationUser user, DeviceParser device)
+        {            
+            // Generate email with placeholders.
+            await _emailService.SendForgotUsernameEmail(new()
+            {
+                ToEmails = new List<string>() { user.Email },
+                Placeholders = new Dictionary<string, string> {
+                    {
+                        "{{Username}}", user.UserName
+                    },
+                    {
+                        "{{Email}}", user.Email
+                    },
+                    {
+                        "{{IPAddress}}", device.IPv4
+                    },
+                    {
+                        "{{ComputerInfo}}", device.ToSimpleString()
                     },
                     {
                         "{{DateTime}}", DateTime.Now.ToString()

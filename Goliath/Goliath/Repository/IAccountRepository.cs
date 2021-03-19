@@ -24,5 +24,7 @@ namespace Goliath.Repository
         Task GenerateForgotPasswordToken(ApplicationUser userModel, DeviceParser device);
 
         Task<IdentityResult> ResetPasswordAsync(ResetPasswordModel model);
+
+        Task GenerateUsername(ApplicationUser user, DeviceParser device);
     }
 }

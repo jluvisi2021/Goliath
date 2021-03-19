@@ -71,8 +71,16 @@ namespace Goliath.Services
         /// <returns></returns>
         public async Task<bool> SendForgotPasswordEmail(UserEmailOptions options)
         {
-            options.Subject = "Forgot Password";
+            options.Subject = "Reset Password";
             options.Body = GetTemplate("ForgotPasswordEmail", options);
+
+            return await SendEmail(options);
+        }
+
+        public async Task<bool> SendForgotUsernameEmail(UserEmailOptions options)
+        {
+            options.Subject = "Forgot Username";
+            options.Body = GetTemplate("ForgotUsernameEmail", options);
 
             return await SendEmail(options);
         }
