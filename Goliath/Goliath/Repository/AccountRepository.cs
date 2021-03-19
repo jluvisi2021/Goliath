@@ -55,7 +55,7 @@ namespace Goliath.Repository
         /// <param name="userModel"></param>
         /// <param name="data">Contains some data that should be presented in the email.</param>
         /// <returns></returns>
-        public async Task<IdentityResult> CreateUserAsync(SignUpUserModel userModel, string[] data)
+        public async Task<IdentityResult> CreateUserAsync(SignUpUserModel userModel, DeviceParser device)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace Goliath.Repository
                 if (result.Succeeded)
                 {
                     // Send them a token.
-                    await GenerateEmailConfirmationToken(userModel, user, data);
+                    await GenerateEmailConfirmationToken(userModel, user, device);
                 }
                 return result;
             }
@@ -95,7 +95,7 @@ namespace Goliath.Repository
         /// <param name="userModel"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        public async Task GenerateEmailConfirmationToken(SignUpUserModel signUpModel, ApplicationUser userModel, string[] data)
+        public async Task GenerateEmailConfirmationToken(SignUpUserModel signUpModel, ApplicationUser userModel, DeviceParser device)
         {
             // Generate a token using Identity Core.
             string token = await _userManager.GenerateEmailConfirmationTokenAsync(userModel);
@@ -105,7 +105,7 @@ namespace Goliath.Repository
                 // The data passed in represents the following information.
                 // data[0] = Browser Info/Computer Info (User Agent)
                 // data[1] = IP Address (IPv4 Mapped)
-                await SendEmailConfirmationToken(signUpModel, userModel, data[0], data[1], token);
+                await SendEmailConfirmationToken(signUpModel, userModel, device, token);
             }
         }
 
@@ -114,7 +114,7 @@ namespace Goliath.Repository
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        public async Task GenerateEmailConfirmationToken(ApplicationUser userModel, string[] data)
+        public async Task GenerateEmailConfirmationToken(ApplicationUser userModel, DeviceParser device)
         {
             // Generate a token using Identity Core.
             string token = await _userManager.GenerateEmailConfirmationTokenAsync(userModel);
@@ -124,7 +124,7 @@ namespace Goliath.Repository
                 // The data passed in represents the following information.
                 // data[0] = Browser Info/Computer Info (User Agent)
                 // data[1] = IP Address (IPv4 Mapped)
-                await ResendEmailConfirmationToken(userModel, data[0], data[1], token);
+                await ResendEmailConfirmationToken(userModel, device, token);
             }
         }
 
@@ -134,7 +134,7 @@ namespace Goliath.Repository
         /// <param name="userModel"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        public async Task GenerateForgotPasswordToken(ApplicationUser userModel, string[] data)
+        public async Task GenerateForgotPasswordToken(ApplicationUser userModel, DeviceParser device)
         {
             // Generate a token using Identity Core.
             string token = await _userManager.GeneratePasswordResetTokenAsync(userModel);
@@ -144,7 +144,7 @@ namespace Goliath.Repository
                 // The data passed in represents the following information.
                 // data[0] = Browser Info/Computer Info (User Agent)
                 // data[1] = IP Address (IPv4 Mapped)
-                await SendForgotPasswordToken(userModel, data[0], data[1], token);
+                await SendForgotPasswordToken(userModel, device, token);
             }
         }
 
@@ -205,7 +205,7 @@ namespace Goliath.Repository
         /// <param name="ip">IPv4 Address</param>
         /// <param name="token"></param>
         /// <returns></returns>
-        private async Task ResendEmailConfirmationToken(ApplicationUser user, string computer, string ip, string token)
+        private async Task ResendEmailConfirmationToken(ApplicationUser user, DeviceParser device, string token)
         {
             // Get the information required to send the email from the appsettings.json.
             string appDomain = _config["Application:AppDomain"];
@@ -222,10 +222,10 @@ namespace Goliath.Repository
                         "{{Email}}", user.Email
                     },
                     {
-                        "{{IPAddress}}", ip
+                        "{{IPAddress}}", device.IPv4
                     },
                     {
-                        "{{ComputerInfo}}", computer
+                        "{{ComputerInfo}}", device.ToSimpleString()
                     },
                     {
                         "{{VerifyLink}}", string.Format(appDomain + verifyLink, user.Id, token)
@@ -234,7 +234,7 @@ namespace Goliath.Repository
                         "{{DateTime}}", DateTime.Now.ToString()
                     }
                         }.ToImmutableDictionary()
-            });
+            }); 
         }
 
         /// <summary>
@@ -245,7 +245,7 @@ namespace Goliath.Repository
         /// <param name="ip"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        private async Task SendForgotPasswordToken(ApplicationUser user, string computer, string ip, string token)
+        private async Task SendForgotPasswordToken(ApplicationUser user, DeviceParser device, string token)
         {
             // Get the information required to send the email from the appsettings.json.
             string appDomain = _config["Application:AppDomain"];
@@ -262,10 +262,10 @@ namespace Goliath.Repository
                         "{{Email}}", user.Email
                     },
                     {
-                        "{{IPAddress}}", ip
+                        "{{IPAddress}}", device.IPv4
                     },
                     {
-                        "{{ComputerInfo}}", computer
+                        "{{ComputerInfo}}", device.ToSimpleString()
                     },
                     {
                         "{{Link}}", string.Format(appDomain + verifyLink, user.Id, token)
@@ -287,7 +287,7 @@ namespace Goliath.Repository
         /// <param name="ip">Mapped IPv4 address.</param>
         /// <param name="token">Generated .NET Core token.</param>
         /// <returns></returns>
-        private async Task SendEmailConfirmationToken(SignUpUserModel signUpModel, ApplicationUser user, string computer, string ip, string token)
+        private async Task SendEmailConfirmationToken(SignUpUserModel signUpModel, ApplicationUser user, DeviceParser device, string token)
         {
             // Get values from appsettings.json
             string appDomain = _config["Application:AppDomain"];
@@ -307,10 +307,10 @@ namespace Goliath.Repository
                         "{{Password}}", ConvertToAstrisk(signUpModel.Password)
                     },
                     {
-                        "{{IPAddress}}", ip
+                        "{{IPAddress}}", device.IPv4
                     },
                     {
-                        "{{ComputerInfo}}", computer
+                        "{{ComputerInfo}}", device.ToSimpleString()
                     },
                     {
                         "{{VerifyLink}}", string.Format(appDomain + verifyLink, user.Id, token)
@@ -355,5 +355,7 @@ namespace Goliath.Repository
                 return IdentityResult.Failed();
             }
         }
+
+
     }
 }

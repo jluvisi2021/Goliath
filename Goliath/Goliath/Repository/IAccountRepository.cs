@@ -1,4 +1,5 @@
-﻿using Goliath.Models;
+﻿using Goliath.Helper;
+using Goliath.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 
@@ -6,7 +7,7 @@ namespace Goliath.Repository
 {
     public interface IAccountRepository
     {
-        Task<IdentityResult> CreateUserAsync(SignUpUserModel userModel, string[] data);
+        Task<IdentityResult> CreateUserAsync(SignUpUserModel userModel, DeviceParser device);
 
         Task<SignInResult> PasswordSignInAsync(SignInModel signInModel);
 
@@ -16,11 +17,11 @@ namespace Goliath.Repository
 
         Task<ApplicationUser> FindByEmailAsync(string email);
 
-        Task GenerateEmailConfirmationToken(SignUpUserModel signUpModel, ApplicationUser userModel, string[] data);
+        Task GenerateEmailConfirmationToken(SignUpUserModel signUpModel, ApplicationUser userModel, DeviceParser device);
 
-        Task GenerateEmailConfirmationToken(ApplicationUser userModel, string[] data);
+        Task GenerateEmailConfirmationToken(ApplicationUser userModel, DeviceParser device);
 
-        Task GenerateForgotPasswordToken(ApplicationUser userModel, string[] data);
+        Task GenerateForgotPasswordToken(ApplicationUser userModel, DeviceParser device);
 
         Task<IdentityResult> ResetPasswordAsync(ResetPasswordModel model);
     }

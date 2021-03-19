@@ -104,8 +104,11 @@ namespace Goliath.Controllers
             ViewData["ButtonID"] = ButtonID.Register;
             if (ModelState.IsValid)
             {
-                // Pass in the information for the confirmation email.
-                IdentityResult result = await _accountRepository.CreateUserAsync(model, new string[] { Request.Headers["User-Agent"].ToString(), HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString() });
+                
+                // Pass in the information for the confirmation email.// new string[] { Request.Headers["User-Agent"].ToString(), HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
+                IdentityResult result = await _accountRepository.CreateUserAsync(model,
+                new DeviceParser(Request.Headers["User-Agent"].ToString(), HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()));
+
                 if (!result.Succeeded)
                 {
                     // For every error that is created during registration we add that to the eventual bootstrap modal.
@@ -163,7 +166,7 @@ namespace Goliath.Controllers
                     return View();
                 }
                 // Generate a token as well as a user agent.
-                await _accountRepository.GenerateForgotPasswordToken(user, new string[] { Request.Headers["User-Agent"].ToString(), HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString() });
+                await _accountRepository.GenerateForgotPasswordToken(user, new DeviceParser(Request.Headers["User-Agent"].ToString(), HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()));
                 // Indicate to the View that the email was sent.
                 model.IsEmailSent = true;
                 // Clear all fields.
@@ -210,7 +213,8 @@ namespace Goliath.Controllers
                     return View(model);
                 }
                 // Generate a token as well as a user agent.
-                await _accountRepository.GenerateEmailConfirmationToken(user, new string[] { Request.Headers["User-Agent"].ToString(), HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString() });
+                await _accountRepository.GenerateEmailConfirmationToken(user, new DeviceParser(Request.Headers["User-Agent"].ToString(), HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()));
+                
                 // Indicate to the View that the email was sent.
                 model.IsEmailSent = true;
                 // Clear all fields.
