@@ -133,15 +133,20 @@ const GlobalScript = (function () {
          * Checks if the browser is supported.
          * If not then it sends a notification to the user.
          * Officially Supported Browsers: Chrome, all Chromium-based browsers, Safari, Firefox
+         * @returns {boolean}
          * */
-        checkBrowser: function () {
+        checkBrowser: function (action = true) {
             if (navigator.userAgent.search("Chrome") >= 0) {
-                return;
+                console.log("Chrome");
+                return true;
             }
             else if (navigator.userAgent.search("Safari") >= 0) {
-                return;
+                return true;
             } else if (navigator.userAgent.search("Firefox") >= 0) {
-                return;
+                return true;
+            }
+            if (!action) {
+                return false;
             }
             console.log("Unsupported browser detected.");
             GlobalScript.displayNotification("Warning", "Goliath does not support this browser. Goliath may continue to function but not all features may work.", GlobalScript.BannerTypes()["alert-danger"], "center-banner");
@@ -149,6 +154,7 @@ const GlobalScript = (function () {
             $("#footer-text").addClass("text-danger");
             $("#footer-text").html($("#footer-text").html() + ' [Unsupported]');
             $("#footer-text").attr("title", $("#footer-text").attr("title").toString() + ' <div class="font-weight-bold text-danger">WARNING: You are using an unsupported browser. Not all features may function correctly.</div>');
+            return false;
         }
     };
 })(); 

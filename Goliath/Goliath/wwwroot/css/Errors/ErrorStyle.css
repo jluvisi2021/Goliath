@@ -1,0 +1,19 @@
+﻿#outer {
+    height: 100vh;
+}
+
+#collapse {
+    cursor: pointer;
+}
+#information {
+    max-width: 50%;
+}
+
+@media (max-width: 767px) {
+    #icon2 {
+        display: none;
+    }
+    #information {
+        max-width: 100%;
+    }
+}

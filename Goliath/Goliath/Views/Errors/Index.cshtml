@@ -1,0 +1,141 @@
+﻿@model Goliath.Models.BadStatusCodeModel
+@using Goliath.Models 
+@inject Microsoft.AspNetCore.Identity.SignInManager<ApplicationUser> _signInManager;
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta name='viewport' content='initial-scale=1, viewport-fit=cover'>
+    <meta charset="utf-8" />
+    <meta name="author" content="jluvisi" />
+    <meta name="description" content="Goliath is an ASP.NET Core based password & secrets manager. Goliath allows users to setup personal accounts and provides a cloud based way of retrieving sensitive encrypted information." />
+
+    <title>Goliath | Error: @Model.StatusCode</title>
+
+    <environment exclude="Development">
+        <script src="@ViewData["jQuery"]"></script>
+        <script src="@ViewData["Bootstrap"]"></script>
+        <script src="@ViewBag.fontAwesome" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="@ViewData["BootstrapTheme"]">
+    </environment>
+
+    <environment include="Development">
+        <script src="@ViewData["jQueryDevelopment"]"></script>
+        <script src="@ViewData["BootstrapDevelopment"]"></script>
+        <script src="@ViewBag.fontAwesome" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="@ViewData["BootstrapThemeDevelopment"]">
+    </environment>
+
+    <link href="~/css/global.css" rel="stylesheet" />
+    <script src="~/js/global.js"></script>
+    <link href="~/css/Errors/ErrorStyle.css" rel="stylesheet" />
+    <script src="~/js/Errors/ErrorScript.js"></script>
+    
+</head>
+<body>
+   
+    
+    <main id="outer">
+
+        <section id="inner">
+            <div class="jumbotron">
+                <h1 class="display-3">
+
+                    <i id="icon1" class="far fa-times-circle fa-1x text-danger"></i>
+                    <span id="error-label" class="display-3 ml-2 mr-2">Error: @Model.StatusCode</span>
+                    <i id="icon2" class="far fa-times-circle fa-1x text-danger"></i>
+
+                </h1>
+                <p class="lead">
+                    <strong>Oops!</strong> It seems we encountered an error while trying to load this webpage.
+                    <br />
+                    Either it does not exist or needs to be updated.
+                </p>
+                <hr class="my-4">
+                <div class="text-dark btn-hover-text-primary" id="collapse" data-toggle="collapse" data-target="#information" aria-expanded="false" aria-controls="information" onclick="update();">
+                    <i id="arrow" class="fas fa-arrow-right mr-2"></i>Additional Information
+                </div>
+                
+                <div class="collapse" id="information">
+                    <div class="card card-body">
+                        <p>
+
+                            <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/@Model.StatusCode" target="_blank">
+                                HTTP ERROR: STATUS @Model.StatusCode
+                            </a>
+
+                            <br />
+                            <em>User Agent:</em>
+                            <br />
+                            @Model.UserAgent
+                            <br />
+                            <em>Goliath Information</em>
+                            <br />
+                            Browser Supported: <span id="browser-supported"></span>
+                            <br />
+                            Logged In: <span id="logged-in"></span>
+                            <br />
+                            Is Redirection: <span id="is-redirect"></span>
+                        </p>
+                    </div>
+                </div>
+                <p class="lead">
+                    <a href="javascript: history.go(-1)" class="btn btn-primary" role="button">
+                        <i class="fas fa-undo-alt mr-2"></i>Go Back
+                    </a>
+                    <a asp-controller="UserPanel" asp-action="Logout" class="btn btn-primary" role="button">
+                        <i class="fas fa-sign-in-alt mr-2"></i>Go to Login
+                    </a>
+                    <a asp-controller="UserPanel" asp-action="Index" class="btn btn-primary" role="button">
+                        <i class="fas fa-database"></i>
+                        Go to UserPanel
+                    </a>
+                </p>
+                <hr />
+
+                <p>
+                    <a class="btn btn-danger" data-toggle="tooltip" data-placement="right" data-html="true" title="<div id=&quot;&quot;> <div id=&quot;inner&quot;> <span class=&quot;text-danger&quot;> <i class=&quot;fas fa-exclamation-circle&quot;></i> <strong>Notice</strong> </span> <br /> <p>Only report this as an issue if you believe that this page should be getting rendered but is not.</p> </div> </div>" data-original-title="Issue Notice" href="#!" onclick="reportError();" role="button">
+
+                        <i class="fas fa-bug mr-2"></i>Report as Issue
+                    </a>
+                    <br />
+                    @DateTime.Now
+                </p>
+            </div>
+
+
+        </section>
+
+
+
+    </main>
+</body>
+</html>
+
+@if (_signInManager.IsSignedIn(User))
+{
+    <script>
+        updateText("#logged-in", true);
+    </script>
+}
+else
+{
+<script>
+    updateText("#logged-in", false);
+</script>
+
+}
+@if (TempData["Redirect"] != null)
+{
+<script>
+    updateText("#is-redirect", true);
+</script>
+}
+else
+{
+<script>
+    updateText("#is-redirect", false);
+</script>
+}

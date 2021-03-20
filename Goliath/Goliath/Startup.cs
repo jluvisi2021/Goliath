@@ -60,6 +60,7 @@ namespace Goliath
             // Allow Razor pages to update upon browser refresh.
             services.AddRazorPages().AddRazorRuntimeCompilation();
 #endif
+            
             // Enable services to use in Controllers through DI.
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IAccountRepository, AccountRepository>();
@@ -78,7 +79,13 @@ namespace Goliath
                 {
                     app.UseHsts();
                 }
+                
             }
+            app.UseStatusCodePages(options =>
+            {
+                options.UseStatusCodePagesWithRedirects("/Errors/Index?code={0}");
+            });
+            
 
             if (bool.Parse(_config["General:HTTPSRedirection"]) == true)
             {

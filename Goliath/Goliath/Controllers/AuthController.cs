@@ -18,7 +18,6 @@ namespace Goliath.Controllers
     /// ButtonID indicates the radio button to be checked.
     ///
     /// </summary>
-
     public sealed class AuthController : Controller
     {
         /// <summary>
@@ -52,10 +51,17 @@ namespace Goliath.Controllers
                 return RedirectToAction("Index", "UserPanel");
             }
 
+            return RedirectToAction("Login");
+        }
+
+        [Route("login")]
+        public IActionResult Login()
+        {
             ViewData["ButtonID"] = ButtonID.Login;
             return View("Login");
         }
 
+        [Route("login")]
         [HttpPost]
         public async Task<IActionResult> Index(SignInModel signInModel)
         {
