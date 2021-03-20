@@ -1,5 +1,5 @@
 ﻿@model Goliath.Models.BadStatusCodeModel
-@using Goliath.Models 
+@using Goliath.Models
 @inject Microsoft.AspNetCore.Identity.SignInManager<ApplicationUser> _signInManager;
 @{
     Layout = null;
@@ -32,11 +32,9 @@
     <script src="~/js/global.js"></script>
     <link href="~/css/Errors/ErrorStyle.css" rel="stylesheet" />
     <script src="~/js/Errors/ErrorScript.js"></script>
-    
 </head>
 <body>
-   
-    
+
     <main id="outer">
 
         <section id="inner">
@@ -46,7 +44,6 @@
                     <i id="icon1" class="far fa-times-circle fa-1x text-danger"></i>
                     <span id="error-label" class="display-3 ml-2 mr-2">Error: @Model.StatusCode</span>
                     <i id="icon2" class="far fa-times-circle fa-1x text-danger"></i>
-
                 </h1>
                 <p class="lead">
                     <strong>Oops!</strong> It seems we encountered an error while trying to load this webpage.
@@ -57,7 +54,7 @@
                 <div class="text-dark btn-hover-text-primary" id="collapse" data-toggle="collapse" data-target="#information" aria-expanded="false" aria-controls="information" onclick="update();">
                     <i id="arrow" class="fas fa-arrow-right mr-2"></i>Additional Information
                 </div>
-                
+
                 <div class="collapse" id="information">
                     <div class="card card-body">
                         <p>
@@ -104,12 +101,7 @@
                     @DateTime.Now
                 </p>
             </div>
-
-
         </section>
-
-
-
     </main>
 </body>
 </html>
@@ -122,20 +114,20 @@
 }
 else
 {
-<script>
-    updateText("#logged-in", false);
-</script>
+    <script>
+        updateText("#logged-in", false);
+    </script>
 
 }
 @if (TempData["Redirect"] != null)
 {
-<script>
-    updateText("#is-redirect", true);
-</script>
+    <script>
+        updateText("#is-redirect", true);
+    </script>
 }
 else
 {
-<script>
-    updateText("#is-redirect", false);
-</script>
+    <script>
+        updateText("#is-redirect", false);
+    </script>
 }
