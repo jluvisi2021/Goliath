@@ -27,6 +27,6 @@ namespace Goliath.Models
         /// All of the individual placeholders for the email.<br/>
         /// Placeholders are denoted by {{NAME}}<br/>
         /// </summary>
-        public ImmutableDictionary<string, string> Placeholders { get; set; }
+        public Dictionary<string, string> Placeholders { get; set; }
     }
 }

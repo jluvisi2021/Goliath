@@ -19,6 +19,9 @@ namespace Goliath.Services
         /// Configure the settings of the email such as the subject.
         /// </summary>
         private readonly SMTPConfigModel _smtpConfig;
+        // For email templates
+        private static string footer = File.ReadAllText(@$"Services/EmailTemplate/Partial/Footer.html");
+        private readonly static string styles = File.ReadAllText(@$"Services/EmailTemplate/Partial/Styles.html");
 
         public EmailService(IOptions<SMTPConfigModel> options)
         {
@@ -147,12 +150,18 @@ namespace Goliath.Services
         {
             // Read all of the raw text data from the file.
             string template = File.ReadAllText(@$"Services/EmailTemplate/{name}.html");
+            
             // Go through each of the individual keys in the placeholder (values to replace).
             foreach (string s in options.Placeholders.Keys)
             {
                 // Replace each key in the HTML with the placeholders value.
                 template = template.Replace(s, options.Placeholders[s]);
+                footer = footer.Replace(s, options.Placeholders[s]);
             }
+            // Replace the partial footer.
+            template = template.Replace("{{$footer}}", footer);
+            // Replace with CSS styles.
+            template = template.Replace("{{$styles}}", styles);
             return template;
         }
     }

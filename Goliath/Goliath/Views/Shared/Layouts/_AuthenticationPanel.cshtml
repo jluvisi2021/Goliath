@@ -1,4 +1,6 @@
-﻿@*
+﻿@using Goliath.Models;
+@inject Microsoft.AspNetCore.Identity.SignInManager<ApplicationUser> _signInManager;
+@*
     Layout for Authentication Panel.
     - Logins
     - Registering
@@ -15,6 +17,14 @@
 @section UniqueHeader {
     <link href="~/css/login-style.css" rel="stylesheet" />
     <script src="~/js/Auth/_AuthenticationPanel.js"></script>
+}
+
+@*If the user is logged in then redirect them to userpanel.*@
+@if (_signInManager.IsSignedIn(User))
+{
+    Context.Response.Redirect(Url.Action("Index", "UserPanel"));
+    
+    
 }
 
 <section id="center-banner" style="position: absolute;">

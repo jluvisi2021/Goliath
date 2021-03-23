@@ -12,9 +12,10 @@ namespace Goliath.Controllers
         {
            
         }
-
+        
         public IActionResult Index(string code)
         {
+            
             BadStatusCodeModel model = new()
             {
 

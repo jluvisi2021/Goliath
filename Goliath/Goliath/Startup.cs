@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System;
 
 namespace Goliath
 {
@@ -48,6 +49,12 @@ namespace Goliath
                 options.Password.RequireDigit = true; // Password must have digit
                 options.User.RequireUniqueEmail = true; // All emails unique
                 options.SignIn.RequireConfirmedEmail = true; // Require activated accounts.
+            });
+
+            // All tokens expire within 5 minutes.
+            services.Configure<DataProtectionTokenProviderOptions>(options =>
+            {
+                options.TokenLifespan = TimeSpan.FromMinutes(5);
             });
 
             // Enable MVC Design

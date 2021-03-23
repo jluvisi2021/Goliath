@@ -102,9 +102,6 @@ namespace Goliath.Repository
             // If the token is valid.
             if (!string.IsNullOrWhiteSpace(token))
             {
-                // The data passed in represents the following information.
-                // data[0] = Browser Info/Computer Info (User Agent)
-                // data[1] = IP Address (IPv4 Mapped)
                 await SendEmailConfirmationToken(signUpModel, userModel, device, token);
             }
         }
@@ -135,9 +132,6 @@ namespace Goliath.Repository
             // If the token is valid.
             if (!string.IsNullOrWhiteSpace(token))
             {
-                // The data passed in represents the following information.
-                // data[0] = Browser Info/Computer Info (User Agent)
-                // data[1] = IP Address (IPv4 Mapped)
                 await ResendEmailConfirmationToken(userModel, device, token);
             }
         }
@@ -155,9 +149,6 @@ namespace Goliath.Repository
             // If the token is valid.
             if (!string.IsNullOrWhiteSpace(token))
             {
-                // The data passed in represents the following information.
-                // data[0] = Browser Info/Computer Info (User Agent)
-                // data[1] = IP Address (IPv4 Mapped)
                 await SendForgotPasswordToken(userModel, device, token);
             }
         }
@@ -242,12 +233,12 @@ namespace Goliath.Repository
                         "{{ComputerInfo}}", device.ToSimpleString()
                     },
                     {
-                        "{{VerifyLink}}", string.Format(appDomain + verifyLink, user.Id, token)
+                        "{{Link}}", string.Format(appDomain + verifyLink, user.Id, token)
                     },
                     {
                         "{{DateTime}}", DateTime.Now.ToString()
                     }
-                        }.ToImmutableDictionary()
+                        }
             }); 
         }
 
@@ -287,7 +278,7 @@ namespace Goliath.Repository
                     {
                         "{{DateTime}}", DateTime.Now.ToString()
                     }
-                        }.ToImmutableDictionary()
+                        }
             });
         }
 
@@ -327,12 +318,12 @@ namespace Goliath.Repository
                         "{{ComputerInfo}}", device.ToSimpleString()
                     },
                     {
-                        "{{VerifyLink}}", string.Format(appDomain + verifyLink, user.Id, token)
+                        "{{Link}}", string.Format(appDomain + verifyLink, user.Id, token)
                     },
                     {
                         "{{DateTime}}", DateTime.Now.ToString()
                     }
-                        }.ToImmutableDictionary()
+                        }
             });
         }
 
@@ -358,7 +349,7 @@ namespace Goliath.Repository
                     {
                         "{{DateTime}}", DateTime.Now.ToString()
                     }
-                        }.ToImmutableDictionary()
+                        }
             });
         }
 

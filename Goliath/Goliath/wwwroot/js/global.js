@@ -137,7 +137,6 @@ const GlobalScript = (function () {
          * */
         checkBrowser: function (action = true) {
             if (navigator.userAgent.search("Chrome") >= 0) {
-                console.log("Chrome");
                 return true;
             }
             else if (navigator.userAgent.search("Safari") >= 0) {

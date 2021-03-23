@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <title></title>
+    {{$styles}}
 </head>
 <body>
     <h3>Hello, {{Username}}!</h3>
@@ -36,33 +37,18 @@
             <br />
             - IP Address: {{IPAddress}}
             <br />
-            Computer/Browser Info: {{ComputerInfo}}
+            <u>Computer/Browser Info:</u> {{ComputerInfo}}
             <br />
         </code>
     </span>
     <hr />
     <span style="color: forestgreen">If the above information matches then click below to activate your Goliath account.</span>
     <h4>
-        <a href="{{VerifyLink}}">Click to Verify your account!</a>
-    </h4>
-    <p><em>Once you have verified your account Goliath recommends looking into additional security options such as Two-Factor Authentication.</em></p>
-    <br />
-    <hr />
-    <em>Find out more about Goliath:</em>
-    <ul>
-        <li>
-            <a href="#!">View the Source Code</a>
-        </li>
-        <li>
-            <a href="#!">View the Documentation</a>
-        </li>
-        <li>
-            <a href="#!">View Common Questions and Answers</a>
-        </li>
-    </ul>
+        <a href="{{Link}}">Click to Verify your account!</a>
 
-    Email Sent from Server at: <strong>{{DateTime}}</strong>
-    <br />
-    <em>GNU General Public License v3.0- Jacob LuVisi @ 2021</em>
+    </h4>
+    <p><span style="color: gray">This link expires after 5 minutes.</span></p>
+    <p><em>Once you have verified your account Goliath recommends looking into additional security options such as Two-Factor Authentication.</em></p>
+    {{$footer}}
 </body>
 </html>

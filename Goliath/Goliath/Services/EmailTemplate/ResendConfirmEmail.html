@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <title></title>
+    {{$styles}}
 </head>
 <body>
     <h3>Hello, {{Username}}!</h3>
@@ -13,35 +14,18 @@
         You must click the link below to activate your account.
     </p>
     <h4>
-        <a href="{{VerifyLink}}">Click to Verify your account!</a>
+        <a href="{{Link}}">Click to Verify your account!</a>
     </h4>
-
+    <p><span style="color: gray">This link expires after 5 minutes.</span></p>
     <hr />
     Sender Information:
     <span style="color: dimgray">
         <br />
         - IP Address: {{IPAddress}}
         <br />
-        Computer/Browser Info: {{ComputerInfo}}
+        <u>Computer/Browser Info:</u> {{ComputerInfo}}
         <br />
     </span>
-    <hr />
-    <br />
-    <em>Find out more about Goliath:</em>
-    <ul>
-        <li>
-            <a href="#!">View the Source Code</a>
-        </li>
-        <li>
-            <a href="#!">View the Documentation</a>
-        </li>
-        <li>
-            <a href="#!">View Common Questions and Answers</a>
-        </li>
-    </ul>
-
-    Email Sent from Server at: <strong>{{DateTime}}</strong>
-    <br />
-    <em>GNU General Public License v3.0- Jacob LuVisi @ 2021</em>
+    {{$footer}}
 </body>
 </html>
