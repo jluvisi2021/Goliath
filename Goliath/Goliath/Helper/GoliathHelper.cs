@@ -19,9 +19,6 @@
         /// <param name="data"></param>
         public static void PrintDebugger(string data)
         {
-
-
-
             System.Diagnostics.Debug.WriteLine(data);
         }
 

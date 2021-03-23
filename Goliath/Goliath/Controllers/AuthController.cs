@@ -1,4 +1,5 @@
-﻿using Goliath.Enums;
+﻿using DNTCaptcha.Core;
+using Goliath.Enums;
 using Goliath.Helper;
 using Goliath.Models;
 using Goliath.Repository;
@@ -6,7 +7,9 @@ using Goliath.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -35,11 +38,28 @@ namespace Goliath.Controllers
         /// </summary>
         private readonly IEmailService _emailService;
 
-        public AuthController(IAccountRepository accountRepository, SignInManager<ApplicationUser> signInManager, IEmailService emailService)
+        // Captcha Classes
+        private readonly IDNTCaptchaValidatorService _validatorService;
+
+        private readonly DNTCaptchaOptions _captchaOptions;
+
+        public AuthController
+            (
+            IAccountRepository accountRepository,
+            SignInManager<ApplicationUser> signInManager,
+            IEmailService emailService,
+            IDNTCaptchaValidatorService validatorService,
+            IOptions<DNTCaptchaOptions> captchaOptions
+            )
         {
             _accountRepository = accountRepository;
             _signInManager = signInManager;
             _emailService = emailService;
+            _validatorService = validatorService;
+            _captchaOptions =
+                captchaOptions == null
+                ? throw new ArgumentNullException(nameof(captchaOptions))
+                : captchaOptions.Value;
         }
 
         // Referred to as "Login" as well.
@@ -54,21 +74,26 @@ namespace Goliath.Controllers
             return RedirectToAction("Login");
         }
 
-        [Route("login")]
         public IActionResult Login()
         {
             ViewData["ButtonID"] = ButtonID.Login;
             return View("Login");
         }
 
-        [Route("login")]
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Index(SignInModel signInModel)
         {
             ViewData["ButtonID"] = ButtonID.Login;
             // If the user has signed in with valid data.
             if (ModelState.IsValid)
             {
+                if (!_validatorService.HasRequestValidCaptchaEntry(Language.English, DisplayMode.ShowDigits))
+                {
+                    ModelState.AddModelError(_captchaOptions.CaptchaComponent.CaptchaInputName, "Please enter the correct security code.");
+                    return View("Login", signInModel);
+                }
+
                 Microsoft.AspNetCore.Identity.SignInResult result = await _accountRepository.PasswordSignInAsync(signInModel);
                 // If the user name and password match.
                 if (result.Succeeded)
@@ -105,12 +130,12 @@ namespace Goliath.Controllers
 
         [Route("register/goliath")]
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(SignUpUserModel model)
         {
             ViewData["ButtonID"] = ButtonID.Register;
             if (ModelState.IsValid)
             {
-                
                 // Pass in the information for the confirmation email.// new string[] { Request.Headers["User-Agent"].ToString(), HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
                 IdentityResult result = await _accountRepository.CreateUserAsync(model,
                 new DeviceParser(Request.Headers["User-Agent"].ToString(), HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()));
@@ -151,6 +176,7 @@ namespace Goliath.Controllers
 
         [Route("forgotpassword")]
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordModel model)
         {
             ViewData["ButtonID"] = ButtonID.ForgotPassword;
@@ -197,11 +223,12 @@ namespace Goliath.Controllers
 
         [Route("forgotusername")]
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotUsername(ForgotUsernameModel model)
         {
             ViewData["ButtonID"] = ButtonID.ForgotUsername;
             ApplicationUser user = await _accountRepository.FindByEmailAsync(model.Email);
-            if(user != null)
+            if (user != null)
             {
                 if (!user.EmailConfirmed)
                 {
@@ -212,7 +239,7 @@ namespace Goliath.Controllers
                 model.IsEmailSent = true;
                 ModelState.Clear();
                 return View(model);
-                    }
+            }
             else
             {
                 ModelState.AddModelError(string.Empty, "We could not find user: " + model.Email);
@@ -230,6 +257,7 @@ namespace Goliath.Controllers
 
         [Route("verify")]
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> VerifyEmail(EmailConfirmModel model)
         {
             ViewData["ButtonID"] = ButtonID.VerifyEmail;
@@ -246,7 +274,7 @@ namespace Goliath.Controllers
                 }
                 // Generate a token as well as a user agent.
                 await _accountRepository.GenerateEmailConfirmationToken(user, new DeviceParser(Request.Headers["User-Agent"].ToString(), HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()));
-                
+
                 // Indicate to the View that the email was sent.
                 model.IsEmailSent = true;
                 // Clear all fields.
@@ -310,6 +338,7 @@ namespace Goliath.Controllers
         }
 
         [HttpPost("forgot-password")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ResetPassword(ResetPasswordModel model)
         {
             ViewData["ButtonID"] = ButtonID.ForgotPassword;
@@ -320,14 +349,13 @@ namespace Goliath.Controllers
                 IdentityResult result = await _accountRepository.ResetPasswordAsync(model);
                 if (result.Succeeded)
                 {
-               
                     ModelState.Clear();
                     model.IsCompleted = true;
                     // Completed Successfully
                     TempData["Redirect"] = RedirectPurpose.ResetPasswordSuccess;
                     return RedirectToAction("Index");
                 }
-             
+
                 // Go through all errors and add them to the view.
                 foreach (IdentityError error in result.Errors)
                 {
@@ -341,7 +369,6 @@ namespace Goliath.Controllers
                 {
                     foreach (Microsoft.AspNetCore.Mvc.ModelBinding.ModelError propertyError in error.Value.Errors)
                     {
-                        
                         errors.Add(propertyError.ErrorMessage);
                     }
                 }

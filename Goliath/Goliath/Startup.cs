@@ -1,3 +1,4 @@
+using DNTCaptcha.Core;
 using Goliath.Data;
 using Goliath.Models;
 using Goliath.Repository;
@@ -59,6 +60,7 @@ namespace Goliath
 
             // Enable MVC Design
             services.AddControllersWithViews();
+            
             // URL Settings
             services.AddRouting(options => options.LowercaseUrls = true);
             services.AddRouting(options => options.LowercaseQueryStrings = true);
@@ -67,10 +69,19 @@ namespace Goliath
             // Allow Razor pages to update upon browser refresh.
             services.AddRazorPages().AddRazorRuntimeCompilation();
 #endif
-            
+
             // Enable services to use in Controllers through DI.
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IAccountRepository, AccountRepository>();
+
+            // Enable Captchas
+            services.AddDNTCaptcha(options =>
+            {
+                options.UseCookieStorageProvider()
+                .ShowThousandsSeparators(false)
+                .AbsoluteExpiration(minutes: 5)
+                .WithEncryptionKey("SecureKey1234");
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -86,13 +97,11 @@ namespace Goliath
                 {
                     app.UseHsts();
                 }
-                
             }
             app.UseStatusCodePages(options =>
             {
                 options.UseStatusCodePagesWithRedirects("/Errors/Index?code={0}");
             });
-            
 
             if (bool.Parse(_config["General:HTTPSRedirection"]) == true)
             {
@@ -111,6 +120,7 @@ namespace Goliath
 
             // Require user accounts
             app.UseAuthorization();
+
 
             /* Starts at ~/Views/Auth/Login.cshtml */
             app.UseEndpoints(endpoints =>

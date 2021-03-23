@@ -5,6 +5,7 @@
 #collapse {
     cursor: pointer;
 }
+
 #information {
     max-width: 50%;
 }
@@ -13,6 +14,7 @@
     #icon2 {
         display: none;
     }
+
     #information {
         max-width: 100%;
     }

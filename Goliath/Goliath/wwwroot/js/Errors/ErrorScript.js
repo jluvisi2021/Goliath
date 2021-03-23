@@ -36,8 +36,6 @@ function updateText(id, val) {
             "color": "red"
         });
     }
-    
-    
 }
 
 /*
@@ -51,7 +49,6 @@ function update() {
         $("#arrow").removeClass("fas fa-arrow-down");
         $("#arrow").addClass("fas fa-arrow-right");
     }
-
 }
 
 /**

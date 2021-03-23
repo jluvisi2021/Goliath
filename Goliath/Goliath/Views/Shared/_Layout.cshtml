@@ -5,7 +5,8 @@
 
 *@
 <!DOCTYPE html>
-<!-- Main layout file for application -->
+@* Main layout file for application *@
+
 <html lang="en-us">
 <head>
     <meta name='viewport' content='initial-scale=1, viewport-fit=cover'>
@@ -15,23 +16,35 @@
 
     <title>Goliath | @ViewData["Title"]</title>
 
+
     <!-- jQuery, Bootstrap 4 & FontAwesome -->
+    <!--
+
     <environment exclude="Development">
         <script src="@ViewData["jQuery"]"></script>
         <script src="@ViewData["Bootstrap"]"></script>
-        <script src="@ViewBag.fontAwesome" crossorigin="anonymous"></script>
+        @* <script src="@ViewBag.fontAwesome" crossorigin="anonymous"></script>*@
         <link rel="stylesheet" href="@ViewData["BootstrapTheme"]">
     </environment>
     @*Under code is run if the application is being run in debugger.*@
     <environment include="Development">
         <script>
-            console.log("--> Goliath is being run in Development mode. <--");
+            console.log("-> Goliath is being run in Development mode. <-");
         </script>
         <script src="@ViewData["jQueryDevelopment"]"></script>
         <script src="@ViewData["BootstrapDevelopment"]"></script>
-        <script src="@ViewBag.fontAwesome" crossorigin="anonymous"></script>
+        @*<script src="@ViewBag.fontAwesome" crossorigin="anonymous"></script>*@
         <link rel="stylesheet" href="@ViewData["BootstrapThemeDevelopment"]">
     </environment>
+    -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet" />
+    <script src="~/lib/jquery/jquery.min.js"></script>
+    <script src="~/lib/twitter-bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery-validate/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
+    <link rel="stylesheet" href="~/lib/theme/bootstrap4-bubblegum.min.css" />
+
     <!--------------------------------------->
     <!-- Custom Files (Global) -->
     <link href="~/css/global.css" rel="stylesheet" />
@@ -44,7 +57,8 @@
 
 <body>
     <noscript>
-        <meta HTTP-EQUIV="REFRESH" content="0; url=https://localhost:44331/errors/nojs">
+        @*If javascript is not enabled then redirect them*@
+        <meta HTTP-EQUIV="REFRESH" content="0; url=@Url.ActionLink("NoJS", "Errors")">
     </noscript>
     <!-- Primary Layout Child HTML -->
     @RenderBody()
@@ -76,23 +90,23 @@
 </body>
 </html>
 
-    @if(bool.Parse(config["General:CheckBrowserCompatibility"]))
-            {
-        <script>
-            // Check if the browser is compatible.
-            GlobalScript.checkBrowser();
-        </script>
-            }
-     @if(bool.Parse(config["General:EnableTooltips"]))
-            {
-         <script>
-             // Load tooltips.
-             $(document).ready(function () {
+@if (bool.Parse(config["General:CheckBrowserCompatibility"]))
+{
+    <script>
+        // Check if the browser is compatible.
+        GlobalScript.checkBrowser();
+    </script>
+}
+@if (bool.Parse(config["General:EnableTooltips"]))
+{
+    <script>
+        // Load tooltips.
+        $(document).ready(function () {
 
-                 $('[data-toggle="tooltip"]').tooltip({
-                     container: 'body'
-                 });
+            $('[data-toggle="tooltip"]').tooltip({
+                container: 'body'
+            });
 
-             });
-         </script>
-            }
+        });
+    </script>
+}

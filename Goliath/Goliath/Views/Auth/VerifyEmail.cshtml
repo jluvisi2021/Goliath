@@ -35,7 +35,7 @@ else
 {
     @*Accept data for EmailConfirmModel*@
     <hr />
-    <form asp-action="VerifyEmail">
+    <form asp-action="VerifyEmail" asp-antiforgery="true">
         <div asp-validation-summary="All" class="text-danger"></div>
         <p>Request to Resend Email Verification</p>
         <div class="ht-tm-element input-group mb-3">

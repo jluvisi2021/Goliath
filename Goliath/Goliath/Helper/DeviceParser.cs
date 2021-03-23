@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Goliath.Helper
 {
@@ -33,7 +29,7 @@ namespace Goliath.Helper
 
         private string ParseOSName()
         {
-            var OSNames = new Dictionary<string, string>
+            Dictionary<string, string> OSNames = new Dictionary<string, string>
             {
                 { "Windows NT 5.0", "Windows 2000" },
                 { "Windows NT 5.01", "Windows 2000 (SP1)" },
@@ -62,9 +58,9 @@ namespace Goliath.Helper
                 { "BeOS", "BeOS" },
                 { "OS/2", "OS/2" },
             };
-            foreach(string key in OSNames.Keys)
+            foreach (string key in OSNames.Keys)
             {
-                if(_userAgent.Contains(key))
+                if (_userAgent.Contains(key))
                 {
                     return OSNames[key];
                 }
@@ -74,7 +70,7 @@ namespace Goliath.Helper
 
         private string ParseBrowserName()
         {
-            var browserNames = new Dictionary<string, string>
+            Dictionary<string, string> browserNames = new Dictionary<string, string>
             {
                 {"Chrome", "Chrome/Chromium"},
                 {"Firefox", "Firefox/Tor" },
@@ -100,15 +96,12 @@ namespace Goliath.Helper
 
         private string ParseDeviceType()
         {
-            if(_userAgent.Contains("Mobile"))
+            if (_userAgent.Contains("Mobile"))
             {
                 return "Mobile";
             }
             return "Desktop";
-
         }
-
-
 
         public string ToSimpleString()
         {
@@ -126,9 +119,5 @@ namespace Goliath.Helper
         {
             return _userAgent;
         }
-        
-
-        
-
     }
 }

@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Threading.Tasks;
 
 namespace Goliath.Repository
@@ -114,10 +113,10 @@ namespace Goliath.Repository
         /// <returns></returns>
         public async Task GenerateUsername(ApplicationUser user, DeviceParser device)
         {
-            if(!(string.IsNullOrWhiteSpace(user?.UserName))) {
+            if (!(string.IsNullOrWhiteSpace(user?.UserName)))
+            {
                 await SendEmailWithUsername(user, device);
             }
-
         }
 
         /// <summary>
@@ -239,7 +238,7 @@ namespace Goliath.Repository
                         "{{DateTime}}", DateTime.Now.ToString()
                     }
                         }
-            }); 
+            });
         }
 
         /// <summary>
@@ -328,7 +327,7 @@ namespace Goliath.Repository
         }
 
         private async Task SendEmailWithUsername(ApplicationUser user, DeviceParser device)
-        {            
+        {
             // Generate email with placeholders.
             await _emailService.SendForgotUsernameEmail(new()
             {
@@ -386,7 +385,5 @@ namespace Goliath.Repository
                 return IdentityResult.Failed();
             }
         }
-
-
     }
 }

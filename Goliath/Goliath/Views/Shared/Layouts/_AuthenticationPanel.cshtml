@@ -23,8 +23,7 @@
 @if (_signInManager.IsSignedIn(User))
 {
     Context.Response.Redirect(Url.Action("Index", "UserPanel"));
-    
-    
+
 }
 
 <section id="center-banner" style="position: absolute;">
@@ -113,7 +112,7 @@
                                                 <a class="dropdown-item py-xl-1" href="#!"><i class="fab fa-google px-sm-2 dropdown-bottom-icons"></i>Sign in with Google</a>
                                                 <a class="dropdown-item" href="/idk"><i class="fab fa-microsoft px-sm-2 dropdown-bottom-icons"></i>Sign in with Microsoft</a>
                                                 <a class="dropdown-item" href="/idk"><i class="fab fa-facebook-square px-sm-2 dropdown-bottom-icons"></i>Sign in with Facebook</a>
-                                                <a class="dropdown-item" href="https://github.com/jluvisi2021/Goliath"><i class="fab fa-github px-sm-2 dropdown-bottom-icons"></i>View GitHub</a>
+                                                <a class="dropdown-item" href="https://github.com/jluvisi2021/Goliath" target="_blank"><i class="fab fa-github px-sm-2 dropdown-bottom-icons"></i>View GitHub</a>
                                             </div>
                                             <!-- Other Drop Down End -->
                                         </div>

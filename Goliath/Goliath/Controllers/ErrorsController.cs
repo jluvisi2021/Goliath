@@ -10,21 +10,17 @@ namespace Goliath.Controllers
     {
         public ErrorsController()
         {
-           
         }
-        
+
         public IActionResult Index(string code)
         {
-            
             BadStatusCodeModel model = new()
             {
-
                 StatusCode = code,
                 LastPageVisited = Request.Headers["Referer"],
                 UserAgent = Request.Headers["User-Agent"].ToString()
-
             };
-            
+
             return View(model);
         }
 
@@ -32,6 +28,5 @@ namespace Goliath.Controllers
         {
             return View();
         }
-
     }
 }
