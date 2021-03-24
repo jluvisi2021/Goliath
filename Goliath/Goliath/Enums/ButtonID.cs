@@ -4,7 +4,7 @@
     /// Represents constant strings for buttons on
     /// the login screen.
     /// </summary>
-    public class ButtonID
+    public static class ButtonID
     {
         public const string Login = "login";
         public const string Register = "register";

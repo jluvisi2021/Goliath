@@ -21,10 +21,7 @@ namespace Goliath.Controllers
             _accountRepository = accountRepository;
         }
 
-        public IActionResult Index()
-        {
-            return View("Profile");
-        }
+        public IActionResult Index() => View("Profile");
 
         /// <summary>
         /// Returns a specific partial view in Ajax.
@@ -33,10 +30,8 @@ namespace Goliath.Controllers
         /// </summary>
         /// <param name="partialName">File name of partial view.</param>
         /// <returns></returns>
-        public ActionResult GetModule(string partialName)
-        {
-            return PartialView($"~/Views/UserPanel/{partialName}.cshtml");
-        }
+        public ActionResult GetModule(string partialName) => PartialView($"~/Views/UserPanel/{partialName}.cshtml");
+        
 
         [Route("logout")]
         public async Task<IActionResult> Logout()
@@ -47,29 +42,14 @@ namespace Goliath.Controllers
             return RedirectToAction("Index", "Auth");
         }
 
-        public IActionResult Database()
-        {
-            return View();
-        }
+        public IActionResult Database() => View();
 
-        public IActionResult Utilities()
-        {
-            return View();
-        }
+        public IActionResult Utilities() => View();
 
-        public IActionResult Help()
-        {
-            return View();
-        }
+        public IActionResult Help() => View();
 
-        public IActionResult About()
-        {
-            return View();
-        }
+        public IActionResult About() => View();
 
-        public IActionResult BuildInfo()
-        {
-            return View();
-        }
+        public IActionResult BuildInfo() => View();
     }
 }

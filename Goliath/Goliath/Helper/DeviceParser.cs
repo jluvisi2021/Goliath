@@ -11,10 +11,10 @@ namespace Goliath.Helper
         private string _userAgent { get; set; }
         private string _ipAddress { get; set; }
 
-        public string OSName { get; private set; } = "Unknown";
-        public string BrowserName { get; private set; } = "Unknown";
-        public string DeviceType { get; private set; } = "Unknown";
-        public string IPv4 { get; private set; } = "Unknown";
+        public string OSName { get; private set; } 
+        public string BrowserName { get; private set; } 
+        public string DeviceType { get; private set; } 
+        public string IPv4 { get; private set; } 
 
         public DeviceParser(string userAgent, string ipAddress)
         {

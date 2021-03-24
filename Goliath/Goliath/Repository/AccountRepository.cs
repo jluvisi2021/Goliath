@@ -72,6 +72,7 @@ namespace Goliath.Repository
                     // Send them a token.
                     await GenerateEmailConfirmationToken(userModel, user, device);
                 }
+               
                 return result;
             }
             catch (Exception e)
@@ -107,20 +108,6 @@ namespace Goliath.Repository
         }
 
         /// <summary>
-        /// Sends an email to a client with their username.
-        /// </summary>
-        /// <param name="model"></param>
-        /// <param name="device"></param>
-        /// <returns></returns>
-        public async Task GenerateUsername(ApplicationUser user, DeviceParser device)
-        {
-            if (!(string.IsNullOrWhiteSpace(user?.UserName)))
-            {
-                await SendEmailWithUsername(user, device);
-            }
-        }
-
-        /// <summary>
         /// Sends an email to the user with a token.
         /// </summary>
         /// <param name="user"></param>
@@ -135,6 +122,22 @@ namespace Goliath.Repository
                 await ResendEmailConfirmationToken(userModel, device, token);
             }
         }
+
+        /// <summary>
+        /// Sends an email to a client with their username.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="device"></param>
+        /// <returns></returns>
+        public async Task GenerateUsername(ApplicationUser user, DeviceParser device)
+        {
+            if (!(string.IsNullOrWhiteSpace(user?.UserName)))
+            {
+                await SendEmailWithUsername(user, device);
+            }
+        }
+
+        
 
         /// <summary>
         /// Sends an email to the user with a token to reset password.

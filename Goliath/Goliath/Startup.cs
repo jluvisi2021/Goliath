@@ -96,7 +96,7 @@ namespace Goliath
             }
             else
             {
-                if (bool.Parse(_config["General:HTTPSRedirection"]) == true)
+                if (bool.Parse(_config["General:HTTPSRedirection"]))
                 {
                     app.UseHsts();
                 }
@@ -106,7 +106,7 @@ namespace Goliath
                 options.UseStatusCodePagesWithRedirects("/Errors/Index?code={0}");
             });
 
-            if (bool.Parse(_config["General:HTTPSRedirection"]) == true)
+            if (bool.Parse(_config["General:HTTPSRedirection"]))
             {
                 // Always require HTTPS connections.
                 app.UseHttpsRedirection();

@@ -134,7 +134,7 @@ namespace Goliath.Controllers
             {
                 // Pass in the information for the confirmation email.// new string[] { Request.Headers["User-Agent"].ToString(), HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
                 IdentityResult result = await _accountRepository.CreateUserAsync(model,
-                new DeviceParser(Request.Headers["User-Agent"].ToString(), HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()));
+                new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
 
                 if (!result.Succeeded)
                 {
@@ -163,14 +163,14 @@ namespace Goliath.Controllers
             return View();
         }
 
-        [Route("forgotpassword")]
+        [Route("credentials/password")]
         public IActionResult ForgotPassword()
         {
             ViewData["ButtonID"] = ButtonID.ForgotPassword;
             return View();
         }
 
-        [Route("forgotpassword")]
+        [Route("credentials/password")]
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordModel model)
         {
@@ -193,7 +193,7 @@ namespace Goliath.Controllers
                     return View();
                 }
                 // Generate a token as well as a user agent.
-                await _accountRepository.GenerateForgotPasswordToken(user, new DeviceParser(Request.Headers["User-Agent"].ToString(), HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()));
+                await _accountRepository.GenerateForgotPasswordToken(user, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
                 // Indicate to the View that the email was sent.
                 model.IsEmailSent = true;
                 // Clear all fields.
@@ -209,14 +209,14 @@ namespace Goliath.Controllers
             return View();
         }
 
-        [Route("forgotusername")]
+        [Route("credentials/username")]
         public IActionResult ForgotUsername()
         {
             ViewData["ButtonID"] = ButtonID.ForgotUsername;
             return View();
         }
 
-        [Route("forgotusername")]
+        [Route("credentials/username")]
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotUsername(ForgotUsernameModel model)
         {
@@ -229,7 +229,7 @@ namespace Goliath.Controllers
                     ModelState.AddModelError(string.Empty, "Please confirm your account before doing this.");
                     return View(model);
                 }
-                await _accountRepository.GenerateUsername(user, new DeviceParser(Request.Headers["User-Agent"].ToString(), HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()));
+                await _accountRepository.GenerateUsername(user, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
                 model.IsEmailSent = true;
                 ModelState.Clear();
                 return View(model);
@@ -267,7 +267,7 @@ namespace Goliath.Controllers
                     return View(model);
                 }
                 // Generate a token as well as a user agent.
-                await _accountRepository.GenerateEmailConfirmationToken(user, new DeviceParser(Request.Headers["User-Agent"].ToString(), HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()));
+                await _accountRepository.GenerateEmailConfirmationToken(user, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
 
                 // Indicate to the View that the email was sent.
                 model.IsEmailSent = true;
@@ -317,6 +317,12 @@ namespace Goliath.Controllers
         public IActionResult ResetPassword(string uid, string token)
         {
             ViewData["ButtonID"] = ButtonID.ForgotPassword;
+
+            if(string.IsNullOrWhiteSpace(uid) || string.IsNullOrWhiteSpace(token))
+            {
+                TempData["Redirect"] = RedirectPurpose.ResetPasswordFailure;
+                return RedirectToAction("Index");
+            }
             // Add the userID and token from the url.
             ResetPasswordModel model = new()
             {
@@ -352,7 +358,6 @@ namespace Goliath.Controllers
                 foreach (IdentityError error in result.Errors)
                 {
                     errors.Add(error.Description);
-                    //ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
             foreach (KeyValuePair<string, Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateEntry> error in ViewData.ModelState)
@@ -371,5 +376,9 @@ namespace Goliath.Controllers
             TempData["Errors"] = errors.ToArray();
             return RedirectToAction("Index");
         }
+
+        private string GetClientUserAgent() => Request.Headers["User-Agent"].ToString();
+        private string GetRemoteClientIPv4() => HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+
     }
 }

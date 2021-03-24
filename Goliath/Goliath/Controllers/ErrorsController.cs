@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Goliath.Controllers
 {
     /// <summary>
-    /// Manages bad requests on HTTPS. (TODO)
+    /// Manages bad requests on HTTPS.
     /// </summary>
     public class ErrorsController : Controller
     {
@@ -24,9 +24,6 @@ namespace Goliath.Controllers
             return View(model);
         }
 
-        public IActionResult NoJS()
-        {
-            return View();
-        }
+        public IActionResult NoJS() => View();
     }
 }

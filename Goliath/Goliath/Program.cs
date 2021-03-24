@@ -39,7 +39,7 @@ namespace Goliath
     -> https://github.com/jluvisi2021/Goliath/wiki
     */
 
-    public class Program
+    public static class Program
     {
         public static void Main(string[] args)
         {
