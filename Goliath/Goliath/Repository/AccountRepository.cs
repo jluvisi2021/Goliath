@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Goliath.Repository
@@ -190,13 +191,13 @@ namespace Goliath.Repository
         /// <returns></returns>
         private static string ConvertToAstrisk(string str)
         {
-            string j = string.Empty;
+            StringBuilder j = new();
             int l = str.Length;
             for (int i = 0; i < l; i++)
             {
-                j += "*";
+                j.Append('*');
             }
-            return j;
+            return j.ToString();
         }
 
         /// <summary>

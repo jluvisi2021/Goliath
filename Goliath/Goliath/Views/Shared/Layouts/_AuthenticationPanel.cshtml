@@ -15,8 +15,8 @@
 }
 @* Specific to _AuthenticationPanel. *@
 @section UniqueHeader {
-    <link href="~/css/login-style.css" rel="stylesheet" />
-    <script src="~/js/Auth/_AuthenticationPanel.js"></script>
+    <link href="~/css/Auth/LoginStyle.css" rel="stylesheet" />
+    <script src="~/js/Auth/AuthenticationScript.js"></script>
 }
 
 @*If the user is logged in then redirect them to userpanel.*@
@@ -121,7 +121,7 @@
                                     <hr />
                                     <div>
                                         <!-- Right Panel Header -->
-                                        @RenderSection("RightContainerHeader")
+                                        @RenderSection("RightContainerHeader", false)
                                         <!-- Right Panel Header End -->
                                     </div>
                                 </div>
@@ -140,8 +140,8 @@
     </section>
 </main>
 
-<script>
-
+@section Scripts {
+    <script type="text/javascript">
     @*Highlight individual button elements depending on the current page*@
     loadButtonElements("@ViewData["ButtonID"]");
     // Remove highlighting for a clicked nav item.
@@ -149,4 +149,5 @@
         $(".nav-item").removeClass("active");
         $(e.target).addClass("active");
     });
-</script>
+    </script>
+}

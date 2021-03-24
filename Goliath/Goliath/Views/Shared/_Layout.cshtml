@@ -16,7 +16,6 @@
 
     <title>Goliath | @ViewData["Title"]</title>
 
-
     <!-- jQuery, Bootstrap 4 & FontAwesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/lib/theme/bootstrap4-bubblegum.min.css" />
@@ -25,8 +24,8 @@
 
     <!--------------------------------------->
     <!-- Custom Files (Global) -->
-    <link href="~/css/global.css" rel="stylesheet" />
-    <script src="~/js/global.js"></script>
+    <link href="~/css/Shared/GlobalStyle.css" rel="stylesheet" />
+    <script src="~/js/Shared/GlobalScript.js"></script>
     <!--------------------------->
     <!-- Custom Files (Specific) -->
     @RenderSection("UniqueHeader")
@@ -68,12 +67,12 @@
 </body>
 </html>
 
-
+@*Primary Scripts for child.*@
+@RenderSection("Scripts", false)
 
 @if (bool.Parse(config["General:CheckBrowserCompatibility"]))
 {
     <script>
-        // Check if the browser is compatible.
         GlobalScript.checkBrowser();
     </script>
 }

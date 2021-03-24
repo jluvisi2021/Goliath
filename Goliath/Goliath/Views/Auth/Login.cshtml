@@ -1,6 +1,5 @@
-﻿@using Newtonsoft.Json;
-@using Goliath.Models;
-@model Goliath.Models.SignInModel
+﻿@model Goliath.Models.SignInModel
+
 @{
     ViewData["Title"] = "Login";
 }
@@ -11,61 +10,16 @@
     <p class="text-muted mb-4">Enter your Goliath credentials.</p>
 }
 
-
 @*If the user is redirected to the login page and
     we want to run some code.*@
 @if (TempData["Redirect"] != null)
 {
-    if (TempData["Redirect"].Equals((int)RedirectPurpose.RegisterSuccess))
-    {
-        @*User has been redirected; They have just made an account.*@
-        <script>
-            GlobalScript.displayModal('<strong><span style="color: green;">Success!</span></strong>', "Your account has been created.<br />Please check your email and verify your account! If you cannot find a verification email then <a href=\"/verify\" class=\"alert-link\">request a resend.</a>");
-        </script>
-    }
-    else if (TempData["Redirect"].Equals((int)RedirectPurpose.LogoutSuccess))
-    {
-        @*User has been redirected; They just logged out.*@
-        <script>
-            GlobalScript.displayNotification("Success", "You have been logged out at " + "@DateTime.Now", GlobalScript.BannerTypes()["alert-success"], "center-banner");
-        </script>
-    }
-    else if (TempData["Redirect"].Equals((int)RedirectPurpose.VerifiedEmailSuccess))
-    {
-        @*User has been redirected; They just activated their account.*@
-        <script>
-            GlobalScript.displayNotification("Success", "Your account has been verified. You may now log in!", GlobalScript.BannerTypes()["alert-success"], "center-banner");
-        </script>
-    }
-    else if (TempData["Redirect"].Equals((int)RedirectPurpose.VerifiedEmailFailure))
-    {
-        @*User has been redirected; They attempted to activate their account and failed.*@
-        <script>
-            GlobalScript.displayNotification("Error", "Your account could not be verified. Try again later.", GlobalScript.BannerTypes()["alert-danger"], "center-banner");
-        </script>
-    }
-    else if (TempData["Redirect"].Equals((int)RedirectPurpose.ResetPasswordModal))
-    {
-
-        <partial name="ResetPassword" model="@(JsonConvert.DeserializeObject<ResetPasswordModel>((string)TempData["Model"]));" />
-    }
-    else if (TempData["Redirect"].Equals((int)RedirectPurpose.ResetPasswordSuccess))
-    {
-        <script>
-            GlobalScript.displayNotification("Success", "Your password has been updated.", GlobalScript.BannerTypes()["alert-success"], "center-banner");
-        </script>
-    }
-    else if (TempData["Redirect"].Equals((int)RedirectPurpose.ResetPasswordFailure))
-    {
-        <script>
-            GlobalScript.displayNotification("Error", "Could not reset password. Try again later.", GlobalScript.BannerTypes()["alert-danger"], "center-banner");
-        </script>
-    }
+    <partial name="_RedirectHandler" />
 }
 
 <form asp-action="Login" asp-antiforgery="true">
     @if (!ViewData.ModelState.IsValid)
-    { 
+    {
         @*Display a validation model if the user inputs are incorrect.*@
         <script>
             GlobalScript.displayModal('Correct Errors', `Please correct the errors to login:<br />@Html.ValidationSummary(false, "", new { @class = "text-danger" })`);
@@ -106,19 +60,12 @@
                  asp-refresh-button-class="fas fa-redo btn-sm"
                  asp-use-noise="false" />
 
-
     <div class="custom-control custom-checkbox mb-3">
         <input asp-for="RememberMe" id="customCheck1" type="checkbox" checked class="custom-control-input">
         <label for="customCheck1" class="custom-control-label" data-toggle="tooltip" data-placement="right" title="Click for us to remember your account on this browser.">Remember Me</label>
     </div>
     <hr />
     <button type="submit" class="btn btn-primary btn-block text-uppercase mb-2 rounded-pill shadow-sm">Sign in</button>
-
-
-
-
-
-
 
     @*OAuth Login Methods*@
     <div class="text-center">
@@ -149,5 +96,6 @@
         </p>
     </div>
 </form>
+
 @*JQuery Validation Scripts*@
 <partial name="_JQueryValidation" />

@@ -35,7 +35,7 @@ namespace Goliath.Controllers
         /// <returns></returns>
         public ActionResult GetModule(string partialName)
         {
-            return PartialView("~/Views/UserPanel/" + partialName + ".cshtml");
+            return PartialView($"~/Views/UserPanel/{partialName}.cshtml");
         }
 
         [Route("logout")]

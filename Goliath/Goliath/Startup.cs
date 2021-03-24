@@ -1,11 +1,8 @@
-
 using DNTCaptcha.Core;
 using Goliath.Data;
 using Goliath.Models;
 using Goliath.Repository;
 using Goliath.Services;
-using GoogleReCaptcha.V3;
-using GoogleReCaptcha.V3.Interface;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -64,6 +61,8 @@ namespace Goliath
             // Enable MVC Design
             services.AddControllersWithViews();
 
+            // Change URL Settings.
+            // Note: options.LowercaseQuery won't work and will interfere with DNT Captcha.
             services.AddRouting(options =>
             {
                 options.LowercaseUrls = true;
@@ -75,9 +74,8 @@ namespace Goliath
                options.UseCookieStorageProvider()
                    .ShowThousandsSeparators(false)
                    .AbsoluteExpiration(minutes: 5)
+                   .WithEncryptionKey(_config["Application:CaptchaEncryptionKey"])
             );
-
-            
 
 #if DEBUG
             // Allow Razor pages to update upon browser refresh.
@@ -114,8 +112,6 @@ namespace Goliath
                 app.UseHttpsRedirection();
             }
 
-      
-
             // Use wwwroot folder.
             app.UseStaticFiles();
 
@@ -127,7 +123,6 @@ namespace Goliath
 
             // Require user accounts
             app.UseAuthorization();
-
 
             /* Starts at ~/Views/Auth/Login.cshtml */
             app.UseEndpoints(endpoints =>

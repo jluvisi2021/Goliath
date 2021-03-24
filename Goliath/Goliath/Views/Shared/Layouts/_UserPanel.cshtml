@@ -13,8 +13,8 @@
 }
 
 @section UniqueHeader {
-    <link href="~/css/userpanel-style.css" rel="stylesheet" />
-    <script src="~/js/UserPanel/_UserPanel.js"></script>
+    <link href="~/css/UserPanel/UserPanelStyle.css" rel="stylesheet" />
+    <script src="~/js/UserPanel/UserPanelScript.js"></script>
 }
 
 <main>
@@ -77,7 +77,10 @@
         <!-- UserPanel Body End -->
     </section>
 </main>
-<script>
+
+@section Scripts {
+    <script type="text/javascript">
     @*Highlight the different nav items depending on what page the user is viewing.*@
     updateNav("@ViewData["Title"].ToString().ToLower().Split(" ")[0]");
-</script>
+    </script>
+}

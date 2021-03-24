@@ -10,8 +10,8 @@ $(window).on("scroll", () => {
         });
         return;
     }
-    var scrollHeight = $(document).height();
-    var scrollPosition = $(window).height() + $(window).scrollTop();
+    const scrollHeight = $(document).height();
+    const scrollPosition = $(window).height() + $(window).scrollTop();
 
     if (scrollHeight - scrollPosition <= 1) {
         $("#footer").css({
@@ -24,7 +24,7 @@ $(window).on("scroll", () => {
     }
 });
 /** Access data from global.js */
-const GlobalScript = (function () {
+const GlobalScript = (() => {
     /** Private Variables */
 
     const _bannerTypes = Object.freeze({
@@ -37,7 +37,7 @@ const GlobalScript = (function () {
 
     return {
         /** Returns the list of avaliable banner types. */
-        BannerTypes: function () {
+        BannerTypes: () => {
             return _bannerTypes;
         },
         /**
@@ -61,7 +61,7 @@ const GlobalScript = (function () {
     * @param {string} id (Optional)
     *
     */
-        displayNotification: function (textHeader, text, type, divParentID) {
+        displayNotification: (textHeader, text, type, divParentID) => {
             let typeStr = "";
             switch (type) {
                 case 0:
@@ -104,7 +104,7 @@ const GlobalScript = (function () {
     * @param {string} title [Supports HTML(Use ``)]
     * @param {string} body [Supports HTML(Use ``)]
     */
-        displayModal: function (title, body) {
+        displayModal: (title, body) => {
             $("#outer").append(`
         <div class="modal fade" id="render-model" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -134,7 +134,7 @@ const GlobalScript = (function () {
          * Officially Supported Browsers: Chrome, all Chromium-based browsers, Safari, Firefox
          * @returns {boolean}
          * */
-        checkBrowser: function (action = true) {
+        checkBrowser: (action = true) => {
             if (navigator.userAgent.search("Chrome") >= 0) {
                 return true;
             }
@@ -146,7 +146,6 @@ const GlobalScript = (function () {
             if (!action) {
                 return false;
             }
-            console.log("Unsupported browser detected.");
             GlobalScript.displayNotification("Warning", "Goliath does not support this browser. Goliath may continue to function but not all features may work.", GlobalScript.BannerTypes()["alert-danger"], "center-banner");
             $("#footer-text").addClass("font-weight-bold");
             $("#footer-text").addClass("text-danger");

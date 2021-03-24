@@ -1,12 +1,9 @@
-﻿
-using DNTCaptcha.Core;
+﻿using DNTCaptcha.Core;
 using Goliath.Enums;
 using Goliath.Helper;
 using Goliath.Models;
 using Goliath.Repository;
 using Goliath.Services;
-using GoogleReCaptcha.V3.Interface;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -78,13 +75,12 @@ namespace Goliath.Controllers
             ViewData["ButtonID"] = ButtonID.Login;
             return View();
         }
-        
+
         [Route("login")]
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(SignInModel signInModel)
         {
             ViewData["ButtonID"] = ButtonID.Login;
-
 
             // If the user has signed in with valid data.
             if (ModelState.IsValid)
@@ -175,7 +171,7 @@ namespace Goliath.Controllers
         }
 
         [Route("forgotpassword")]
-        [HttpPost, ValidateAntiForgeryToken ]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordModel model)
         {
             ViewData["ButtonID"] = ButtonID.ForgotPassword;
@@ -207,7 +203,7 @@ namespace Goliath.Controllers
             }
             else
             {
-                ModelState.AddModelError(string.Empty, "We could not find user: " + model.Email);
+                ModelState.AddModelError(string.Empty, $"We could not find user: {model.Email}");
             }
 
             return View();
@@ -240,7 +236,7 @@ namespace Goliath.Controllers
             }
             else
             {
-                ModelState.AddModelError(string.Empty, "We could not find user: " + model.Email);
+                ModelState.AddModelError(string.Empty, $"We could not find user: {model.Email}");
             }
 
             return View();
@@ -282,7 +278,7 @@ namespace Goliath.Controllers
             }
             else
             {
-                ModelState.AddModelError(string.Empty, "We could not find user: " + model.Email);
+                ModelState.AddModelError(string.Empty, $"We could not find user: {model.Email}");
             }
 
             return View();
