@@ -10,7 +10,6 @@ namespace Goliath.Models
         /// <summary>
         /// The Username entered.
         /// </summary>
-        [Required]
         [Display(Name = "Username")]
         [DataType(DataType.Text)]
         public string Username { get; set; }

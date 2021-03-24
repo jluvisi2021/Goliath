@@ -6,18 +6,11 @@
 }
 <!-- Login Panel -->
 
-<script src="https://www.google.com/recaptcha/api.js" async defer></script>
-
 @section RightContainerHeader {
     <h3 class="display-4">Login</h3>
     <p class="text-muted mb-4">Enter your Goliath credentials.</p>
 }
 
-@*
-
-    Validate that javascript is working. If it is not then don't load.
-
-*@
 
 @*If the user is redirected to the login page and
     we want to run some code.*@
@@ -70,14 +63,15 @@
     }
 }
 
-<form asp-action="Index" asp-antiforgery="true">
+<form asp-action="Login" asp-antiforgery="true">
+    @if (!ViewData.ModelState.IsValid)
+    { 
+        @*Display a validation model if the user inputs are incorrect.*@
+        <script>
+            GlobalScript.displayModal('Correct Errors', `Please correct the errors to login:<br />@Html.ValidationSummary(false, "", new { @class = "text-danger" })`);
+        </script>
+    }
 
-    @*
-    Google ReCaptcha v3    
-    *@
-    <input type="hidden" name="captcha" id="captchaInput" />
-
-    <div asp-validation-summary="All" class="text-danger"></div>
     <div class="ht-tm-element input-group mb-3">
         <div class="input-group-prepend">
             <button class="btn btn-outline-primary" type="button">
@@ -95,6 +89,23 @@
         </div>
         <input asp-for="Password" placeholder="Password" required="" class="form-control shadow-sm px-2 rounded-right text-primary" />
     </div>
+    <dnt-captcha asp-captcha-generator-max="999999"
+                 asp-captcha-generator-min="111111"
+                 asp-captcha-generator-language="English"
+                 asp-captcha-generator-display-mode="ShowDigits"
+                 asp-use-relative-urls="true"
+                 asp-placeholder="Enter Captcha"
+                 asp-validation-error-message="Please enter the security code."
+                 asp-font-name="Tahoma"
+                 asp-font-size="20"
+                 asp-fore-color="#333333"
+                 asp-back-color="#ccc"
+                 asp-text-box-class="form-control shadow-sm px-2 rounded-right"
+                 asp-text-box-template="<div class='ht-tm-element input-group mb-3'><div class='input-group-prepend'> <button class='btn btn-outline-primary' type='button'> <i class='fas fa-shield-alt'></i> </button> </div>{0}</div>"
+                 asp-validation-message-class="d-none"
+                 asp-refresh-button-class="fas fa-redo btn-sm"
+                 asp-use-noise="false" />
+
 
     <div class="custom-control custom-checkbox mb-3">
         <input asp-for="RememberMe" id="customCheck1" type="checkbox" checked class="custom-control-input">
@@ -102,6 +113,11 @@
     </div>
     <hr />
     <button type="submit" class="btn btn-primary btn-block text-uppercase mb-2 rounded-pill shadow-sm">Sign in</button>
+
+
+
+
+
 
 
     @*OAuth Login Methods*@
@@ -133,5 +149,5 @@
         </p>
     </div>
 </form>
-
-<partial name="_GoogleReCaptchaV3" />
+@*JQuery Validation Scripts*@
+<partial name="_JQueryValidation" />

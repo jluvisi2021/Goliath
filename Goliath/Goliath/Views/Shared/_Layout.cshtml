@@ -19,12 +19,9 @@
 
     <!-- jQuery, Bootstrap 4 & FontAwesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/lib/theme/bootstrap4-bubblegum.min.css" />
     <script src="~/lib/jquery/jquery.min.js"></script>
     <script src="~/lib/twitter-bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="~/lib/jquery-validate/jquery.validate.min.js"></script>
-    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-    <script src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
-    <link rel="stylesheet" href="~/lib/theme/bootstrap4-bubblegum.min.css" />
 
     <!--------------------------------------->
     <!-- Custom Files (Global) -->
@@ -70,6 +67,8 @@
     </main>
 </body>
 </html>
+
+
 
 @if (bool.Parse(config["General:CheckBrowserCompatibility"]))
 {

@@ -9,6 +9,7 @@ $(window).ready(function (e) {
             e.stopImmediatePropagation();
         }
     });
+
 });
 
 /* Page load end */

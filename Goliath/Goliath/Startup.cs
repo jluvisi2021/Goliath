@@ -1,4 +1,5 @@
 
+using DNTCaptcha.Core;
 using Goliath.Data;
 using Goliath.Models;
 using Goliath.Repository;
@@ -62,11 +63,22 @@ namespace Goliath
 
             // Enable MVC Design
             services.AddControllersWithViews();
+
+            services.AddRouting(options =>
+            {
+                options.LowercaseUrls = true;
+                options.AppendTrailingSlash = true;
+            });
+
+            // DNT Captchas
+            services.AddDNTCaptcha(options =>
+               options.UseCookieStorageProvider()
+                   .ShowThousandsSeparators(false)
+                   .AbsoluteExpiration(minutes: 5)
+            );
+
             
-            // URL Settings
-            services.AddRouting(options => options.LowercaseUrls = true);
-            services.AddRouting(options => options.LowercaseQueryStrings = true);
-            services.AddRouting(options => options.AppendTrailingSlash = true);
+
 #if DEBUG
             // Allow Razor pages to update upon browser refresh.
             services.AddRazorPages().AddRazorRuntimeCompilation();
@@ -75,8 +87,6 @@ namespace Goliath
             // Enable services to use in Controllers through DI.
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IAccountRepository, AccountRepository>();
-            // Google  ReCaptcha v3
-            services.AddHttpClient<ICaptchaValidator, GoogleReCaptchaValidator>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -103,6 +113,8 @@ namespace Goliath
                 // Always require HTTPS connections.
                 app.UseHttpsRedirection();
             }
+
+      
 
             // Use wwwroot folder.
             app.UseStaticFiles();
