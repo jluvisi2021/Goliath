@@ -1,8 +1,10 @@
-using DNTCaptcha.Core;
+
 using Goliath.Data;
 using Goliath.Models;
 using Goliath.Repository;
 using Goliath.Services;
+using GoogleReCaptcha.V3;
+using GoogleReCaptcha.V3.Interface;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -73,15 +75,8 @@ namespace Goliath
             // Enable services to use in Controllers through DI.
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IAccountRepository, AccountRepository>();
-
-            // Enable Captchas
-            services.AddDNTCaptcha(options =>
-            {
-                options.UseCookieStorageProvider()
-                .ShowThousandsSeparators(false)
-                .AbsoluteExpiration(minutes: 5)
-                .WithEncryptionKey("SecureKey1234");
-            });
+            // Google  ReCaptcha v3
+            services.AddHttpClient<ICaptchaValidator, GoogleReCaptchaValidator>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,14 +1,6 @@
 ﻿@*General settings for all of the application.*@
 @{
-
-    ViewBag.fontAwesome = config["FontAwesome:Path"];
     ViewData["Version"] = " v" + config["General:WebVersion"];
-    ViewData["jQueryDevelopment"] = config["General:AssetPaths:Development:jQuery"];
-    ViewData["BootstrapDevelopment"] = config["General:AssetPaths:Development:BootstrapBundle"];
-    ViewData["BootstrapThemeDevelopment"] = config["General:AssetPaths:Development:BootstrapTheme"];
-    ViewData["jQuery"] = config["General:AssetPaths:Production:jQuery"];
-    ViewData["Bootstrap"] = config["General:AssetPaths:Production:BootstrapBundle"];
-    ViewData["BootstrapTheme"] = config["General:AssetPaths:Production:BootstrapTheme"];
     ViewData["CarouselImage1"] = config["General:Images:Carousel:1"];
     ViewData["CarouselImage2"] = config["General:Images:Carousel:2"];
     ViewData["CarouselImage3"] = config["General:Images:Carousel:3"];

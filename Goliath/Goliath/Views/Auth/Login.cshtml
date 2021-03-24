@@ -6,6 +6,8 @@
 }
 <!-- Login Panel -->
 
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
 @section RightContainerHeader {
     <h3 class="display-4">Login</h3>
     <p class="text-muted mb-4">Enter your Goliath credentials.</p>
@@ -32,7 +34,7 @@
     {
         @*User has been redirected; They just logged out.*@
         <script>
-            GlobalScript.displayNotification("Success", "You have been logged out at " + @DateTime.Now, GlobalScript.BannerTypes()["alert-success"], "center-banner");
+            GlobalScript.displayNotification("Success", "You have been logged out at " + "@DateTime.Now", GlobalScript.BannerTypes()["alert-success"], "center-banner");
         </script>
     }
     else if (TempData["Redirect"].Equals((int)RedirectPurpose.VerifiedEmailSuccess))
@@ -69,6 +71,12 @@
 }
 
 <form asp-action="Index" asp-antiforgery="true">
+
+    @*
+    Google ReCaptcha v3    
+    *@
+    <input type="hidden" name="captcha" id="captchaInput" />
+
     <div asp-validation-summary="All" class="text-danger"></div>
     <div class="ht-tm-element input-group mb-3">
         <div class="input-group-prepend">
@@ -94,6 +102,8 @@
     </div>
     <hr />
     <button type="submit" class="btn btn-primary btn-block text-uppercase mb-2 rounded-pill shadow-sm">Sign in</button>
+
+
     @*OAuth Login Methods*@
     <div class="text-center">
         <div class="btn-group" data-toggle="tooltip" data-placement="right" title="Login using an external provider.">
@@ -112,25 +122,6 @@
         </div>
     </div>
     <hr />
-    <!-- EXAMPLE CAPCTHA -->
-    <div class="input-group mb-3">
-        <dnt-captcha asp-captcha-generator-max="9000"
-                     asp-captcha-generator-min="1"
-                     asp-captcha-generator-language="English"
-                     asp-captcha-generator-display-mode="NumberToWord"
-                     asp-use-relative-urls="true"
-                     asp-placeholder="Security code as a number"
-                     asp-validation-error-message="Please enter the security code as a number."
-                     asp-font-name="Tahoma"
-                     asp-font-size="20"
-                     asp-fore-color="#333333"
-                     asp-back-color="#ccc"
-                     asp-text-box-class="text-box form-control"
-                     asp-text-box-template="<div class='input-group'><span class='input-group-prepend'><span class='input-group-text'><i class='fas fa-lock'></i></span></span>{0}</div>"
-                     asp-validation-message-class="text-danger"
-                     asp-refresh-button-class="fas fa-redo btn-sm"
-                     asp-use-noise="false" />
-    </div>
 
     <div class="text-center d-flex justify-content-between mt-4">
         <p>
@@ -142,3 +133,5 @@
         </p>
     </div>
 </form>
+
+<partial name="_GoogleReCaptchaV3" />

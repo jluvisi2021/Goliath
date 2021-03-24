@@ -1,0 +1,12 @@
+﻿@*
+Google ReCaptcha V3 uses the google recaptcha service for protecting against Bots.    
+*@
+<script src="https://www.google.com/recaptcha/api.js?render=@config["googleReCaptcha:SiteKey"]"></script>
+<script>
+        grecaptcha.ready(() => {
+            window.grecaptcha.execute('@config["googleReCaptcha:SiteKey"]', { action: 'auth' }).then(function (token) {
+                $("#captchaInput").val(token);
+                console.log(token);
+            });
+        });
+</script>

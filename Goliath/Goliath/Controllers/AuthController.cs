@@ -1,9 +1,10 @@
-﻿using DNTCaptcha.Core;
+﻿
 using Goliath.Enums;
 using Goliath.Helper;
 using Goliath.Models;
 using Goliath.Repository;
 using Goliath.Services;
+using GoogleReCaptcha.V3.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -38,28 +39,19 @@ namespace Goliath.Controllers
         /// </summary>
         private readonly IEmailService _emailService;
 
-        // Captcha Classes
-        private readonly IDNTCaptchaValidatorService _validatorService;
-
-        private readonly DNTCaptchaOptions _captchaOptions;
-
+        private readonly ICaptchaValidator _captchaValidator;
         public AuthController
             (
             IAccountRepository accountRepository,
             SignInManager<ApplicationUser> signInManager,
             IEmailService emailService,
-            IDNTCaptchaValidatorService validatorService,
-            IOptions<DNTCaptchaOptions> captchaOptions
+            ICaptchaValidator captchaValidator
             )
         {
             _accountRepository = accountRepository;
             _signInManager = signInManager;
             _emailService = emailService;
-            _validatorService = validatorService;
-            _captchaOptions =
-                captchaOptions == null
-                ? throw new ArgumentNullException(nameof(captchaOptions))
-                : captchaOptions.Value;
+            _captchaValidator = captchaValidator;
         }
 
         // Referred to as "Login" as well.
@@ -82,17 +74,20 @@ namespace Goliath.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Index(SignInModel signInModel)
+        public async Task<IActionResult> Index(SignInModel signInModel, string captcha)
         {
             ViewData["ButtonID"] = ButtonID.Login;
+
+            GoliathHelper.PrintDebugger("Captcha: " + captcha);
+            if (!await _captchaValidator.IsCaptchaPassedAsync(captcha))
+            {
+                ModelState.AddModelError("captcha", "Captcha validation failed");
+            }
+
             // If the user has signed in with valid data.
             if (ModelState.IsValid)
             {
-                if (!_validatorService.HasRequestValidCaptchaEntry(Language.English, DisplayMode.ShowDigits))
-                {
-                    ModelState.AddModelError(_captchaOptions.CaptchaComponent.CaptchaInputName, "Please enter the correct security code.");
-                    return View("Login", signInModel);
-                }
+               
 
                 Microsoft.AspNetCore.Identity.SignInResult result = await _accountRepository.PasswordSignInAsync(signInModel);
                 // If the user name and password match.
