@@ -10,6 +10,7 @@ namespace Goliath.Models
         /// <summary>
         /// The Username entered.
         /// </summary>
+        [Required(ErrorMessage = "Please input a username.")]
         [Display(Name = "Username")]
         [DataType(DataType.Text)]
         public string Username { get; set; }
@@ -17,7 +18,7 @@ namespace Goliath.Models
         /// <summary>
         /// The password entered.
         /// </summary>
-        [Required]
+        [Required(ErrorMessage = "Please input a password.")]
         [Display(Name = "Password")]
         [DataType(DataType.Password)]
         public string Password { get; set; }

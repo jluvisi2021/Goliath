@@ -152,6 +152,16 @@ const GlobalScript = (() => {
             $("#footer-text").html($("#footer-text").html() + ' [Unsupported]');
             $("#footer-text").attr("title", $("#footer-text").attr("title").toString() + ' <div class="font-weight-bold text-danger">WARNING: You are using an unsupported browser. Not all features may function correctly.</div>');
             return false;
+        },
+        /**
+         * Loads a captcha partial view on top of the current view.
+         * Requires the CSS ID of the HTML form.
+         * Pound sign is not required.
+         * REQUIRES: A <div> tag (or similar) with a #captcha-view ID to put the captcha into.
+         * @param {string} formID
+         */
+        loadCaptcha: (formID) => {
+            $("#captcha-view").load("/Captcha/LoadCaptcha?formID=" + formID);
         }
     };
 })(); 

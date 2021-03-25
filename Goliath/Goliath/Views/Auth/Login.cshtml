@@ -17,7 +17,7 @@
     <partial name="_RedirectHandler" />
 }
 
-<form asp-action="Login" asp-antiforgery="true">
+<form asp-action="Login" asp-antiforgery="true" id="login-form">
     @if (!ViewData.ModelState.IsValid)
     {
         @*Display a validation model if the user inputs are incorrect.*@
@@ -43,30 +43,15 @@
         </div>
         <input asp-for="Password" placeholder="Password" required="" class="form-control shadow-sm px-2 rounded-right text-primary" />
     </div>
-    <dnt-captcha asp-captcha-generator-max="999999"
-                 asp-captcha-generator-min="111111"
-                 asp-captcha-generator-language="English"
-                 asp-captcha-generator-display-mode="ShowDigits"
-                 asp-use-relative-urls="true"
-                 asp-placeholder="Enter Captcha"
-                 asp-validation-error-message="Please enter the security code."
-                 asp-font-name="Tahoma"
-                 asp-font-size="20"
-                 asp-fore-color="#333333"
-                 asp-back-color="#ccc"
-                 asp-text-box-class="form-control shadow-sm px-2 rounded-right"
-                 asp-text-box-template="<div class='ht-tm-element input-group mb-3'><div class='input-group-prepend'> <button class='btn btn-outline-primary' type='button'> <i class='fas fa-shield-alt'></i> </button> </div>{0}</div>"
-                 asp-validation-message-class="d-none"
-                 asp-refresh-button-class="fas fa-redo btn-sm"
-                 asp-use-noise="false" />
 
     <div class="custom-control custom-checkbox mb-3">
         <input asp-for="RememberMe" id="customCheck1" type="checkbox" checked class="custom-control-input">
         <label for="customCheck1" class="custom-control-label" data-toggle="tooltip" data-placement="right" title="Click for us to remember your account on this browser.">Remember Me</label>
     </div>
     <hr />
-    <button type="submit" class="btn btn-primary btn-block text-uppercase mb-2 rounded-pill shadow-sm">Sign in</button>
-
+    <button type="button" class="btn btn-primary btn-block text-uppercase mb-2 rounded-pill shadow-sm" onclick="GlobalScript.loadCaptcha('login-form');">Sign in</button>
+    @*Render the partial view for the captcha when the sign in button is clicked.*@
+    <div id="captcha-view"></div> 
     @*OAuth Login Methods*@
     <div class="text-center">
         <div class="btn-group" data-toggle="tooltip" data-placement="right" title="Login using an external provider.">

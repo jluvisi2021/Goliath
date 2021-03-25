@@ -118,6 +118,7 @@ namespace Goliath.Controllers
             return View(signInModel);
         }
 
+
         [Route("register/goliath")]
         public IActionResult Register()
         {

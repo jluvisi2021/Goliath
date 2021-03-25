@@ -1,0 +1,47 @@
+﻿@{
+    ViewData["Title"] = "Reset Password";
+}
+
+    <div class="modal fade" id="captchaModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="captchaModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="captchaModalLabel">Complete Captcha</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Please complete the 
+                        <a href="https://www.cloudflare.com/learning/bots/how-captchas-work/" target="_blank">CAPTCHA </a>
+                    prompt below to sign in.</p>
+                    <hr />
+                    <dnt-captcha asp-captcha-generator-max="999999"
+                                 asp-captcha-generator-min="111111"
+                                 asp-captcha-generator-language="English"
+                                 asp-captcha-generator-display-mode="ShowDigits"
+                                 asp-use-relative-urls="true"
+                                 asp-placeholder="Enter Captcha"
+                                 asp-validation-error-message="Please enter the security code."
+                                 asp-font-name="Tahoma"
+                                 asp-font-size="20"
+                                 asp-fore-color="#333333"
+                                 asp-back-color="#ccc"
+                                 asp-text-box-class="form-control shadow-sm px-2 rounded-right"
+                                 asp-text-box-template="<div class='ht-tm-element input-group mb-3'><div class='input-group-prepend'> <button class='btn btn-outline-primary' type='button'> <i class='fas fa-shield-alt'></i> </button> </div>{0}</div>"
+                                 asp-validation-message-class="d-none"
+                                 asp-refresh-button-class="fas fa-redo btn-sm"
+                                 asp-use-noise="false" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" onclick="$('#@ViewData["FormID"]').submit();" data-dismiss="modal">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<script>
+    $('#captchaModal').modal('show');
+</script>
