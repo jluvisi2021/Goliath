@@ -47,14 +47,6 @@ body {
         border-bottom-right-radius: 15%;
         border-top-right-radius: 15%;
     }
-    /*Absolute Centering for mobile phones.*/
-    .parent-container {
-        position: absolute; /* or absolute */
-        top: calc(50% - 30px);
-        left: calc(50% - 30px);
-        /* bring your own prefixes */
-        transform: translate(calc(-50% + 30px), -50%);
-    }
 }
 
 /*Round the left side of containers.*/
