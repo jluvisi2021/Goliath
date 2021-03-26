@@ -12,7 +12,7 @@
 }
 
 <!-- Register Form -->
-<form asp-action="Register" asp-antiforgery="true">
+<form asp-action="Register" asp-antiforgery="true" id="register-form">
     @if (!ViewData.ModelState.IsValid)
     {
 
@@ -68,8 +68,11 @@
     </div>
 
     <hr />
-    <button type="submit" class="btn btn-primary btn-block text-uppercase mb-2 rounded-pill shadow-sm">Send Verification Email</button>
+    <button type="button" class="btn btn-primary btn-block text-uppercase mb-2 rounded-pill shadow-sm" onclick="GlobalScript.loadCaptcha('register-form');">Send Verification Email</button>
+    @*Render the partial view for the captcha when the sign in button is clicked.*@
+    <div id="captcha-view"></div>
     <div class="text-center">
         <p><a asp-controller="Auth" asp-action="RegisterMethod">Go Back</a></p>
     </div>
 </form>
+<partial name="_JQueryValidation" />

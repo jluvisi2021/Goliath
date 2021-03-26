@@ -72,7 +72,7 @@ namespace Goliath.Repository
                     // Send them a token.
                     await GenerateEmailConfirmationToken(userModel, user, device);
                 }
-               
+
                 return result;
             }
             catch (Exception e)
@@ -136,8 +136,6 @@ namespace Goliath.Repository
                 await SendEmailWithUsername(user, device);
             }
         }
-
-        
 
         /// <summary>
         /// Sends an email to the user with a token to reset password.

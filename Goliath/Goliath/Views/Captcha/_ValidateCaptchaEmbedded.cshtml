@@ -1,0 +1,20 @@
+﻿@*
+    Embedded version of the captcha.
+        Should be directly used inside of CSHTML (No Modal)
+*@
+<dnt-captcha asp-captcha-generator-max="999999"
+             asp-captcha-generator-min="111111"
+             asp-captcha-generator-language="English"
+             asp-captcha-generator-display-mode="ShowDigits"
+             asp-use-relative-urls="true"
+             asp-placeholder="Enter Captcha"
+             asp-validation-error-message="Please enter the security code."
+             asp-font-name="Tahoma"
+             asp-font-size="20"
+             asp-fore-color="#333333"
+             asp-back-color="#ccc"
+             asp-text-box-class="form-control shadow-sm px-2 rounded-right"
+             asp-text-box-template="<div class='ht-tm-element input-group mb-3'><div class='input-group-prepend'> <button class='btn btn-outline-primary' type='button'> <i class='fas fa-shield-alt'></i> </button> </div>{0}</div>"
+             asp-validation-message-class="d-none"
+             asp-refresh-button-class="fas fa-redo btn-sm"
+             asp-use-noise="false" />

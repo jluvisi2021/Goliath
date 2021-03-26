@@ -31,7 +31,6 @@ namespace Goliath.Controllers
         /// <param name="partialName">File name of partial view.</param>
         /// <returns></returns>
         public ActionResult GetModule(string partialName) => PartialView($"~/Views/UserPanel/{partialName}.cshtml");
-        
 
         [Route("logout")]
         public async Task<IActionResult> Logout()

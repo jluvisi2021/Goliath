@@ -118,7 +118,6 @@ namespace Goliath.Controllers
             return View(signInModel);
         }
 
-
         [Route("register/goliath")]
         public IActionResult Register()
         {
@@ -133,6 +132,12 @@ namespace Goliath.Controllers
             ViewData["ButtonID"] = ButtonID.Register;
             if (ModelState.IsValid)
             {
+                if (!_validatorService.HasRequestValidCaptchaEntry(Language.English, DisplayMode.ShowDigits))
+                {
+                    ModelState.AddModelError(_captchaOptions.CaptchaComponent.CaptchaInputName, "Incorrect CAPTCHA.");
+                    return View(model);
+                }
+
                 // Pass in the information for the confirmation email.// new string[] { Request.Headers["User-Agent"].ToString(), HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
                 IdentityResult result = await _accountRepository.CreateUserAsync(model,
                 new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
@@ -181,6 +186,12 @@ namespace Goliath.Controllers
 
             if (user != null)
             {
+                if (!_validatorService.HasRequestValidCaptchaEntry(Language.English, DisplayMode.ShowDigits))
+                {
+                    ModelState.AddModelError(_captchaOptions.CaptchaComponent.CaptchaInputName, "Incorrect CAPTCHA.");
+                    return View();
+                }
+
                 // If the username does not match.
                 if (!(user.UserName.Equals(model.Username)))
                 {
@@ -223,12 +234,18 @@ namespace Goliath.Controllers
         {
             ViewData["ButtonID"] = ButtonID.ForgotUsername;
             ApplicationUser user = await _accountRepository.FindByEmailAsync(model.Email);
+
             if (user != null)
             {
                 if (!user.EmailConfirmed)
                 {
                     ModelState.AddModelError(string.Empty, "Please confirm your account before doing this.");
-                    return View(model);
+                    return View();
+                }
+                if (!_validatorService.HasRequestValidCaptchaEntry(Language.English, DisplayMode.ShowDigits))
+                {
+                    ModelState.AddModelError(_captchaOptions.CaptchaComponent.CaptchaInputName, "Incorrect CAPTCHA.");
+                    return View();
                 }
                 await _accountRepository.GenerateUsername(user, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
                 model.IsEmailSent = true;
@@ -266,6 +283,11 @@ namespace Goliath.Controllers
                     model.IsConfirmed = true;
                     ModelState.AddModelError(string.Empty, "Account already verified.");
                     return View(model);
+                }
+                if (!_validatorService.HasRequestValidCaptchaEntry(Language.English, DisplayMode.ShowDigits))
+                {
+                    ModelState.AddModelError(_captchaOptions.CaptchaComponent.CaptchaInputName, "Incorrect CAPTCHA.");
+                    return View();
                 }
                 // Generate a token as well as a user agent.
                 await _accountRepository.GenerateEmailConfirmationToken(user, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
@@ -319,7 +341,7 @@ namespace Goliath.Controllers
         {
             ViewData["ButtonID"] = ButtonID.ForgotPassword;
 
-            if(string.IsNullOrWhiteSpace(uid) || string.IsNullOrWhiteSpace(token))
+            if (string.IsNullOrWhiteSpace(uid) || string.IsNullOrWhiteSpace(token))
             {
                 TempData["Redirect"] = RedirectPurpose.ResetPasswordFailure;
                 return RedirectToAction("Index");
@@ -379,7 +401,7 @@ namespace Goliath.Controllers
         }
 
         private string GetClientUserAgent() => Request.Headers["User-Agent"].ToString();
-        private string GetRemoteClientIPv4() => HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
 
+        private string GetRemoteClientIPv4() => HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
     }
 }

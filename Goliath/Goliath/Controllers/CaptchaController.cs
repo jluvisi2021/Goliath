@@ -1,9 +1,4 @@
-﻿using Goliath.Models;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace Goliath.Controllers
 {
@@ -17,6 +12,5 @@ namespace Goliath.Controllers
             ViewData["FormID"] = formID;
             return PartialView("~/Views/Captcha/_ValidateCaptcha.cshtml");
         }
-           
     }
 }
