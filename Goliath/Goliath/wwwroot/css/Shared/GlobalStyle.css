@@ -58,17 +58,6 @@
         transform: translateX(-50%);
         z-index: 3;
     }
-    /*Make CSS look better on phones.*/
-    #outer {
-        width: 100%;
-        height: 100%;
-        padding-top: 15%;
-        display: flex;
-    }
-
-    #footer {
-        display: none;
-    }
 }
 
 /*Set the bad browser notification to be invisible by default.*/

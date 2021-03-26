@@ -20,63 +20,89 @@
     <meta name="description" content="Official Goliath Password Manager.">
     <meta name="keywords" content="keywords,here">
 
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/lib/theme/bootstrap4-bubblegum.min.css" />
+    <link rel="stylesheet" href="~/css/Errors/NoJSStyle.css" />
+
     <script>
             window.location.replace("@Url.Action("Index", "Auth")");
     </script>
-
-    <style type="text/css">
-        body {
-            font-size: 2.25rem;
-            font-family: 'Trebuchet MS';
-        }
-
-        #wrapper {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%,-50%);
-        }
-
-        #center {
-            text-align: center;
-        }
-
-        #error {
-            color: red;
-        }
-
-        #items {
-            font-size: 1.9rem;
-        }
-
-        li {
-            padding-top: 0.5%;
-            padding-bottom: 0.5%;
-        }
-    </style>
 </head>
 
-<body>
+<body class="bg-dark">
 
     <main id="wrapper">
-        <section id="center">
-            <h1><span id="error">Error</span></h1>
-            <hr />
-            <p>You must enable JavaScript to access Goliath.</p>
-            <a href="https://www.tutorialspoint.com/javascript/javascript_enabling.htm" target="_blank">Learn How</a>
-        </section>
-        <hr />
-        <section>
-            <h5>Recommended Settings</h5>
-            <ul id="items">
-
-                <li class="collapseAfter">Browsers: <a href="https://www.google.com/chrome/" target="_blank">Google Chrome</a>, <a href="https://www.apple.com/mac/" target="_blank">Safari</a>, <a href="https://www.mozilla.org/en-US/firefox/new/" target="_blank">Firefox</a>, <a href="https://www.microsoft.com/en-us/edge" target="_blank">Microsoft Edge</a></li>
-                <li>JavaScript Enabled</li>
-                <li>16:9/16:10/3:2 Screen</li>
-                <li>1080p Resolution or Greater</li>
-                <li><a href="https://github.com/jluvisi2021/Goliath" target="_blank">View Source Code</a></li>
-            </ul>
+        <section class="text-center">
+            <div class="card">
+                <h5 class="card-header">
+                    <span class="text-danger"><strong><i class="fas fa-exclamation-circle"></i> Error:</strong> JavaScript required.</span>
+                </h5>
+                <div class="card-body">
+                    <p class="card-text lead">
+                        <strong class="h2">Oops!</strong>
+                        <br />
+                        It seems you have JavaScript disabled on your browser.
+                        Goliath <u class="font-weight-bold">requires</u> JavaScript to function properly.
+                    </p>
+                    <hr />
+                    <div id="buttons">
+                        <a href="https://www.enable-javascript.com/" target="_blank" class="btn btn-primary">
+                            <i class="fab fa-js-square fa-lg"></i>
+                            Enable JavaScript
+                        </a>
+                        <br id="spacer" />
+                        <a href="#info" class="btn btn-primary">
+                            <i class="fas fa-question-circle fa-lg"></i>
+                            Learn More
+                        </a>
+                        <br id="spacer" />
+                        <a href="https://github.com/jluvisi2021/Goliath" target="_blank" class="btn btn-primary">
+                            <i class="fab fa-github fa-lg"></i>
+                            View GitHub
+                        </a>
+                        <br id="spacer" />
+                    </div>
+                </div>
+            </div>
         </section>
     </main>
+    @*Pop-up without JavaScript*@
+    <div id="info" class="overlay">
+        <div class="popup">
+
+            <h2 class="text-center">Goliath & JavaScript <i class="fab fa-js-square fa-lg text-warning bg-dark"></i></h2>
+            <a class="close" href="#">×</a>
+            <div class="content">
+                <hr />
+                <p>
+                    <a href="https://en.wikipedia.org/wiki/JavaScript" target="_blank">JavaScript</a>
+                    is a programming language which
+                    allows for the creation of interactive web pages.
+                    <br />
+                    Goliath uses JavaScript to prompt
+                    <a href="https://www.cloudflare.com/learning/bots/how-captchas-work/" , target="_blank">
+                        CAPTCHAs,
+                    </a>
+                    dynamically update the view, as well as handle
+                    updates and notifications.
+                    <br />
+                    If JavaScript is not enabled then Goliath cannot perform critical functionality.
+                    <br />
+                    JavaScript can be used for running <a href="https://snyk.io/learn/javascript-security/" , target="_blank">nefarious code</a> but all of Goliath is <b><a href="https://github.com/jluvisi2021/Goliath" , target="_blank">open-source</a></b> so you do
+                    not have to worry about anything malicious being ran in the background.
+                    <br />
+                    Goliath also uses multiple security protocols to ensure data is protected. <a href="#!" , target="_blank">Learn how Goliath protects data.</a>
+                    <hr />
+                    <a href="https://www.enable-javascript.com/" target="_blank" class="btn btn-warning">
+                        <i class="fab fa-js-square fa-lg"></i>
+                        Enable JavaScript
+                    </a>
+                    <a id="close-btn" href="#!" class="btn btn-outline-danger">
+                        <i class="fas fa-times-circle mr-1"></i>Close
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

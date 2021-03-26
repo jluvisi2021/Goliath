@@ -34,18 +34,30 @@ body {
         border-top-right-radius: 15%;
     }
 
-    #inner {
-        min-width: 80%;
-    }
 }
 
+
 /** Allow mobile devices to round corners. */
-@media only screen and (pointer:none), (pointer:coarse) and (max-device-width: 768px) and (orientation: portrait) {
+@media only screen and (pointer:none), (pointer:coarse) and (max-device-width: 767px) and (orientation: portrait) {
     .round-right {
         border-bottom-left-radius: 15%;
         border-top-left-radius: 15%;
         border-bottom-right-radius: 15%;
         border-top-right-radius: 15%;
+    }
+
+}
+
+/**
+    Narrow screens and also short in terms of px.
+    Devices: iPhone 6/7/8
+*/
+@media only screen and (pointer:none), (pointer:coarse) and (max-device-height: 667px) and (orientation: portrait) {
+    #footer {
+        display: none;
+    }
+    #outer {
+        height: calc(100vh);
     }
 }
 
@@ -89,5 +101,9 @@ body {
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
+    }
+    /**Hide footer for bad browser message.*/
+    #footer {
+        display: none;
     }
 }

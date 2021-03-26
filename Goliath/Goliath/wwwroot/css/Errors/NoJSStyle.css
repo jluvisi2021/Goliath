@@ -1,0 +1,131 @@
+﻿/**
+    Manages the No JS error elements.
+
+*/
+#wrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
+
+#spacer {
+    display: none;
+}
+
+/**For the "Learn More" PopUp
+    - No JavaScript
+*/
+
+#close-btn {
+    display: none;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: none;
+    transition: opacity 500ms;
+    opacity: 0;
+    overflow: auto;
+}
+
+    .overlay:target {
+        display: block;
+        opacity: 1;
+    }
+
+.popup {
+    margin: 70px auto;
+    margin-top: 5%;
+    padding: 20px;
+    background: #fff;
+    border-radius: 5px;
+    width: 45%;
+    position: relative;
+    transition: all 1s ease-in-out;
+    overflow: auto;
+}
+
+    .popup h2 {
+        margin-top: 0;
+        color: #333;
+        font-family: Tahoma, Arial, sans-serif;
+    }
+
+    .popup .close {
+        position: absolute;
+        top: 20px;
+        right: 30px;
+        transition: all 200ms;
+        font-size: 30px;
+        font-weight: bold;
+        text-decoration: none;
+        color: #333;
+        z-index: 2;
+    }
+
+        .popup .close:hover {
+            color: dodgerblue;
+        }
+
+    .popup .content {
+        max-height: 30%;
+        overflow: auto;
+    }
+
+@media screen and (max-width: 1000px) {
+    #wrapper {
+        width: 65%;
+    }
+
+    .popup {
+        width: 65%;
+    }
+}
+/*Adjust width and visiblity depending on screen size.*/
+@media screen and (max-width: 800px) {
+    #wrapper {
+        width: 85%;
+    }
+
+    .popup {
+        width: 75%;
+    }
+}
+/*If the view is this small then stack the buttons on
+    top of each other. Also make the close button visible.
+*/
+@media screen and (max-width: 600px) {
+    #wrapper {
+        width: 100%;
+    }
+
+    #spacer {
+        display: unset;
+    }
+
+    #buttons {
+        float: left;
+    }
+
+    a {
+        margin-bottom: 5%;
+    }
+
+    .popup {
+        width: 85%;
+    }
+
+    .close {
+        display: none;
+    }
+
+    #close-btn {
+        display: inline-block;
+    }
+}
