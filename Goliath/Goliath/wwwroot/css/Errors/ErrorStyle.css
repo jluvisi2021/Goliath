@@ -1,13 +1,22 @@
 ﻿#outer {
-    height: 100vh;
+    width: 100%;
+    height: calc(100vh);
+    display: flex;
 }
 
 #collapse {
     cursor: pointer;
 }
+#spacer {
+    display: none;
+}
 
 #information {
     max-width: 50%;
+}
+
+#inner {
+    padding: 0;
 }
 
 @media (max-width: 767px) {
@@ -17,5 +26,18 @@
 
     #information {
         max-width: 100%;
+    }
+    #buttons {
+        float: left;
+    }
+    #spacer {
+        display: unset;
+    }
+    .btn-primary {
+        margin-bottom: 5%;
+
+    }
+    .jumbotron {
+        padding-bottom: 15%;
     }
 }
