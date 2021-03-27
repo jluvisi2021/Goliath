@@ -14,5 +14,7 @@ namespace Goliath.Services
         Task<bool> SendForgotPasswordEmail(UserEmailOptions options);
 
         Task<bool> SendForgotUsernameEmail(UserEmailOptions options);
+
+        Task<bool> SendRoleMovedEmail(UserEmailOptions options);
     }
 }

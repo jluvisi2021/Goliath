@@ -1,0 +1,21 @@
+﻿@using Goliath.Models
+@using Goliath.Enums
+@inject Microsoft.AspNetCore.Identity.SignInManager<ApplicationUser> _signInManager;
+@{
+    ViewData["Title"] = "No Permission";
+    Layout = "~/Views/Shared/Layouts/_UserPanel.cshtml";
+}
+@if (_signInManager.IsSignedIn(User))
+{
+    if (!User.IsInRole(GoliathRoles.Administrator))
+    {
+
+
+        <h1>Error. Not enough permission.</h1>
+        IgnoreBody();
+    }
+    else
+    {
+        @RenderBody();
+    }
+}

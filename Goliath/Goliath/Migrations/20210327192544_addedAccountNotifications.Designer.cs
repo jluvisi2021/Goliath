@@ -4,14 +4,16 @@ using Goliath.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Goliath.Migrations
 {
     [DbContext(typeof(GoliathContext))]
-    partial class GoliathContextModelSnapshot : ModelSnapshot
+    [Migration("20210327192544_addedAccountNotifications")]
+    partial class addedAccountNotifications
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

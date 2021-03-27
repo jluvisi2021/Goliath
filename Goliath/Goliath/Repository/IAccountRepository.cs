@@ -26,5 +26,14 @@ namespace Goliath.Repository
         Task<IdentityResult> ResetPasswordAsync(ResetPasswordModel model);
 
         Task GenerateUsername(ApplicationUser user, DeviceParser device);
+
+        Task CreateSuperUser();
+
+        Task<bool> IsAdmin(ApplicationUser user);
+
+        Task MoveUserToAdminRole(ApplicationUser user);
+
+        Task MoveUserToDefaultRole(ApplicationUser user);
     }
+
 }

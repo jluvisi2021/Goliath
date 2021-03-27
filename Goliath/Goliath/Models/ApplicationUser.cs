@@ -13,6 +13,12 @@ namespace Goliath.Models
         public string DarkTheme { get; set; }
 
         /// <summary>
+        /// Stored in JSON.
+        /// Notifications that get displayed to the user when they login.
+        /// </summary>
+        public string PendingNotifications { get; set; }
+
+        /// <summary>
         /// Manages all of the password data that the user has. <br /><u> JSON Format </u>
         /// </summary>
         public string UserData { get; set; }

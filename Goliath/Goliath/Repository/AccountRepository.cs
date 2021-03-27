@@ -1,4 +1,5 @@
-﻿using Goliath.Helper;
+﻿using Goliath.Enums;
+using Goliath.Helper;
 using Goliath.Models;
 using Goliath.Services;
 using Microsoft.AspNetCore.Identity;
@@ -21,6 +22,7 @@ namespace Goliath.Repository
         /// Manages the sign in process for the user and can check the state of the user.
         /// </summary>
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         /// <summary>
         /// The object which can send direct emails to clients using HTML templates.
@@ -39,13 +41,98 @@ namespace Goliath.Repository
         /// <param name="signInManager"> </param>
         /// <param name="emailService"> </param>
         /// <param name="config"> </param>
-        public AccountRepository(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailService emailService, IConfiguration config)
+        public AccountRepository(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<IdentityRole> roleManager, IEmailService emailService, IConfiguration config)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
             _emailService = emailService;
             _config = config;
+            
         }
+
+        
+        
+        /// <summary>
+        /// Creates a "Super User" which can manage all roles in the panel for all users.
+        /// </summary>
+        /// <returns></returns>
+        public async Task CreateSuperUser()
+        {
+            if(!(await _roleManager.RoleExistsAsync(GoliathRoles.Administrator)))
+            {
+                await _roleManager.CreateAsync(new IdentityRole()
+                {
+                    Name = GoliathRoles.Administrator
+                });
+                await _roleManager.CreateAsync(new IdentityRole()
+                {
+                    Name = GoliathRoles.Default
+                });
+                var result = await _userManager.CreateAsync(new ApplicationUser()
+                {
+                    UserName = _config["SuperUser:Username"],
+                    Email = _config["SuperUser:Email"],
+                    EmailConfirmed = true,
+                }, 
+                password: _config["SuperUser:Password"]
+                );
+                if(result.Succeeded)
+                {
+                    var superUser = await _userManager.FindByNameAsync("GoliathAdmin");
+                    await _userManager.AddToRoleAsync(superUser, GoliathRoles.Administrator);
+                }
+                else
+                {
+                    GoliathHelper.PrintDebugger(GoliathHelper.PrintType.Error, "Could not create super user.");
+                    return;
+                }
+                GoliathHelper.PrintDebugger("Created Super User.");
+            }
+        }
+        /// <summary>
+        /// Returns whether or not the user has the admin role.
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns>If the user is admin.</returns>
+        public async Task<bool> IsAdmin(ApplicationUser user)
+        {
+            return await _userManager.IsInRoleAsync(user, GoliathRoles.Administrator);
+        }
+
+        /// <summary>
+        /// Removes all roles from a user and makes them an admin.
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public async Task MoveUserToAdminRole(ApplicationUser user)
+        {
+            if(!await _userManager.IsInRoleAsync(user, GoliathRoles.Administrator))
+            {
+                await _userManager.RemoveFromRolesAsync(user, await _userManager.GetRolesAsync(user));
+                await _userManager.AddToRoleAsync(user, GoliathRoles.Administrator);
+                var s = await _userManager.GetRolesAsync(user);
+                await SendRoleMovedEmail(user, s[0].ToString(), GoliathRoles.Administrator);
+            }
+        }
+
+        /// <summary>
+        /// Removes all roles from a user and makes them default.
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public async Task MoveUserToDefaultRole(ApplicationUser user)
+        {
+            if (!await _userManager.IsInRoleAsync(user, GoliathRoles.Default))
+            {
+                await _userManager.RemoveFromRolesAsync(user, await _userManager.GetRolesAsync(user));
+                await _userManager.AddToRoleAsync(user, GoliathRoles.Default);
+                var s = await _userManager.GetRolesAsync(user);
+                await SendRoleMovedEmail(user, s[0].ToString(), GoliathRoles.Administrator);
+            }
+        }
+
+        /////////////////////////////////////////////
 
         /// <summary>
         /// Creates the user and adds them to the database using Identity core.
@@ -63,10 +150,15 @@ namespace Goliath.Repository
                     UserName = userModel.Username,
                     Email = userModel.Email,
                 };
+                
+
+
                 // Use Identity Core to create the user.
                 IdentityResult result = await (_userManager.CreateAsync(user, userModel.Password));
                 if (result.Succeeded)
                 {
+                    // add them to default role.
+                    await _userManager.AddToRoleAsync(user, GoliathRoles.Default);
                     // Send them a token.
                     await GenerateEmailConfirmationToken(userModel, user, device);
                 }
@@ -340,6 +432,32 @@ namespace Goliath.Repository
                     },
                     {
                         "{{ComputerInfo}}", device.ToSimpleString()
+                    },
+                    {
+                        "{{DateTime}}", DateTime.Now.ToString()
+                    }
+                        }
+            });
+        }
+
+        private async Task SendRoleMovedEmail(ApplicationUser user, string previousRole, string currentRole)
+        {
+            // Generate email with placeholders.
+            await _emailService.SendForgotUsernameEmail(new()
+            {
+                ToEmails = new List<string>() { user.Email },
+                Placeholders = new Dictionary<string, string> {
+                    {
+                        "{{Username}}", user.UserName
+                    },
+                    {
+                        "{{Email}}", user.Email
+                    },
+                    {
+                        "{{PreviousRole}}", previousRole
+                    },
+                    {
+                        "{{CurrentRole}}", currentRole
                     },
                     {
                         "{{DateTime}}", DateTime.Now.ToString()

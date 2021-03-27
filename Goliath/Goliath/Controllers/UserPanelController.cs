@@ -19,6 +19,7 @@ namespace Goliath.Controllers
         public UserPanelController(IAccountRepository accountRepository)
         {
             _accountRepository = accountRepository;
+
         }
 
         public IActionResult Index() => View("Profile");
@@ -50,5 +51,7 @@ namespace Goliath.Controllers
         public IActionResult About() => View();
 
         public IActionResult BuildInfo() => View();
+
+        public IActionResult AdminPanel() => View();
     }
 }

@@ -1,8 +1,10 @@
 using DNTCaptcha.Core;
 using Goliath.Data;
+using Goliath.Helper;
 using Goliath.Models;
 using Goliath.Repository;
 using Goliath.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -11,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
+using System.Threading.Tasks;
 
 namespace Goliath
 {
@@ -20,6 +23,7 @@ namespace Goliath
         /// <b> appsettings.json </b> object.
         /// </summary>
         private readonly IConfiguration _config;
+        private IAccountRepository _accountRepository;
 
         public Startup(IConfiguration config)
         {
@@ -81,15 +85,17 @@ namespace Goliath
             // Allow Razor pages to update upon browser refresh.
             services.AddRazorPages().AddRazorRuntimeCompilation();
 #endif
-
+            services.AddTransient<AccountRepository>();
             // Enable services to use in Controllers through DI.
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IAccountRepository, AccountRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IAccountRepository accountRepository)
         {
+            _accountRepository = accountRepository;
+            _accountRepository.CreateSuperUser().Wait();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -123,6 +129,7 @@ namespace Goliath
 
             // Require user accounts
             app.UseAuthorization();
+
 
             /* Starts at ~/Views/Auth/Login.cshtml */
             app.UseEndpoints(endpoints =>

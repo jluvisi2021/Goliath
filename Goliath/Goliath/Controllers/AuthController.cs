@@ -4,6 +4,8 @@ using Goliath.Helper;
 using Goliath.Models;
 using Goliath.Repository;
 using Goliath.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
