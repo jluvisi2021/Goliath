@@ -1,8 +1,8 @@
 ﻿namespace Goliath.Models
 {
     /// <summary>
-    /// Parses settings from appsettings.json to utilize in sending SMTP emails.<br/>
-    /// If you are looking to setup a personal SMTP sender then view wiki docs for configuring appsettings.json.
+    /// Parses settings from appsettings.json to utilize in sending SMTP emails. <br /> If you are
+    /// looking to setup a personal SMTP sender then view wiki docs for configuring appsettings.json.
     /// </summary>
     public class SMTPConfigModel
     {
@@ -27,7 +27,7 @@
         public string Host { get; set; }
 
         /// <summary>
-        /// Example: 587 -> Outlook TLS
+        /// Example: 587 -&gt; Outlook TLS
         /// </summary>
         public int Port { get; set; }
     }

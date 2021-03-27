@@ -3,10 +3,9 @@
 namespace Goliath.Models
 {
     /// <summary>
-    /// Manages the email verification page. <br />
-    /// Keeps track of if the user: <br />
-    /// * Entered an Email<br/>
-    /// * Entered an Email that has already been confirmed.<br/>
+    /// Manages the email verification page. <br /> Keeps track of if the user: <br />
+    /// * Entered an Email <br />
+    /// * Entered an Email that has already been confirmed. <br />
     /// * Has had an email sent to them.
     /// </summary>
     public class EmailConfirmModel

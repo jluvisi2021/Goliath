@@ -28,18 +28,17 @@ namespace Goliath.Repository
         private readonly IEmailService _emailService;
 
         /// <summary>
-        /// The configuration for <b>appsettings.json</b>
+        /// The configuration for <b> appsettings.json </b>
         /// </summary>
         private readonly IConfiguration _config;
 
         /// <summary>
-        /// The account repository is used for directly interacting
-        /// with the ApplicationUser class.
+        /// The account repository is used for directly interacting with the ApplicationUser class.
         /// </summary>
-        /// <param name="userManager"></param>
-        /// <param name="signInManager"></param>
-        /// <param name="emailService"></param>
-        /// <param name="config"></param>
+        /// <param name="userManager"> </param>
+        /// <param name="signInManager"> </param>
+        /// <param name="emailService"> </param>
+        /// <param name="config"> </param>
         public AccountRepository(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailService emailService, IConfiguration config)
         {
             _userManager = userManager;
@@ -49,12 +48,11 @@ namespace Goliath.Repository
         }
 
         /// <summary>
-        /// Creates the user and adds them to
-        /// the database using Identity core.
+        /// Creates the user and adds them to the database using Identity core.
         /// </summary>
-        /// <param name="userModel"></param>
-        /// <param name="data">Contains some data that should be presented in the email.</param>
-        /// <returns></returns>
+        /// <param name="userModel"> </param>
+        /// <param name="data"> Contains some data that should be presented in the email. </param>
+        /// <returns> </returns>
         public async Task<IdentityResult> CreateUserAsync(SignUpUserModel userModel, DeviceParser device)
         {
             try
@@ -88,14 +86,13 @@ namespace Goliath.Repository
         }
 
         /// <summary>
-        /// Sends an email to a client with a generated token.
-        /// <br />
-        /// This version of the method should only be used at registration due to its dependency of SignUpUserModel
+        /// Sends an email to a client with a generated token. <br /> This version of the method
+        /// should only be used at registration due to its dependency of SignUpUserModel
         /// </summary>
-        /// <param name="signUpModel"></param>
-        /// <param name="userModel"></param>
-        /// <param name="data"></param>
-        /// <returns></returns>
+        /// <param name="signUpModel"> </param>
+        /// <param name="userModel"> </param>
+        /// <param name="data"> </param>
+        /// <returns> </returns>
         public async Task GenerateEmailConfirmationToken(SignUpUserModel signUpModel, ApplicationUser userModel, DeviceParser device)
         {
             // Generate a token using Identity Core.
@@ -110,8 +107,8 @@ namespace Goliath.Repository
         /// <summary>
         /// Sends an email to the user with a token.
         /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
+        /// <param name="user"> </param>
+        /// <returns> </returns>
         public async Task GenerateEmailConfirmationToken(ApplicationUser userModel, DeviceParser device)
         {
             // Generate a token using Identity Core.
@@ -126,9 +123,9 @@ namespace Goliath.Repository
         /// <summary>
         /// Sends an email to a client with their username.
         /// </summary>
-        /// <param name="model"></param>
-        /// <param name="device"></param>
-        /// <returns></returns>
+        /// <param name="model"> </param>
+        /// <param name="device"> </param>
+        /// <returns> </returns>
         public async Task GenerateUsername(ApplicationUser user, DeviceParser device)
         {
             if (!(string.IsNullOrWhiteSpace(user?.UserName)))
@@ -140,9 +137,9 @@ namespace Goliath.Repository
         /// <summary>
         /// Sends an email to the user with a token to reset password.
         /// </summary>
-        /// <param name="userModel"></param>
-        /// <param name="data"></param>
-        /// <returns></returns>
+        /// <param name="userModel"> </param>
+        /// <param name="data"> </param>
+        /// <returns> </returns>
         public async Task GenerateForgotPasswordToken(ApplicationUser userModel, DeviceParser device)
         {
             // Generate a token using Identity Core.
@@ -155,22 +152,20 @@ namespace Goliath.Repository
         }
 
         /// <summary>
-        /// Returns the application user which is found from
-        /// a specified email address.
+        /// Returns the application user which is found from a specified email address.
         /// </summary>
-        /// <param name="email">Email Address</param>
-        /// <returns>Application User (async)</returns>
+        /// <param name="email"> Email Address </param>
+        /// <returns> Application User (async) </returns>
         public async Task<ApplicationUser> FindByEmailAsync(string email)
         {
             return await _userManager.FindByEmailAsync(email);
         }
 
         /// <summary>
-        /// Sign in to the application
-        /// using the sign in model.
+        /// Sign in to the application using the sign in model.
         /// </summary>
-        /// <param name="signInModel"></param>
-        /// <returns></returns>
+        /// <param name="signInModel"> </param>
+        /// <returns> </returns>
         public async Task<SignInResult> PasswordSignInAsync(SignInModel signInModel)
         {
             return await _signInManager.PasswordSignInAsync(signInModel.Username, signInModel.Password, signInModel.RememberMe, false);
@@ -179,7 +174,7 @@ namespace Goliath.Repository
         /// <summary>
         /// Manage signing out of the application.
         /// </summary>
-        /// <returns></returns>
+        /// <returns> </returns>
         public async Task SignOutAsync()
         {
             await _signInManager.SignOutAsync();
@@ -188,8 +183,8 @@ namespace Goliath.Repository
         /// <summary>
         /// Converts a string to asterisk characters.
         /// </summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
+        /// <param name="str"> </param>
+        /// <returns> </returns>
         private static string ConvertToAstrisk(string str)
         {
             StringBuilder j = new();
@@ -202,15 +197,14 @@ namespace Goliath.Repository
         }
 
         /// <summary>
-        /// Send an email to a user with a confirmation token as well
-        /// as information about the computer sending the email.<br />
-        /// This method does not use the SignUp model. [USE FOR RESENDS]
+        /// Send an email to a user with a confirmation token as well as information about the
+        /// computer sending the email. <br /> This method does not use the SignUp model. [USE FOR RESENDS]
         /// </summary>
-        /// <param name="user"></param>
-        /// <param name="computer">User Agent</param>
-        /// <param name="ip">IPv4 Address</param>
-        /// <param name="token"></param>
-        /// <returns></returns>
+        /// <param name="user"> </param>
+        /// <param name="computer"> User Agent </param>
+        /// <param name="ip"> IPv4 Address </param>
+        /// <param name="token"> </param>
+        /// <returns> </returns>
         private async Task ResendEmailConfirmationToken(ApplicationUser user, DeviceParser device, string token)
         {
             // Get the information required to send the email from the appsettings.json.
@@ -246,11 +240,11 @@ namespace Goliath.Repository
         /// <summary>
         /// Sends an email to a client with a link to reset their password.
         /// </summary>
-        /// <param name="user"></param>
-        /// <param name="computer"></param>
-        /// <param name="ip"></param>
-        /// <param name="token"></param>
-        /// <returns></returns>
+        /// <param name="user"> </param>
+        /// <param name="computer"> </param>
+        /// <param name="ip"> </param>
+        /// <param name="token"> </param>
+        /// <returns> </returns>
         private async Task SendForgotPasswordToken(ApplicationUser user, DeviceParser device, string token)
         {
             // Get the information required to send the email from the appsettings.json.
@@ -284,15 +278,15 @@ namespace Goliath.Repository
         }
 
         /// <summary>
-        /// Send an email to a user with a confirmation token as well
-        /// as information about the computer sending the email.
+        /// Send an email to a user with a confirmation token as well as information about the
+        /// computer sending the email.
         /// </summary>
-        /// <param name="signUpModel">Register Model.</param>
-        /// <param name="user">Current client.</param>
-        /// <param name="computer">UserAgent info.</param>
-        /// <param name="ip">Mapped IPv4 address.</param>
-        /// <param name="token">Generated .NET Core token.</param>
-        /// <returns></returns>
+        /// <param name="signUpModel"> Register Model. </param>
+        /// <param name="user"> Current client. </param>
+        /// <param name="computer"> UserAgent info. </param>
+        /// <param name="ip"> Mapped IPv4 address. </param>
+        /// <param name="token"> Generated .NET Core token. </param>
+        /// <returns> </returns>
         private async Task SendEmailConfirmationToken(SignUpUserModel signUpModel, ApplicationUser user, DeviceParser device, string token)
         {
             // Get values from appsettings.json
@@ -357,9 +351,9 @@ namespace Goliath.Repository
         /// <summary>
         /// Confirms that a clients email and token match.
         /// </summary>
-        /// <param name="uid"></param>
-        /// <param name="token"></param>
-        /// <returns></returns>
+        /// <param name="uid"> </param>
+        /// <param name="token"> </param>
+        /// <returns> </returns>
         public async Task<IdentityResult> ConfirmEmailAsync(string uid, string token)
         {
             // If the email cannot be confirmed then return a failed attempt.

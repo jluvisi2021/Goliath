@@ -1,0 +1,17 @@
+﻿@{ 
+    ViewData["Title"] = "Home";
+}
+@section UniqueHeader {
+    <link rel="stylesheet" href="~/css/Home/HomeStyle.css" />
+    <script src="~/js/Home/HomeScript.js" defer></script>
+}
+
+
+<main id="outer">
+    <section id="inner" class="text-center">
+        <p class="display-2">Goliath Home Screen</p>
+        <a asp-controller="Auth" asp-action="Index">
+            Go to login
+        </a>
+    </section>
+</main>

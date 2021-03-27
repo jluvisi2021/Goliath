@@ -23,8 +23,8 @@ namespace Goliath.Models
         public string Body { get; set; }
 
         /// <summary>
-        /// All of the individual placeholders for the email.<br/>
-        /// Placeholders are denoted by {{NAME}}<br/>
+        /// All of the individual placeholders for the email. <br /> Placeholders are denoted by
+        /// {{NAME}} <br />
         /// </summary>
         public Dictionary<string, string> Placeholders { get; set; }
     }

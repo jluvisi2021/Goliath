@@ -16,18 +16,17 @@
         /// <summary>
         /// Prints a message to the debugger for ASP.NET Core.
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="data"> </param>
         public static void PrintDebugger(string data)
         {
             System.Diagnostics.Debug.WriteLine(data);
         }
 
         /// <summary>
-        /// Print a message to the debugger for ASP.NET Core<br/>
-        /// with a specified type.
+        /// Print a message to the debugger for ASP.NET Core <br /> with a specified type.
         /// </summary>
-        /// <param name="type"></param>
-        /// <param name="data"></param>
+        /// <param name="type"> </param>
+        /// <param name="data"> </param>
         public static void PrintDebugger(PrintType type, string data)
         {
             switch (type)

@@ -40,6 +40,7 @@
     z-index: 5;
 }
 
+
 /* For drop down menus */
 .drop-down {
     position: absolute;
@@ -58,6 +59,13 @@
         transform: translateX(-50%);
         z-index: 3;
     }
+   #footer-padding {
+       padding: 0% !important;
+       margin: 0 auto !important;
+   }
+   #footer {
+       height: auto;
+   }
 }
 
 /*Set the bad browser notification to be invisible by default.*/

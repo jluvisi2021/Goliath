@@ -1,8 +1,7 @@
 ﻿namespace Goliath.Enums
 {
     /// <summary>
-    /// Represents constant strings for buttons on
-    /// the login screen.
+    /// Represents constant strings for buttons on the login screen.
     /// </summary>
     public static class ButtonID
     {

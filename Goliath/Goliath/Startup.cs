@@ -17,7 +17,7 @@ namespace Goliath
     public class Startup
     {
         /// <summary>
-        /// <b>appsettings.json</b> object.
+        /// <b> appsettings.json </b> object.
         /// </summary>
         private readonly IConfiguration _config;
 
@@ -127,9 +127,7 @@ namespace Goliath
             /* Starts at ~/Views/Auth/Login.cshtml */
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Auth}/{action=Index}/{id?}");
+                endpoints.MapDefaultControllerRoute();
                 endpoints.MapRazorPages();
             });
         }

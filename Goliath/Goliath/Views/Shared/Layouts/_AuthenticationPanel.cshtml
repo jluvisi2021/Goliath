@@ -83,7 +83,7 @@
                         <div class="row justify-content-md-center">
                             <div class="col-lg-10 col-xl-9 mx-auto">
 
-                                <div class="text-center">
+                                <header class="text-center">
                                     <!-- Top Radio Buttons -->
                                     <div class=" ht-tm-element btn-group btn-group-toggle" data-toggle="buttons">
 
@@ -124,7 +124,7 @@
                                         @RenderSection("RightContainerHeader", false)
                                         <!-- Right Panel Header End -->
                                     </div>
-                                </div>
+                                </header>
 
                                 <div>
                                     <!-- Right Panel Body -->
@@ -141,13 +141,8 @@
 </main>
 
 @section Scripts {
-    <script type="text/javascript">
-    @*Highlight individual button elements depending on the current page*@
-    loadButtonElements("@ViewData["ButtonID"]");
-    // Remove highlighting for a clicked nav item.
-    $(".nav-item").click(function (e) {
-        $(".nav-item").removeClass("active");
-        $(e.target).addClass("active");
-    });
+    <script type="text/javascript" defer>
+            @*Highlight individual button elements depending on the current page*@
+            loadButtonElements("@ViewData["ButtonID"]");
     </script>
 }

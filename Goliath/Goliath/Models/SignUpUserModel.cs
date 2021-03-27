@@ -8,8 +8,8 @@ namespace Goliath.Models
     public class SignUpUserModel
     {
         /// <summary>
-        /// Requirements: <br/>
-        /// - 6-18 Characters <br/>
+        /// Requirements: <br />
+        /// - 6-18 Characters <br />
         /// - Matches a-Z, 0-9, _
         /// </summary>
         [Required(ErrorMessage = "Please enter a username.")]
@@ -37,13 +37,13 @@ namespace Goliath.Models
         public string ConfirmEmail { get; set; }
 
         /// <summary>
-        /// Requirements: <br/>
-        /// - 6-2048 characters<br/>
-        /// - Cannot contain spaces. <br/>
-        /// - One digit <br/>
-        /// - One UpperCase<br/>
-        /// - One LowerCase<br/>
-        /// - One Non-Alphanumeric Character<br/>
+        /// Requirements: <br />
+        /// - 6-2048 characters <br />
+        /// - Cannot contain spaces. <br />
+        /// - One digit <br />
+        /// - One UpperCase <br />
+        /// - One LowerCase <br />
+        /// - One Non-Alphanumeric Character <br />
         /// </summary>
         [Required(ErrorMessage = "Please enter a password.")]
         [Compare("ConfirmPassword", ErrorMessage = "Password does not match.")]
@@ -54,13 +54,13 @@ namespace Goliath.Models
         public string Password { get; set; }
 
         /// <summary>
-        /// Requirements: <br/>
-        /// - 6-2048 characters<br/>
-        /// - Cannot contain spaces. <br/>
-        /// - One digit <br/>
-        /// - One UpperCase<br/>
-        /// - One LowerCase<br/>
-        /// - One Non-Alphanumeric Character<br/>
+        /// Requirements: <br />
+        /// - 6-2048 characters <br />
+        /// - Cannot contain spaces. <br />
+        /// - One digit <br />
+        /// - One UpperCase <br />
+        /// - One LowerCase <br />
+        /// - One Non-Alphanumeric Character <br />
         /// </summary>
         [Required(ErrorMessage = "Please confirm your password.")]
         [DataType(DataType.Password)]

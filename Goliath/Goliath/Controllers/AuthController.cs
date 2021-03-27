@@ -15,11 +15,9 @@ using System.Threading.Tasks;
 namespace Goliath.Controllers
 {
     /// <summary>
-    /// Manages the Views for Authentication.
-    /// <br />
-    /// ButtonID indicates the radio button to be checked.
-    ///
+    /// Manages the Views for Authentication. <br /> ButtonID indicates the radio button to be checked.
     /// </summary>
+    [Route("account")]
     public sealed class AuthController : Controller
     {
         /// <summary>
@@ -85,6 +83,7 @@ namespace Goliath.Controllers
             // If the user has signed in with valid data.
             if (ModelState.IsValid)
             {
+                
                 if (!_validatorService.HasRequestValidCaptchaEntry(Language.English, DisplayMode.ShowDigits))
                 {
                     ModelState.AddModelError(_captchaOptions.CaptchaComponent.CaptchaInputName, "Incorrect CAPTCHA.");
@@ -138,13 +137,14 @@ namespace Goliath.Controllers
                     return View(model);
                 }
 
-                // Pass in the information for the confirmation email.// new string[] { Request.Headers["User-Agent"].ToString(), HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
+                // Pass in the information for the confirmation email.
                 IdentityResult result = await _accountRepository.CreateUserAsync(model,
                 new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
 
                 if (!result.Succeeded)
                 {
-                    // For every error that is created during registration we add that to the eventual bootstrap modal.
+                    // For every error that is created during registration we add that to the
+                    // eventual bootstrap modal.
                     foreach (IdentityError errorMessage in result.Errors)
                     {
                         ModelState.AddModelError(string.Empty, errorMessage.Description);
@@ -169,14 +169,14 @@ namespace Goliath.Controllers
             return View();
         }
 
-        [Route("credentials/password")]
+        [Route("restore/password")]
         public IActionResult ForgotPassword()
         {
             ViewData["ButtonID"] = ButtonID.ForgotPassword;
             return View();
         }
 
-        [Route("credentials/password")]
+        [Route("restore/password")]
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordModel model)
         {
@@ -221,14 +221,14 @@ namespace Goliath.Controllers
             return View();
         }
 
-        [Route("credentials/username")]
+        [Route("restore/username")]
         public IActionResult ForgotUsername()
         {
             ViewData["ButtonID"] = ButtonID.ForgotUsername;
             return View();
         }
 
-        [Route("credentials/username")]
+        [Route("restore/username")]
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotUsername(ForgotUsernameModel model)
         {
@@ -308,13 +308,12 @@ namespace Goliath.Controllers
         }
 
         /// <summary>
-        /// Verifies an email given a UID and TOKEN.<br />
-        /// Does not contain a view and redirects to index view.<br />
-        /// The result of the method call is returned by the Bootstrap modal.
+        /// Verifies an email given a UID and TOKEN. <br /> Does not contain a view and redirects to
+        /// index view. <br /> The result of the method call is returned by the Bootstrap modal.
         /// </summary>
-        /// <param name="uid"></param>
-        /// <param name="token"></param>
-        /// <returns></returns>
+        /// <param name="uid"> </param>
+        /// <param name="token"> </param>
+        /// <returns> </returns>
         [HttpGet("verify-email")]
         public async Task<IActionResult> VerifyEmail(string uid, string token)
         {

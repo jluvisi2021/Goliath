@@ -79,8 +79,10 @@
 </main>
 
 @section Scripts {
-    <script type="text/javascript">
-    @*Highlight the different nav items depending on what page the user is viewing.*@
+    <script type="text/javascript" defer>
+        $(document).ready(() => {
+            @*Highlight the different nav items depending on what page the user is viewing.*@
     updateNav("@ViewData["Title"].ToString().ToLower().Split(" ")[0]");
+        });
     </script>
 }

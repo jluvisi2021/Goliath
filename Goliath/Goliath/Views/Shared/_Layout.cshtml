@@ -20,7 +20,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/lib/theme/bootstrap4-bubblegum.min.css" />
     <script src="~/lib/jquery/jquery.min.js"></script>
-    <script src="~/lib/twitter-bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/twitter-bootstrap/js/bootstrap.bundle.min.js" defer></script>
 
     <!--------------------------------------->
     <!-- Custom Files (Global) -->
@@ -28,7 +28,7 @@
     <script src="~/js/Shared/GlobalScript.js"></script>
     <!--------------------------->
     <!-- Custom Files (Specific) -->
-    @RenderSection("UniqueHeader")
+    @RenderSection("UniqueHeader", false)
     <!----------------------------->
 </head>
 
@@ -44,7 +44,7 @@
     <!-- Primary Layout Child HTML End-->
     <footer class="footer fixed-bottom" id="footer">
         <div class="container text-center">
-            <p class="p-3">
+            <p id="footer-padding" class="p-3">
                 <a id="footer-text" data-toggle="tooltip" data-placement="top" data-html="true" title="Web Version: @ViewData["Version"]<br>Latest Update: 3/17/2021">
                     [Goliath @ViewData["Version"]] Last Updated: @DateTime.Now
                 </a>
@@ -71,23 +71,22 @@
 
 @*Primary Scripts for child.*@
 @RenderSection("Scripts", false)
-
 @if (bool.Parse(config["General:CheckBrowserCompatibility"]))
 {
-    <script>
-        GlobalScript.checkBrowser();
+    <script type="text/javascript" defer>
+        $(document).ready(() => {
+            GlobalScript.checkBrowser();
+        });
     </script>
 }
 @if (bool.Parse(config["General:EnableTooltips"]))
 {
-    <script>
+    <script type="text/javascript" defer>
         // Load tooltips.
-        $(document).ready(function () {
-
+        $(document).ready(() => {
             $('[data-toggle="tooltip"]').tooltip({
                 container: 'body'
             });
-
         });
     </script>
 }

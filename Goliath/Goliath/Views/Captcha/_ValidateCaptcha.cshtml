@@ -2,29 +2,31 @@
     ViewData["Title"] = "Reset Password";
 }
 
-    <div class="modal fade" id="captchaModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="captchaModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="captchaModalLabel">Complete Captcha</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p>Please complete the
-                        <a href="https://www.cloudflare.com/learning/bots/how-captchas-work/" target="_blank">CAPTCHA </a>
-                    prompt below to sign in.</p>
-                    <hr />
-                    <partial name="_ValidateCaptchaEmbedded" />
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary" onclick="$('#@ViewData["FormID"]').submit();" data-dismiss="modal">Submit</button>
-                </div>
+<div class="modal fade" id="captchaModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="captchaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="captchaModalLabel">Complete Captcha</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    Please complete the
+                    <a href="https://www.cloudflare.com/learning/bots/how-captchas-work/" target="_blank">CAPTCHA </a>
+                    prompt below to sign in.
+                </p>
+                <hr />
+                <partial name="_ValidateCaptchaEmbedded" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" onclick="$('#@ViewData["FormID"]').submit();" data-dismiss="modal">Submit</button>
             </div>
         </div>
     </div>
+</div>
 
 <script>
     $('#captchaModal').modal('show');

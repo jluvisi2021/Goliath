@@ -33,9 +33,7 @@ body {
         border-bottom-right-radius: 15%;
         border-top-right-radius: 15%;
     }
-
 }
-
 
 /** Allow mobile devices to round corners. */
 @media only screen and (pointer:none), (pointer:coarse) and (max-device-width: 767px) and (orientation: portrait) {
@@ -45,7 +43,6 @@ body {
         border-bottom-right-radius: 15%;
         border-top-right-radius: 15%;
     }
-
 }
 
 /**
@@ -56,6 +53,7 @@ body {
     #footer {
         display: none;
     }
+
     #outer {
         height: calc(100vh);
     }

@@ -3,7 +3,7 @@
  *
  * */
 // When the user scrolls to the bottom of a scrollable page remove the footer.
-$(window).on("scroll", () => {
+$(window).scroll(() => {
     if (!($(document).height() > $(window).height())) {
         $("#footer").css({
             "visibility": "visible"

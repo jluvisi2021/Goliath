@@ -3,8 +3,7 @@
 namespace Goliath.Models
 {
     /// <summary>
-    /// The model which handles the actual reset screen where a user enters
-    /// a new password.
+    /// The model which handles the actual reset screen where a user enters a new password.
     /// </summary>
     public class ResetPasswordModel
     {

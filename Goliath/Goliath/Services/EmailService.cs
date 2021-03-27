@@ -9,9 +9,8 @@ using System.Threading.Tasks;
 namespace Goliath.Services
 {
     /// <summary>
-    /// The service for sending emails to clients through Goliath.
-    /// <br />
-    /// Uses the <strong>MailKit</strong> NuGet package for sending emails.
+    /// The service for sending emails to clients through Goliath. <br /> Uses the <strong> MailKit
+    /// </strong> NuGet package for sending emails.
     /// </summary>
     public class EmailService : IEmailService
     {
@@ -33,8 +32,8 @@ namespace Goliath.Services
         /// <summary>
         /// Send a test email.
         /// </summary>
-        /// <param name="options"></param>
-        /// <returns></returns>
+        /// <param name="options"> </param>
+        /// <returns> </returns>
         public async Task<bool> SendTestEmail(UserEmailOptions options)
         {
             options.Subject = "Test Email";
@@ -46,8 +45,8 @@ namespace Goliath.Services
         /// <summary>
         /// Send a confirmation link to a user.
         /// </summary>
-        /// <param name="options"></param>
-        /// <returns>If the email was sent.</returns>
+        /// <param name="options"> </param>
+        /// <returns> If the email was sent. </returns>
         public async Task<bool> SendConfirmationEmail(UserEmailOptions options)
         {
             options.Subject = "Confirm Your Account";
@@ -59,8 +58,8 @@ namespace Goliath.Services
         /// <summary>
         /// Sends a resend verification email to a user.
         /// </summary>
-        /// <param name="options"></param>
-        /// <returns></returns>
+        /// <param name="options"> </param>
+        /// <returns> </returns>
         public async Task<bool> ResendConfirmationEmail(UserEmailOptions options)
         {
             options.Subject = "Confirm Your Account";
@@ -72,8 +71,8 @@ namespace Goliath.Services
         /// <summary>
         /// Sends a forgot password email to the user.
         /// </summary>
-        /// <param name="options"></param>
-        /// <returns></returns>
+        /// <param name="options"> </param>
+        /// <returns> </returns>
         public async Task<bool> SendForgotPasswordEmail(UserEmailOptions options)
         {
             options.Subject = "Reset Password";
@@ -91,13 +90,12 @@ namespace Goliath.Services
         }
 
         /// <summary>
-        /// Send an email to a user while using a template from UserEmailOptions.
-        /// <br />
-        /// This method is not directly called to send an email rather it is passed through
-        /// one of the public async methods of this class.
+        /// Send an email to a user while using a template from UserEmailOptions. <br /> This method
+        /// is not directly called to send an email rather it is passed through one of the public
+        /// async methods of this class.
         /// </summary>
-        /// <param name="options"></param>
-        /// <returns>If the email was sent successfully.</returns>
+        /// <param name="options"> </param>
+        /// <returns> If the email was sent successfully. </returns>
         private async Task<bool> SendEmail(UserEmailOptions options)
         {
             // Setup the mail message.
@@ -143,11 +141,11 @@ namespace Goliath.Services
         }
 
         /// <summary>
-        /// Get the HTML template for sending emails.
-        /// Templates are located in <b>~/Services/EmailTemplate/</b>
+        /// Get the HTML template for sending emails. Templates are located in <b>
+        /// ~/Services/EmailTemplate/ </b>
         /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
+        /// <param name="name"> </param>
+        /// <returns> </returns>
         private static string GetTemplate(string name, UserEmailOptions options)
         {
             // Read all of the raw text data from the file.
