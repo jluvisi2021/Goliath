@@ -1,10 +1,8 @@
 using DNTCaptcha.Core;
 using Goliath.Data;
-using Goliath.Helper;
 using Goliath.Models;
 using Goliath.Repository;
 using Goliath.Services;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -13,7 +11,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
-using System.Threading.Tasks;
 
 namespace Goliath
 {
@@ -38,7 +35,7 @@ namespace Goliath
                 options => options.UseSqlServer(_config.GetConnectionString("DefaultConnection"))
             );
             // Setup custom Identity Core.
-            services.AddIdentity<ApplicationUser, IdentityRole>()
+            services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<GoliathContext>().AddDefaultTokenProviders();
 
             // Setup the SMTPConfig model to use values directly from the appsettings.
@@ -85,7 +82,6 @@ namespace Goliath
             // Allow Razor pages to update upon browser refresh.
             services.AddRazorPages().AddRazorRuntimeCompilation();
 #endif
-            services.AddTransient<AccountRepository>();
             // Enable services to use in Controllers through DI.
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IAccountRepository, AccountRepository>();

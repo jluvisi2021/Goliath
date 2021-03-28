@@ -13,8 +13,7 @@ namespace Goliath.Models
         public string DarkTheme { get; set; }
 
         /// <summary>
-        /// Stored in JSON.
-        /// Notifications that get displayed to the user when they login.
+        /// Stored in JSON. Notifications that get displayed to the user when they login.
         /// </summary>
         public string PendingNotifications { get; set; }
 

@@ -2,13 +2,13 @@
 
 namespace Goliath.Migrations
 {
-    public partial class addedAccountNotifications : Migration
+    public partial class addedApplicationRole : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "PendingNotifications",
-                table: "AspNetUsers",
+                name: "Icon",
+                table: "AspNetRoles",
                 type: "nvarchar(max)",
                 nullable: true);
         }
@@ -16,8 +16,8 @@ namespace Goliath.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "PendingNotifications",
-                table: "AspNetUsers");
+                name: "Icon",
+                table: "AspNetRoles");
         }
     }
 }

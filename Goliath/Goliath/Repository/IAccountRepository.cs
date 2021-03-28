@@ -1,10 +1,15 @@
 ﻿using Goliath.Helper;
 using Goliath.Models;
 using Microsoft.AspNetCore.Identity;
+using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Goliath.Repository
 {
+    /// <summary>
+    /// Assume all methods are Async unless specifically designated as not.
+    /// </summary>
     public interface IAccountRepository
     {
         Task<IdentityResult> CreateUserAsync(SignUpUserModel userModel, DeviceParser device);
@@ -34,6 +39,29 @@ namespace Goliath.Repository
         Task MoveUserToAdminRole(ApplicationUser user);
 
         Task MoveUserToDefaultRole(ApplicationUser user);
-    }
 
+        Task CreateRole(string name);
+
+        Task CreateRole(string name, bool isAdmin);
+
+        Task CreateRole(string name, bool isAdmin, string excludedURLComponents);
+
+        Task CreateRole(string name, string icon, bool isAdmin);
+
+        Task DeleteRole(string name);
+
+        Task<string> GetRoleIcon(string name);
+
+        Task<string> GetRoleExcludedURLComponents(string name);
+
+        Task<List<ApplicationUser>> GetAllUsersInRole(string name);
+
+        Task MoveUserToRoleByName(ApplicationUser user, string name);
+
+        Task<string> GetPrimaryRole(ApplicationUser user);
+
+        Task<ApplicationUser> GetFromUserClaim(ClaimsPrincipal claimsPrincipal);
+
+        Task<ApplicationUser> GetUserByName(string name);
+    }
 }

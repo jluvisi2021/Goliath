@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,7 +23,8 @@ namespace Goliath.Repository
         /// Manages the sign in process for the user and can check the state of the user.
         /// </summary>
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+
+        private readonly RoleManager<ApplicationRole> _roleManager;
 
         /// <summary>
         /// The object which can send direct emails to clients using HTML templates.
@@ -41,45 +43,44 @@ namespace Goliath.Repository
         /// <param name="signInManager"> </param>
         /// <param name="emailService"> </param>
         /// <param name="config"> </param>
-        public AccountRepository(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<IdentityRole> roleManager, IEmailService emailService, IConfiguration config)
+        public AccountRepository(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<ApplicationRole> roleManager, IEmailService emailService, IConfiguration config)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
             _emailService = emailService;
             _config = config;
-            
         }
 
-        
-        
         /// <summary>
         /// Creates a "Super User" which can manage all roles in the panel for all users.
         /// </summary>
-        /// <returns></returns>
+        /// <returns> </returns>
         public async Task CreateSuperUser()
         {
-            if(!(await _roleManager.RoleExistsAsync(GoliathRoles.Administrator)))
+            if (!(await _roleManager.RoleExistsAsync(GoliathRoles.Administrator)))
             {
-                await _roleManager.CreateAsync(new IdentityRole()
+                await _roleManager.CreateAsync(new ApplicationRole()
                 {
-                    Name = GoliathRoles.Administrator
+                    Name = GoliathRoles.Administrator,
+                    Icon = "<span class='badge badge-pill badge-danger ml-1'>ADMIN</span>"
                 });
-                await _roleManager.CreateAsync(new IdentityRole()
+                await _roleManager.CreateAsync(new ApplicationRole()
                 {
-                    Name = GoliathRoles.Default
+                    Name = GoliathRoles.Default,
+                    Icon = ""
                 });
-                var result = await _userManager.CreateAsync(new ApplicationUser()
+                IdentityResult result = await _userManager.CreateAsync(new ApplicationUser()
                 {
                     UserName = _config["SuperUser:Username"],
                     Email = _config["SuperUser:Email"],
                     EmailConfirmed = true,
-                }, 
+                },
                 password: _config["SuperUser:Password"]
                 );
-                if(result.Succeeded)
+                if (result.Succeeded)
                 {
-                    var superUser = await _userManager.FindByNameAsync("GoliathAdmin");
+                    ApplicationUser superUser = await _userManager.FindByNameAsync("GoliathAdmin");
                     await _userManager.AddToRoleAsync(superUser, GoliathRoles.Administrator);
                 }
                 else
@@ -90,28 +91,46 @@ namespace Goliath.Repository
                 GoliathHelper.PrintDebugger("Created Super User.");
             }
         }
+
         /// <summary>
         /// Returns whether or not the user has the admin role.
         /// </summary>
-        /// <param name="user"></param>
-        /// <returns>If the user is admin.</returns>
+        /// <param name="user"> </param>
+        /// <returns> If the user is admin. </returns>
         public async Task<bool> IsAdmin(ApplicationUser user)
         {
-            return await _userManager.IsInRoleAsync(user, GoliathRoles.Administrator);
+            IList<string> roles = await _userManager.GetRolesAsync(user);
+            foreach (string role in roles)
+            {
+                if ((await _roleManager.FindByNameAsync(role)).IsAdministrator)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public async Task<string> GetPrimaryRole(ApplicationUser user)
+        {
+            if ((await _userManager.GetRolesAsync(user)).Count != 0)
+            {
+                return (await _userManager.GetRolesAsync(user))[0];
+            }
+            return string.Empty;
         }
 
         /// <summary>
         /// Removes all roles from a user and makes them an admin.
         /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
+        /// <param name="user"> </param>
+        /// <returns> </returns>
         public async Task MoveUserToAdminRole(ApplicationUser user)
         {
-            if(!await _userManager.IsInRoleAsync(user, GoliathRoles.Administrator))
+            if (!await _userManager.IsInRoleAsync(user, GoliathRoles.Administrator))
             {
                 await _userManager.RemoveFromRolesAsync(user, await _userManager.GetRolesAsync(user));
                 await _userManager.AddToRoleAsync(user, GoliathRoles.Administrator);
-                var s = await _userManager.GetRolesAsync(user);
+                IList<string> s = await _userManager.GetRolesAsync(user);
                 await SendRoleMovedEmail(user, s[0].ToString(), GoliathRoles.Administrator);
             }
         }
@@ -119,20 +138,127 @@ namespace Goliath.Repository
         /// <summary>
         /// Removes all roles from a user and makes them default.
         /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
+        /// <param name="user"> </param>
+        /// <returns> </returns>
         public async Task MoveUserToDefaultRole(ApplicationUser user)
         {
             if (!await _userManager.IsInRoleAsync(user, GoliathRoles.Default))
             {
                 await _userManager.RemoveFromRolesAsync(user, await _userManager.GetRolesAsync(user));
                 await _userManager.AddToRoleAsync(user, GoliathRoles.Default);
-                var s = await _userManager.GetRolesAsync(user);
+                IList<string> s = await _userManager.GetRolesAsync(user);
                 await SendRoleMovedEmail(user, s[0].ToString(), GoliathRoles.Administrator);
             }
         }
 
+        public async Task CreateRole(string name)
+        {
+            await _roleManager.CreateAsync(new ApplicationRole()
+            {
+                Name = name
+            });
+        }
+
+        public async Task CreateRole(string name, bool isAdmin)
+        {
+            await _roleManager.CreateAsync(new ApplicationRole()
+            {
+                Name = name,
+                IsAdministrator = isAdmin
+            });
+        }
+
+        public async Task CreateRole(string name, bool isAdmin, string excludedURLComponents)
+        {
+            await _roleManager.CreateAsync(new ApplicationRole()
+            {
+                Name = name,
+                IsAdministrator = isAdmin,
+                ExcludedURLComponents = excludedURLComponents
+            });
+        }
+
+        public async Task CreateRole(string name, string icon, bool isAdmin)
+        {
+            await _roleManager.CreateAsync(new ApplicationRole()
+            {
+                Name = name,
+                IsAdministrator = isAdmin,
+                Icon = icon
+            });
+        }
+
+        public async Task DeleteRole(string name)
+        {
+            if (await _roleManager.RoleExistsAsync(name))
+            {
+                await _roleManager.DeleteAsync(await _roleManager.FindByNameAsync(name));
+            }
+        }
+
+        public async Task<string> GetRoleIcon(string name)
+        {
+            if (await _roleManager.RoleExistsAsync(name))
+            {
+                return (await _roleManager.FindByNameAsync(name)).Icon;
+            }
+            return "Error";
+        }
+
+        public async Task<string> GetRoleExcludedURLComponents(string name)
+        {
+            if (await _roleManager.RoleExistsAsync(name))
+            {
+                return (await _roleManager.FindByNameAsync(name)).ExcludedURLComponents;
+            }
+            return "Error";
+        }
+
+        public async Task<List<ApplicationUser>> GetAllUsersInRole(string name)
+        {
+            if (await _roleManager.RoleExistsAsync(name))
+            {
+                return (List<ApplicationUser>)(await _userManager.GetUsersInRoleAsync(name));
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Move a user to a specified role.
+        /// </summary>
+        /// <param name="user"> </param>
+        /// <param name="name"> </param>
+        /// <returns> </returns>
+        public async Task MoveUserToRoleByName(ApplicationUser user, string name)
+        {
+            if (await _roleManager.RoleExistsAsync(name))
+            {
+                if (!await _userManager.IsInRoleAsync(user, name))
+                {
+                    await _userManager.RemoveFromRolesAsync(user, await _userManager.GetRolesAsync(user));
+                    await _userManager.AddToRoleAsync(user, name);
+                    IList<string> s = await _userManager.GetRolesAsync(user);
+                    await SendRoleMovedEmail(user, s[0].ToString(), GoliathRoles.Administrator);
+                }
+            }
+        }
+
+        public async Task<ApplicationUser> GetUserByName(string name)
+        {
+            return await _userManager.FindByNameAsync(name);
+        }
+
         /////////////////////////////////////////////
+
+        /// <summary>
+        /// Returns an application user from a claims principal.
+        /// </summary>
+        /// <param name="claimsPrincipal"> </param>
+        /// <returns> </returns>
+        public async Task<ApplicationUser> GetFromUserClaim(ClaimsPrincipal claimsPrincipal)
+        {
+            return await _userManager.FindByNameAsync(claimsPrincipal.Identity.Name);
+        }
 
         /// <summary>
         /// Creates the user and adds them to the database using Identity core.
@@ -150,8 +276,6 @@ namespace Goliath.Repository
                     UserName = userModel.Username,
                     Email = userModel.Email,
                 };
-                
-
 
                 // Use Identity Core to create the user.
                 IdentityResult result = await (_userManager.CreateAsync(user, userModel.Password));

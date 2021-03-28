@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Goliath.Data
 {
-    public class GoliathContext : IdentityDbContext<ApplicationUser>
+    public class GoliathContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
     {
         public GoliathContext(DbContextOptions<GoliathContext> options) : base(options)
         {

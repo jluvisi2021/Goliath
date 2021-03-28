@@ -4,14 +4,16 @@ using Goliath.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Goliath.Migrations
 {
     [DbContext(typeof(GoliathContext))]
-    partial class GoliathContextModelSnapshot : ModelSnapshot
+    [Migration("20210327222746_addedApplicationRole")]
+    partial class addedApplicationRole
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -28,14 +30,8 @@ namespace Goliath.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ExcludedURLComponents")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Icon")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsAdministrator")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)

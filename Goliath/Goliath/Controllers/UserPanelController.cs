@@ -19,7 +19,6 @@ namespace Goliath.Controllers
         public UserPanelController(IAccountRepository accountRepository)
         {
             _accountRepository = accountRepository;
-
         }
 
         public IActionResult Index() => View("Profile");

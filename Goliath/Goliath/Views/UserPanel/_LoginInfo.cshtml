@@ -1,10 +1,22 @@
 ﻿@using Goliath.Models
+@using Goliath.Enums
 @inject Microsoft.AspNetCore.Identity.SignInManager<ApplicationUser> _signInManager;
+@inject Goliath.Repository.IAccountRepository _accoutRepository
 <!-- Login Greeting Start -->
 @if (_signInManager.IsSignedIn(User))
 {
     <form class="form-inline my-2 my-lg-0">
         <a asp-action="Index" class="nav-item text-white">Welcome Back, @User.Identity.Name</a>
+        @*
+            <span class="badge badge-pill badge-danger ml-1">ADMIN</span>
+        *@
+        @*Display the role badge.*@
+        @Html.Raw(
+     await _accoutRepository.GetRoleIcon(
+       await _accoutRepository.GetPrimaryRole(
+           await _accoutRepository.GetUserByName(
+               User.Identity.Name))))
+
         <span class="pl-1" style="color: gray; font-size: 1.75rem">|</span>
         <a asp-action="Logout" class="btn btn-secondary ml-2 px-3">Logout</a>
     </form>

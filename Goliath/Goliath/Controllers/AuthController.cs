@@ -4,8 +4,6 @@ using Goliath.Helper;
 using Goliath.Models;
 using Goliath.Repository;
 using Goliath.Services;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -85,7 +83,6 @@ namespace Goliath.Controllers
             // If the user has signed in with valid data.
             if (ModelState.IsValid)
             {
-                
                 if (!_validatorService.HasRequestValidCaptchaEntry(Language.English, DisplayMode.ShowDigits))
                 {
                     ModelState.AddModelError(_captchaOptions.CaptchaComponent.CaptchaInputName, "Incorrect CAPTCHA.");

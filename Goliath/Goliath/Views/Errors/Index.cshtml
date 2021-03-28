@@ -75,26 +75,26 @@
                 <p class="lead">
                     <div id="buttons">
                         <a href="javascript: history.go(-1)" class="btn btn-primary" role="button">
-                        <i class="fas fa-undo-alt mr-2"></i>Go Back
-                    </a>
-                    <br id="spacer" />
-                    @if (_signInManager.IsSignedIn(User))
-                    {
-                        <a asp-controller="UserPanel" asp-action="Logout" class="btn btn-primary" role="button">
-                            <i class="fas fa-sign-in-alt mr-2"></i>Go to Login
+                            <i class="fas fa-undo-alt mr-2"></i>Go Back
                         </a>
-                    }
-                    else
-                    {
-                        <a asp-controller="Auth" asp-action="Index" class="btn btn-primary" role="button">
-                            <i class="fas fa-sign-in-alt mr-2"></i>Go to Login
+                        <br id="spacer" />
+                        @if (_signInManager.IsSignedIn(User))
+                        {
+                            <a asp-controller="UserPanel" asp-action="Logout" class="btn btn-primary" role="button">
+                                <i class="fas fa-sign-in-alt mr-2"></i>Go to Login
+                            </a>
+                        }
+                        else
+                        {
+                            <a asp-controller="Auth" asp-action="Index" class="btn btn-primary" role="button">
+                                <i class="fas fa-sign-in-alt mr-2"></i>Go to Login
+                            </a>
+                        }
+                        <br id="spacer" />
+                        <a asp-controller="UserPanel" asp-action="Index" class="btn btn-primary" role="button">
+                            <i class="fas fa-database"></i>
+                            Go to UserPanel
                         </a>
-                    }
-                    <br id="spacer" />
-                    <a asp-controller="UserPanel" asp-action="Index" class="btn btn-primary" role="button">
-                        <i class="fas fa-database"></i>
-                        Go to UserPanel
-                    </a>
                     </div>
                 </p>
 

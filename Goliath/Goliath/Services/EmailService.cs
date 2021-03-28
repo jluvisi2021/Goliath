@@ -45,8 +45,8 @@ namespace Goliath.Services
         /// <summary>
         /// Sends an email to a user indicating that there role has been changed.
         /// </summary>
-        /// <param name="options"></param>
-        /// <returns></returns>
+        /// <param name="options"> </param>
+        /// <returns> </returns>
         public async Task<bool> SendRoleMovedEmail(UserEmailOptions options)
         {
             options.Subject = "Goliath Notification";
