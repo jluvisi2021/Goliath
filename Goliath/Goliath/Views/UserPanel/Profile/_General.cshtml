@@ -1,4 +1,46 @@
-﻿<h1>General Tab</h1>
-<h1>Hello World!</h1>
-<h1>Hello World!</h1>
-<h1>Hello World!</h1>
+﻿@model Goliath.Models.GeneralProfileSettingsModel
+
+<h3>All Available Settings</h3>
+<hr />
+<form asp-action="Profile" asp-antiforgery="true">
+    <div class="container">
+        <div class="row">
+            <div class="text-left">
+                <!-- Background Color Option -->
+                <p id="option-text">BACKGROUND COLOR</p>
+                <div class="ht-tm-element input-group mb-3">
+                    <div class="input-group-prepend ">
+                        <button class="btn btn-outline-primary" type="button">
+                            <i class="fas fa-tint"></i>
+                        </button>
+                    </div>
+                    <input asp-for="BackgroundColor" placeholder="Enter HEX Value" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
+                    <button type="button" class="btn btn-outline-primary ml-2" data-toggle="tooltip" data-placement="right" title="Click to open a color selection menu.">Select</button>
+                </div>
+                <!-- Background Color Option End -->
+                <hr />
+                <!-- Enable Dark Theme Option -->
+                <p id="option-text">CURRENT THEME</p>
+                <div class="ht-tm-element input-group mb-3">
+                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                        <label class="btn btn-outline-primary active pointer-cursor">
+                            <input type="radio" name="options" autocomplete="off" checked="">
+                            <i class="far fa-lightbulb mr-2"></i>Light
+                        </label>
+                        <label class="btn btn-outline-primary pointer-cursor">
+                            <input type="radio" name="options" autocomplete="off">
+                            <i class="far fa-moon mr-2"></i>Dark
+                        </label>
+                    </div>
+                </div>
+                <!-- Enable Dark Theme Option End-->
+                <hr />
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-secondary">
+        <i class="fas fas fa-tools mr-2"></i>
+        Submit
+    </button>
+</form>

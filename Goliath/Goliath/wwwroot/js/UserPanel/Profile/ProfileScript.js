@@ -6,7 +6,9 @@
 $(window).ready(() => {
     $(".list-group .list-group-item").click((e) => {
         $(".list-group .list-group-item").removeClass("active");
+        $(".list-group .list-group-item").removeClass("font-weight-bold");
         $(e.target).addClass("active");
+        $(e.target).addClass("font-weight-bold");
     });
     $("#profile-nav-general").click(() => {
         $("#view").load("/UserPanel/GetModule?partialName=Profile/_General");

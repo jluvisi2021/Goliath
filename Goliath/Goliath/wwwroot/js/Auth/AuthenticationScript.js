@@ -34,3 +34,52 @@ function loadButtonElements(id) {
         $("#" + id + "-radio-btn").prop("checked", true);
     }
 }
+
+/** Adjusts the theme of the login screen depending on time of day. Can be disabled. */
+function changeTheme() {
+    if (!(localStorage.getItem("darkTheme") === null || localStorage.getItem("darkTheme") === "enabled")) {
+        return;
+    }
+    $("body").removeClass("gradient-light");
+    $("body").addClass("gradient-dark");
+    $("#footer").css({
+        "background-color": "#585858",
+        "color": "#FFFFFF"
+    });
+    $("#right-container").css({
+        "background-color": "#d2d2d2"
+    });
+    $("input").css({
+        "background-color": "#c2c2c2"
+    });
+    $("#dropdown").css({
+        "background-color": "#c2c2c2"
+    });
+    $("#signup-goliath").removeClass("btn-success");
+    $("#signup-goliath").addClass("btn-dark");
+    $("button").removeClass("btn-primary");
+    $("button").addClass("btn-dark");
+    $("i").addClass("text-white");
+    $(".btn-outline-primary").css({
+        "border-color": "#363636"
+    });
+    $("#toggle-dark").removeClass("btn-dark");
+    $("#toggle-dark").addClass("btn-light");
+    $("#toggle-dark").addClass("border-dark");
+}
+
+/**
+ * Toggles if dark theme should be active.
+ * */
+function toggleDarkTheme() {
+    if (localStorage.getItem("darkTheme") === null) {
+        localStorage.setItem("darkTheme", "disabled");
+        location.reload();
+    } else if (localStorage.getItem("darkTheme") === "enabled") {
+        localStorage.setItem("darkTheme", "disabled");
+        location.reload();
+    } else {
+        localStorage.setItem("darkTheme", "enabled");
+        location.reload();
+    }
+}

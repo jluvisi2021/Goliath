@@ -1,4 +1,5 @@
 ﻿using Goliath.Enums;
+using Goliath.Models;
 using Goliath.Repository;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -21,7 +22,21 @@ namespace Goliath.Controllers
             _accountRepository = accountRepository;
         }
 
-        public IActionResult Index() => View("Profile");
+        public IActionResult Index()
+        {
+            return View("Profile");
+        }
+
+        public IActionResult Profile()
+        {
+            return View();
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public IActionResult Profile(GeneralProfileSettingsModel model)
+        {
+            return View(model);
+        }
 
         /// <summary>
         /// Returns a specific partial view in Ajax. <br /> Specifically useful for loading a part

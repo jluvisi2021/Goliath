@@ -1,5 +1,5 @@
 ﻿/*Background Gradient + Centering*/
-body {
+.gradient-light {
     margin: 0;
     background-position: center center;
     background: #CE6CE9;
@@ -9,6 +9,22 @@ body {
     background-repeat: no-repeat;
     background-size: cover;
     background-attachment: fixed;
+}
+
+.gradient-dark {
+    margin: 0;
+    background-position: center center;
+    background: #1a1a1a;
+    background: -webkit-linear-gradient(bottom right, #1a1a1a, #525252);
+    background: -moz-linear-gradient(bottom right, #1a1a1a, #525252);
+    background: linear-gradient(to top left, #1a1a1a, #525252);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+#right-container {
+    background-color: #ffffff;
 }
 
 /*Round the corners of the right side of a container.*/

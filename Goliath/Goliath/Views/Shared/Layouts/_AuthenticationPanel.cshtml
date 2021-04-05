@@ -74,7 +74,7 @@
             </article>
 
             <!-- The content half -->
-            <article class="col-md-6 bg-light round-right" id="right-container">
+            <article class="col-md-6 round-right" id="right-container">
                 <!--<div class="container bg-light round parent-container" style="min-height: 100%;zoom: 1.15; margin-top: 3%" id="right-container">-->
                 <div class="d-flex align-items-center py-5">
 
@@ -103,7 +103,7 @@
                                                 Other
                                             </a>
                                             <!-- Other Drop Down Start -->
-                                            <div class="dropdown-menu drop-down" aria-labelledby="other-dropdown" x-placement="bottom-start">
+                                            <div class="dropdown-menu drop-down" aria-labelledby="other-dropdown" x-placement="bottom-start" id="dropdown">
                                                 <a asp-controller="Auth" asp-action="ForgotUsername" id="forgot-username" class="dropdown-item">Forgot Username</a>
                                                 <a asp-controller="Auth" asp-action="ForgotPassword" id="forgot-password" class="dropdown-item">Forgot Password</a>
                                                 <a asp-controller="Auth" asp-action="VerifyEmail" id="verify-email" class="dropdown-item">Verify Email</a>
@@ -143,6 +143,7 @@
 @section Scripts {
     <script type="text/javascript" defer>
             @*Highlight individual button elements depending on the current page*@
-            loadButtonElements("@ViewData["ButtonID"]");
+        loadButtonElements("@ViewData["ButtonID"]");
+        changeTheme();
     </script>
 }

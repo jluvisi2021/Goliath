@@ -24,18 +24,11 @@ header {
 
 /**The primary container for the profile. (TODO: Look into updating)*/
 #primary-container {
+    min-width: 20rem;
     width: 45rem;
+    max-width: 45rem;
     height: 35rem;
     background-color: white;
-}
-
-/*Make the container smaller to a certain point depending on media.*/
-@media all and (max-width: 1000px) {
-    #primary-container {
-        width: 35rem;
-        height: 28rem;
-        background-color: white;
-    }
 }
 
 /*Do not allow the nav to shrink/grow past a certain point no matter the media width.*/
@@ -55,3 +48,31 @@ header {
 .vertical-center {
     min-height: 100%;
 }
+
+/* Settings for Profile */
+@media all and (max-width: 1000px) {
+    #settings-gear {
+        display: none;
+    }
+}
+
+#nav-buttons {
+    cursor: pointer;
+}
+
+/*Text which appears above all options.*/
+#option-text {
+    font-size: 0.85rem;
+    color: gray;
+    opacity: 0.65;
+    font-weight: bold;
+}
+
+/*For HTML elements which need a cursor.*/
+.pointer-cursor {
+    cursor: pointer;
+}
+    /*Which these buttons are hovered over they have the default color of btn-primary. We want to make the color more distinct.*/
+    .pointer-cursor:hover {
+        background-color: rgb(62 90 241 / 0.70);
+    }
