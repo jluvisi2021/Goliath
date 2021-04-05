@@ -7,7 +7,9 @@
     - About Goliath
     - Build Info
 *@
-
+@using Goliath.Models
+@inject Goliath.Repository.IAccountRepository _accountRepository;
+@inject Microsoft.AspNetCore.Identity.SignInManager<ApplicationUser> _signInManager;
 @{
     Layout = "_Layout";
 }
@@ -33,26 +35,31 @@
             <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
                 <ul class="navbar-nav mr-auto mt-2 mt-md-0">
                     <li class="nav-item" id="profile-nav">
-                        <a class="nav-link" asp-action="Index">Profile</a>
+                        <a class="nav-link" asp-controller="UserPanel" asp-action="Index">Profile</a>
                     </li>
                     <li class="nav-item" id="database-nav">
-                        <a class="nav-link" asp-action="Database">Database</a>
+                        <a class="nav-link" asp-controller="UserPanel" asp-action="Database">Database</a>
                     </li>
                     <li class="nav-item" id="utilities-nav">
-                        <a class="nav-link" asp-action="Utilities">Utilities</a>
+                        <a class="nav-link" asp-controller="UserPanel" asp-action="Utilities">Utilities</a>
                     </li>
                     <li class="nav-item" id="help-nav">
-                        <a class="nav-link" asp-action="Help">Help (Q&A)</a>
+                        <a class="nav-link" asp-controller="UserPanel" asp-action="Help">Help (Q&A)</a>
                     </li>
                     <li class="nav-item" id="about-nav">
-                        <a class="nav-link" asp-action="About">About Goliath</a>
+                        <a class="nav-link" asp-controller="UserPanel" asp-action="About">About Goliath</a>
                     </li>
                     <li class="nav-item" id="build-nav">
-                        <a class="nav-link" asp-action="BuildInfo">Build Info</a>
+                        <a class="nav-link" asp-controller="UserPanel" asp-action="BuildInfo">Build Info</a>
                     </li>
-                    <li class="nav-item" id="admin-nav">
-                        <a class="nav-link" asp-action="AdminPanel">Admin Panel</a>
-                    </li>
+                    @*If the user is signed in and is an admin then load admin tab.*@
+                    @if (_signInManager.IsSignedIn(User) && await _accountRepository.IsAdmin(User.Identity.Name))
+                    {
+                        <li class="nav-item" id="admin-nav">
+                            <a class="nav-link" asp-controller="AdminPanel" asp-action="Index">Admin Panel</a>
+                        </li>
+                    }
+
                     @*Dropdown Menu. These do not contain individual pages (Use redirections).*@
                     <li class="nav-item dropdown" id="other-nav">
                         <a class="nav-link dropdown-toggle" href="#" role="button" id="navbarDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -69,7 +76,7 @@
                     </li>
                 </ul>
                 @*Load the top right header indicating the user is logged in.*@
-                <partial name="_LoginInfo" />
+                <partial name="~/Views/UserPanel/_LoginInfo.cshtml" />
             </div>
         </nav>
     </header>

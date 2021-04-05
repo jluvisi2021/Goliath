@@ -20,6 +20,7 @@ namespace Goliath
         /// <b> appsettings.json </b> object.
         /// </summary>
         private readonly IConfiguration _config;
+
         private IAccountRepository _accountRepository;
 
         public Startup(IConfiguration config)
@@ -125,7 +126,6 @@ namespace Goliath
 
             // Require user accounts
             app.UseAuthorization();
-
 
             /* Starts at ~/Views/Auth/Login.cshtml */
             app.UseEndpoints(endpoints =>

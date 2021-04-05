@@ -63,7 +63,8 @@ namespace Goliath.Repository
                 await _roleManager.CreateAsync(new ApplicationRole()
                 {
                     Name = GoliathRoles.Administrator,
-                    Icon = "<span class='badge badge-pill badge-danger ml-1'>ADMIN</span>"
+                    Icon = "<span class='badge badge-pill badge-danger ml-1'>ADMIN</span>",
+                    IsAdministrator = true
                 });
                 await _roleManager.CreateAsync(new ApplicationRole()
                 {
@@ -75,12 +76,14 @@ namespace Goliath.Repository
                     UserName = _config["SuperUser:Username"],
                     Email = _config["SuperUser:Email"],
                     EmailConfirmed = true,
+                    
                 },
                 password: _config["SuperUser:Password"]
                 );
                 if (result.Succeeded)
                 {
                     ApplicationUser superUser = await _userManager.FindByNameAsync("GoliathAdmin");
+                    
                     await _userManager.AddToRoleAsync(superUser, GoliathRoles.Administrator);
                 }
                 else
@@ -99,6 +102,20 @@ namespace Goliath.Repository
         /// <returns> If the user is admin. </returns>
         public async Task<bool> IsAdmin(ApplicationUser user)
         {
+            IList<string> roles = await _userManager.GetRolesAsync(user);
+            foreach (string role in roles)
+            {
+                if ((await _roleManager.FindByNameAsync(role)).IsAdministrator)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public async Task<bool> IsAdmin(string username)
+        {
+            var user = await _userManager.FindByNameAsync(username);
             IList<string> roles = await _userManager.GetRolesAsync(user);
             foreach (string role in roles)
             {

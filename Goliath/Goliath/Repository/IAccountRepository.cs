@@ -36,6 +36,8 @@ namespace Goliath.Repository
 
         Task<bool> IsAdmin(ApplicationUser user);
 
+        Task<bool> IsAdmin(string username);
+
         Task MoveUserToAdminRole(ApplicationUser user);
 
         Task MoveUserToDefaultRole(ApplicationUser user);

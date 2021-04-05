@@ -1,0 +1,25 @@
+﻿@using Goliath.Models
+@inject Microsoft.AspNetCore.Identity.SignInManager<ApplicationUser> _signInManager;
+@inject Goliath.Repository.IAccountRepository _accountRepository;
+@{
+    Layout = "~/Views/Shared/Layouts/_UserPanel.cshtml";
+}
+@if (_signInManager.IsSignedIn(User))
+{
+    if (!await _accountRepository.IsAdmin(User.Identity.Name))
+    {
+
+        <partial name="_NotEnoughPermissionPartial" />
+        IgnoreBody();
+    }
+    else
+    {
+        @RenderBody();
+    }
+}
+else
+{
+    @*User is not signed in.*@
+    <partial name="_NotEnoughPermissionPartial" />
+    IgnoreBody();
+}
