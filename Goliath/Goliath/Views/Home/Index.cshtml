@@ -2,15 +2,155 @@
     ViewData["Title"] = "Home";
 }
 @section UniqueHeader {
+    <link rel="stylesheet"
+          href="https://unpkg.com/simplebar@latest/dist/simplebar.css" />
+    <script src="https://unpkg.com/simplebar@latest/dist/simplebar.min.js"></script>
+    <!-- or -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.css" />
+    <script src="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.min.js"></script>
     <link rel="stylesheet" href="~/css/Home/HomeStyle.css" />
     <script src="~/js/Home/HomeScript.js" defer></script>
 }
-
-<main id="outer">
-    <section id="inner" class="text-center">
-        <p class="display-2">Goliath Home Screen</p>
-        <a asp-controller="Auth" asp-action="Index">
-            Go to login
+<header>
+    <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light border-bottom">
+        <a class="navbar-brand" href="#!">
+            <i class="fas fa-shield-alt"></i>
+            Goliath
         </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <a id="home-nav" class="nav-item nav-link active" href="#">
+                    <i class="fas fa-home mr-2"></i>Home <span class="sr-only">(current)</span>
+                </a>
+                <a id="features-nav" class="nav-item nav-link" href="#">
+                    <i class="fas fa-star mr-2"></i>Features
+                </a>
+                <a id="privacy-nav" class="nav-item nav-link" href="#">
+                    <i class="fas fa-cookie mr-2"></i>Privacy
+                </a>
+                <a id="contact-nav" class="nav-item nav-link" href="#">
+                    <i class="fas fa-envelope mr-2"></i>Contact
+                </a>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<div data-simplebar class="container-fluid">
+    <div id="vanta-js"></div>
+    <section class="row text-white mt-3">
+        <div class="col-12">
+            <article class="row d-flex justify-content-center">
+                <span id="g-title" class="display-3 font-weight-bold">
+                    <i class="fas fa-shield-alt mr-2"></i>
+                    Goliath
+                    <i class="fas fa-shield-alt ml-2"></i>
+                </span>
+
+            </article>
+            <article class="row d-flex justify-content-center">
+                <span id="g-title-description" class="h2 font-weight-normal">
+                    <i>
+                        A simple and secure password manager for the Web.
+                    </i>
+
+                </span>
+            </article>
+        </div>
+
     </section>
-</main>
+    <section class="row">
+        <img src="~/images/iphone-mockup.png" class="img-fluid w-25 h-25 hvr-rotate" />
+        <div class="col-6">
+            <hr class="text-white bg-white" style="opacity: 0.5;"/>
+            <div class="align-content-lg-end">
+                <div class="card text-center" style="opacity: 0.85;">
+                    <div class="card-body">
+                        <h4 class="card-title">Start using Goliath Now:</h4>
+                        <p class="card-text">
+                            <i>
+                                Goliath requires an account to store personal information.
+                            </i>
+                        </p>
+                        <hr />
+                        <a asp-controller="Auth" asp-action="RegisterMethod" target="_blank" class="btn btn-primary w-50 hvr-grow mb-3">
+                            <span class="fas fa-external-link-alt mr-2"></span>Register New Account
+                        </a>
+
+                        <a asp-controller="Auth" asp-action="Login" target="_blank" class="btn btn-primary w-50 hvr-grow mb-3">
+                            <span class="fas fa-sign-in-alt mr-2"></span>Sign In
+                        </a>
+                        <br />
+                        <a href="#!" class="hvr-push">
+                            <i class="fas fa-question-circle"></i> Need help logging in?
+                        </a>
+                    </div>
+                </div>
+                <hr class="text-white bg-white" style="opacity: 0.5;" />
+                <h4 class="text-white">Learn More About Goliath:</h4>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="card bg-primary text-white mb-3 text-center w-75">
+                <div class="card-body">
+                    <h4>
+                        <span>New Updates</span>
+                        <i class="fas fa-wrench"></i>
+                    </h4>
+                    
+                    <hr />
+                    <blockquote class="card-blockquote">
+                        <p>
+                            <strong>
+                                Version: X.X.X.X
+                            </strong>
+                            <div class="text-left">
+                                <i class="fas fa-plus-square text-success"></i>
+                                Added something.
+                                <br />
+                                <i class="fas fa-plus-square text-success"></i>
+                                Added something else.
+                                <br />
+                                <i class="fas fa-minus-square text-danger"></i>
+                                Removed something.
+                            </div>
+                            
+                            <br />
+                            <i class="far fa-clock mr-2"></i><i>2 days ago.</i>
+                        </p>
+                        <hr />
+                        <footer>
+                            Follow new updates
+                            <a class="text-white font-italic" href="#!" title="Source Title">at the official GitHub.</a>
+                        </footer>
+
+                    </blockquote>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
+
+<script>
+    VANTA.NET({
+        el: "#vanta-js",
+        mouseControls: true,
+        touchControls: true,
+        gyroControls: false,
+        minHeight: 200.00,
+        minWidth: 200.00,
+        scale: 1.00,
+        scaleMobile: 1.00,
+        color: 0x686868,
+        backgroundColor: 0x2a2a2e,
+        maxDistance: 22.00,
+        spacing: 16.00
+    })
+</script>

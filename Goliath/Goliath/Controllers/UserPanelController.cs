@@ -33,10 +33,12 @@ namespace Goliath.Controllers
         }
 
         [HttpPost, ValidateAntiForgeryToken]
-        public IActionResult Profile(GeneralProfileSettingsModel model)
+        public IActionResult Profile(ProfileSettingsGeneralModel model)
         {
             return View(model);
         }
+
+
 
         /// <summary>
         /// Returns a specific partial view in Ajax. <br /> Specifically useful for loading a part
