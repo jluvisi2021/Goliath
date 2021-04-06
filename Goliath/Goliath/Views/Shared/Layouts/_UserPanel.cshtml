@@ -15,19 +15,19 @@
 }
 
 @section UniqueHeader {
-    <link href="~/css/UserPanel/UserPanelStyle.css" rel="stylesheet" />
-    <script src="~/js/UserPanel/UserPanelScript.js"></script>
+    <link href="~/css/UserPanel/UserPanelStyle.css" rel="stylesheet" asp-append-version="true" />
+    <script src="~/js/UserPanel/UserPanelScript.js" asp-append-version="true"></script>
 }
 
 <main>
     <!-- Navbar Start -->
     <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary ht-tm-element">
+        <nav id="top-nav" class="navbar navbar-expand-lg navbar-dark bg-primary ht-tm-element">
             <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <!-- Navbar Icon Start -->
-            <a class="navbar-brand" href="#!">
+            <a class="navbar-brand" asp-controller="Home" asp-action="Index">
                 <i class="fas fa-shield-alt"></i>
                 Goliath
             </a>

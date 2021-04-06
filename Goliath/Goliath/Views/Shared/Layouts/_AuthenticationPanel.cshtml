@@ -15,8 +15,8 @@
 }
 @* Specific to _AuthenticationPanel. *@
 @section UniqueHeader {
-    <link href="~/css/Auth/LoginStyle.css" rel="stylesheet" />
-    <script src="~/js/Auth/AuthenticationScript.js"></script>
+    <link href="~/css/Auth/LoginStyle.css" rel="stylesheet" asp-append-version="true" />
+    <script src="~/js/Auth/AuthenticationScript.js" asp-append-version="true"></script>
 }
 
 @*If the user is logged in then redirect them to userpanel.*@
@@ -107,12 +107,12 @@
                                                 <a asp-controller="Auth" asp-action="ForgotUsername" id="forgot-username" class="dropdown-item">Forgot Username</a>
                                                 <a asp-controller="Auth" asp-action="ForgotPassword" id="forgot-password" class="dropdown-item">Forgot Password</a>
                                                 <a asp-controller="Auth" asp-action="VerifyEmail" id="verify-email" class="dropdown-item">Verify Email</a>
-                                                <div class="dropdown-divider"></div>
+                                                <div id="dropdown-divider" class="dropdown-divider"></div>
                                                 @*OAuth Login Methods*@
-                                                <a class="dropdown-item py-xl-1" href="#!"><i class="fab fa-google px-sm-2 dropdown-bottom-icons"></i>Sign in with Google</a>
-                                                <a class="dropdown-item" href="/idk"><i class="fab fa-microsoft px-sm-2 dropdown-bottom-icons"></i>Sign in with Microsoft</a>
-                                                <a class="dropdown-item" href="/idk"><i class="fab fa-facebook-square px-sm-2 dropdown-bottom-icons"></i>Sign in with Facebook</a>
-                                                <a class="dropdown-item" href="https://github.com/jluvisi2021/Goliath" target="_blank"><i class="fab fa-github px-sm-2 dropdown-bottom-icons"></i>View GitHub</a>
+                                                <a class="dropdown-item py-xl-1" href="#!"><i id="signin-google-icon" class="fab fa-google px-sm-2 dropdown-bottom-icons"></i>Sign in with Google</a>
+                                                <a class="dropdown-item" href="/idk"><i id="signin-ms-icon" class="fab fa-microsoft px-sm-2 dropdown-bottom-icons"></i>Sign in with Microsoft</a>
+                                                <a class="dropdown-item" href="/idk"><i id="signin-fb-icon" class="fab fa-facebook-square px-sm-2 dropdown-bottom-icons"></i>Sign in with Facebook</a>
+                                                <a class="dropdown-item" href="https://github.com/jluvisi2021/Goliath" target="_blank"><i id="dd-git-icon" class="fab fa-github px-sm-2 dropdown-bottom-icons"></i>View GitHub</a>
                                             </div>
                                             <!-- Other Drop Down End -->
                                         </div>

@@ -1,7 +1,9 @@
-﻿/**
- * Closure Scope
- *
- * */
+﻿/*
+ * JavaScript which should be accessed in all browser windows.
+ * Hence name: "GlobalScript"
+ */
+
+
 // When the user scrolls to the bottom of a scrollable page remove the footer.
 $(window).scroll(() => {
     if (!($(document).height() > $(window).height())) {
@@ -27,6 +29,7 @@ $(window).scroll(() => {
 const GlobalScript = (() => {
     /** Private Variables */
 
+    /*Types of banners for notifications on home screen */
     const _bannerTypes = Object.freeze({
         "alert-primary": 0,
         "alert-secondary": 1,
@@ -132,7 +135,8 @@ const GlobalScript = (() => {
          * Checks if the browser is supported.
          * If not then it sends a notification to the user.
          * Officially Supported Browsers: Chrome, all Chromium-based browsers, Safari, Firefox
-         * @returns {boolean}
+         * @param {boolean} action -> TRUE (Default) if the method should send notification to #center-banner.
+         * @returns {boolean} -> If the browser is supported.
          * */
         checkBrowser: (action = true) => {
             if (navigator.userAgent.search("Chrome") >= 0) {

@@ -1,0 +1,17 @@
+﻿/*Adjust width of elements to require scrolling if the device is small.*/
+@media all and (max-device-width: 1024px) {
+    #profile-nav {
+        min-width: 40%;
+        max-width: 60%;
+    }
+
+    #primary-container {
+        width: 100vw;
+        height: unset;
+        background-color: white;
+    }
+
+    #top-nav {
+        width: 150vw;
+    }
+}

@@ -11,6 +11,7 @@
     background-attachment: fixed;
 }
 
+/*Dark gradient for dark mode.*/
 .gradient-dark {
     margin: 0;
     background-position: center center;
@@ -23,6 +24,7 @@
     background-attachment: fixed;
 }
 
+/*Color of the right container.*/
 #right-container {
     background-color: #ffffff;
 }

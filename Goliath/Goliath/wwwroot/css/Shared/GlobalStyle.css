@@ -58,6 +58,7 @@
         transform: translateX(-50%);
         z-index: 3;
     }
+    /*Make footer smaller for mobile.*/
 
     #footer-padding {
         padding: 0% !important;

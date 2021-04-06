@@ -1,4 +1,5 @@
-﻿using Goliath.Models;
+﻿using Goliath.Helper;
+using Goliath.Models;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Options;
 using MimeKit;
@@ -144,10 +145,7 @@ namespace Goliath.Services
                 }
                 catch (Exception e)
                 {
-                    System.Diagnostics.Debug.WriteLine("! --------------------------- !");
-                    System.Diagnostics.Debug.WriteLine("Error sending email");
-                    System.Diagnostics.Debug.WriteLine(e.Message);
-                    System.Diagnostics.Debug.WriteLine("! --------------------------- !");
+                    GoliathHelper.PrintDebugger(GoliathHelper.PrintType.Error, e.Message);
                     return false;
                 }
             }

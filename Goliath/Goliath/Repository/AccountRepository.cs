@@ -76,14 +76,13 @@ namespace Goliath.Repository
                     UserName = _config["SuperUser:Username"],
                     Email = _config["SuperUser:Email"],
                     EmailConfirmed = true,
-                    
                 },
                 password: _config["SuperUser:Password"]
                 );
                 if (result.Succeeded)
                 {
                     ApplicationUser superUser = await _userManager.FindByNameAsync("GoliathAdmin");
-                    
+
                     await _userManager.AddToRoleAsync(superUser, GoliathRoles.Administrator);
                 }
                 else
@@ -115,7 +114,7 @@ namespace Goliath.Repository
 
         public async Task<bool> IsAdmin(string username)
         {
-            var user = await _userManager.FindByNameAsync(username);
+            ApplicationUser user = await _userManager.FindByNameAsync(username);
             IList<string> roles = await _userManager.GetRolesAsync(user);
             foreach (string role in roles)
             {

@@ -54,6 +54,12 @@ namespace Goliath
                 options.SignIn.RequireConfirmedEmail = true; // Require activated accounts.
             });
 
+            // Guarantee all cookies are secure.
+            services.AddCookiePolicy(options =>
+            {
+                options.Secure = Microsoft.AspNetCore.Http.CookieSecurePolicy.Always;
+            });
+
             // All tokens expire within 5 minutes.
             services.Configure<DataProtectionTokenProviderOptions>(options =>
             {
@@ -86,12 +92,36 @@ namespace Goliath
             // Enable services to use in Controllers through DI.
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IAccountRepository, AccountRepository>();
+
+            // Configure cookie options for .NET Identity Core.
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.Name = "GoliathAuthenticate";
+            });
+
+            // Add AntiForgery and its respective options.
+            services.AddAntiforgery(options =>
+            {
+                // Set Cookie properties using CookieBuilder properties.
+                options.HeaderName = "X-CSRF-TOKEN";
+                options.SuppressXFrameOptionsHeader = false;
+                options.Cookie.Name = "AntiForgeryCSRF";
+                options.Cookie.MaxAge = new TimeSpan(12, 0, 0); // 12 Hour Expire
+                options.Cookie.SecurePolicy = Microsoft.AspNetCore.Http.CookieSecurePolicy.Always;
+            });
+
+            // Change password hash iteration count.
+            services.Configure<PasswordHasherOptions>(option =>
+            {
+                option.IterationCount = int.Parse(_config["Application:PasswordHashIterations"]);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IAccountRepository accountRepository)
         {
             _accountRepository = accountRepository;
+            // Create roles and super user if not created.
             _accountRepository.CreateSuperUser().Wait();
             if (env.IsDevelopment())
             {
@@ -115,8 +145,20 @@ namespace Goliath
                 app.UseHttpsRedirection();
             }
 
-            // Use wwwroot folder.
-            app.UseStaticFiles();
+            // Use wwwroot folder. Store cached files for 7 days.
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                OnPrepareResponse =
+        r =>
+        {
+            string path = r.File.PhysicalPath;
+            if (path.EndsWith(".css") || path.EndsWith(".js") || path.EndsWith(".gif") || path.EndsWith(".jpg") || path.EndsWith(".png") || path.EndsWith(".svg"))
+            {
+                TimeSpan maxAge = new(7, 0, 0, 0);
+                r.Context.Response.Headers.Add("Cache-Control", "max-age=" + maxAge.TotalSeconds.ToString("0"));
+            }
+        }
+            });
 
             // Enable URL routing.
             app.UseRouting();

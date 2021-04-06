@@ -6,7 +6,7 @@ namespace Goliath.Controllers
     /// <summary>
     /// Manages bad requests on HTTPS.
     /// </summary>
-    public class ErrorsController : Controller
+    public sealed class ErrorsController : Controller
     {
         public ErrorsController()
         {

@@ -35,7 +35,8 @@ function loadButtonElements(id) {
     }
 }
 
-/** Adjusts the theme of the login screen depending on time of day. Can be disabled. */
+/** Adjusts the theme of the login screen.
+ *  Depends on the localStorage.*/
 function changeTheme() {
     if (!(localStorage.getItem("darkTheme") === null || localStorage.getItem("darkTheme") === "enabled")) {
         return;
@@ -66,6 +67,12 @@ function changeTheme() {
     $("#toggle-dark").removeClass("btn-dark");
     $("#toggle-dark").addClass("btn-light");
     $("#toggle-dark").addClass("border-dark");
+
+    $("#signin-google-icon").addClass("text-dark");
+    $("#signin-fb-icon").addClass("text-dark");
+    $("#signin-ms-icon").addClass("text-dark");
+    $("#dd-git-icon").addClass("text-dark");
+    $("#dropdown-divider").addClass("border-dark");
 }
 
 /**
