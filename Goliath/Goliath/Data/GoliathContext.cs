@@ -9,5 +9,7 @@ namespace Goliath.Data
         public GoliathContext(DbContextOptions<GoliathContext> options) : base(options)
         {
         }
+
+        public DbSet<ValidHumanVerifyTokens> ValidTokens { get; set; }
     }
 }

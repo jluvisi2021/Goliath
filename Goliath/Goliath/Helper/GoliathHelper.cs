@@ -1,4 +1,6 @@
-﻿namespace Goliath.Helper
+﻿using System;
+
+namespace Goliath.Helper
 {
     /// <summary>
     /// A class which provides simple static methods and utilities.
@@ -41,6 +43,12 @@
                     System.Diagnostics.Debug.WriteLine($"DEBUG: {data}");
                     return;
             }
+        }
+
+        public static string GenerateSecureRandomNumber()
+        {
+            Random rand = new Random();
+            return $"{rand.Next(7650000)}";
         }
     }
 }

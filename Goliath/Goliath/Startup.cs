@@ -5,6 +5,7 @@ using Goliath.Repository;
 using Goliath.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -32,6 +33,8 @@ namespace Goliath
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddResponseCaching();
+
             services.AddDbContext<GoliathContext>(
                 options => options.UseSqlServer(_config.GetConnectionString("DefaultConnection"))
             );
@@ -57,7 +60,9 @@ namespace Goliath
             // Guarantee all cookies are secure.
             services.AddCookiePolicy(options =>
             {
-                options.Secure = Microsoft.AspNetCore.Http.CookieSecurePolicy.Always;
+                options.Secure = CookieSecurePolicy.Always;
+                options.MinimumSameSitePolicy = SameSiteMode.Strict;
+                options.HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.Always;
             });
 
             // All tokens expire within 5 minutes.
@@ -92,11 +97,19 @@ namespace Goliath
             // Enable services to use in Controllers through DI.
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IAccountRepository, AccountRepository>();
+            services.AddScoped<IValidHumanVerifyTokensRepository, ValidHumanVerifyTokensRepository>();
+            services.AddScoped<ICookieManager, CookieManager>();
+            services.AddScoped<IGoliathCaptchaService, GoliathCaptchaService>();
 
-            // Configure cookie options for .NET Identity Core.
+            // Configure secure cookie options for .NET Identity Core.
             services.ConfigureApplicationCookie(options =>
             {
+                options.SlidingExpiration = true;
                 options.Cookie.Name = "GoliathAuthenticate";
+                options.Cookie.SameSite = SameSiteMode.Strict;
+                options.Cookie.IsEssential = true;
+                options.Cookie.HttpOnly = true;
+                options.ExpireTimeSpan = TimeSpan.FromDays(2); // Token expires every 2 days unless renewed.
             });
 
             // Add AntiForgery and its respective options.
@@ -107,7 +120,7 @@ namespace Goliath
                 options.SuppressXFrameOptionsHeader = false;
                 options.Cookie.Name = "AntiForgeryCSRF";
                 options.Cookie.MaxAge = new TimeSpan(12, 0, 0); // 12 Hour Expire
-                options.Cookie.SecurePolicy = Microsoft.AspNetCore.Http.CookieSecurePolicy.Always;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             });
 
             // Change password hash iteration count.
@@ -134,6 +147,7 @@ namespace Goliath
                     app.UseHsts();
                 }
             }
+            app.UseExceptionHandler("/Errors/GeneralException");
             app.UseStatusCodePages(options =>
             {
                 options.UseStatusCodePagesWithRedirects("/Errors/Index?code={0}");
@@ -154,8 +168,8 @@ namespace Goliath
             string path = r.File.PhysicalPath;
             if (path.EndsWith(".css") || path.EndsWith(".js") || path.EndsWith(".gif") || path.EndsWith(".jpg") || path.EndsWith(".png") || path.EndsWith(".svg"))
             {
-                TimeSpan maxAge = new(7, 0, 0, 0);
-                r.Context.Response.Headers.Add("Cache-Control", "max-age=" + maxAge.TotalSeconds.ToString("0"));
+                TimeSpan maxAge = new(0, 4, 0, 0); // 5 minutes 45 seconds for storing statics.
+                r.Context.Response.Headers.Add("Cache-Control", "public, max-age=" + maxAge.TotalSeconds.ToString("0"));
             }
         }
             });
@@ -168,6 +182,8 @@ namespace Goliath
 
             // Require user accounts
             app.UseAuthorization();
+
+            app.UseResponseCaching();
 
             /* Starts at ~/Views/Auth/Login.cshtml */
             app.UseEndpoints(endpoints =>

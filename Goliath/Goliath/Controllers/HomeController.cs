@@ -15,6 +15,7 @@ namespace Goliath.Controllers
      */
 
     [Route("")]
+    [ResponseCache(Duration = 14400, Location = ResponseCacheLocation.Any, NoStore = false)]
     public sealed class HomeController : Controller
     {
         private readonly IAccountRepository _accountRepository;

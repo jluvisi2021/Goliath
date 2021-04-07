@@ -46,3 +46,48 @@ else if (TempData["Redirect"].Equals((int)RedirectPurpose.ResetPasswordFailure))
         GlobalScript.displayNotification("Error", "Could not reset password. Try again later.", GlobalScript.BannerTypes()["alert-danger"], "center-banner");
     </script>
 }
+else if (TempData["Redirect"].Equals((int)RedirectPurpose.Exception))
+{
+
+    var exceptionModel = JsonConvert.DeserializeObject<ExceptionHandlerModel>((string)TempData["ErrorInformation"]);
+
+    if (exceptionModel.ExceptionTargetHelpLink.Equals("Unknown"))
+    {
+        <script>
+                GlobalScript.displayModal("General Exception", "<span class='text-danger'>We encountered an exception attempting to load this page.</span>"
+            + "<br />"
+            + "<strong>Requested URL:</strong> " + "@(exceptionModel.OriginalPath)"
+            + "<br />"
+            + "<strong>Exception:</strong> " + "@(exceptionModel.RawExceptionMessage)"
+            + "<br />"
+            + "<strong>Target Site:</strong> " + "@(exceptionModel.ExceptionTargetSite)"
+            + "<br />"
+            + "<strong>Source:</strong> " + "@(exceptionModel.ExceptionSource)"
+            + "<br />"
+            + "<strong>Status Code:</strong> " + "@(exceptionModel.StatusCode)"
+            + "<br />"
+            + "<strong>Date:</strong> " + "@(exceptionModel.DateTime)");
+        </script>
+
+    }
+    else
+    {
+        <script>
+                GlobalScript.displayModal("General Exception", "<span class='text-danger'>We encountered an exception attempting to load this page.</span>"
+            + "<br />"
+            + "<strong>Requested URL:</strong> " + "@(exceptionModel.OriginalPath)"
+            + "<br />"
+            + "<strong>Exception:</strong> " + "@(exceptionModel.RawExceptionMessage)"
+            + "<br />"
+            + "<strong>Target Site:</strong> " + "<a href='@(exceptionModel.ExceptionTargetHelpLink)'>@(exceptionModel.ExceptionTargetSite)</a>"
+            + "<br />"
+            + "<strong>Source:</strong> " + "@(exceptionModel.ExceptionSource)"
+            + "<br />"
+            + "<strong>Status Code:</strong> " + "@(exceptionModel.StatusCode)"
+            + "<br />"
+            + "<strong>Date:</strong> " + "@(exceptionModel.DateTime)");
+        </script>
+
+    }
+
+}

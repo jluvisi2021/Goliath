@@ -1,5 +1,18 @@
-﻿@{
+﻿@using Goliath.Services
+@inject ICookieManager _cookieManager;
+
+@{
     ViewData["Title"] = "Reset Password";
+}
+
+@{
+@*If the user completed a captcha recently (they have the cookie) then submit them. *@
+    if(_cookieManager.HasCookie(CookieManager.ValidCaptchaCookie))
+            {
+    <script>
+                    $('#@ViewData["FormID"]').submit();
+    </script>
+            }
 }
 
 <div class="modal fade" id="captchaModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="captchaModalLabel" aria-hidden="true">
@@ -28,6 +41,7 @@
     </div>
 </div>
 
-<script>
-    $('#captchaModal').modal('show');
-</script>
+    @if (!_cookieManager.HasCookie(CookieManager.ValidCaptchaCookie))
+            {
+    <script type="text/javascript">$('#captchaModal').modal('show');</script>
+            }

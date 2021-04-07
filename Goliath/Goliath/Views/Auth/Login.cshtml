@@ -1,5 +1,6 @@
 ﻿@model Goliath.Models.SignInModel
-
+@using Goliath.Services
+@inject ICookieManager _cookieManager
 @{
     ViewData["Title"] = "Login";
 }
@@ -45,11 +46,13 @@
     </div>
 
     <div class="custom-control custom-checkbox mb-3">
-        <input asp-for="RememberMe" id="customCheck1" type="checkbox" checked class="custom-control-input">
+        <input asp-for="RememberMe" id="customCheck1" type="checkbox" class="custom-control-input">
         <label for="customCheck1" class="custom-control-label" data-toggle="tooltip" data-placement="right" title="Click for us to remember your account on this browser.">Remember Me</label>
     </div>
     <hr />
-    <button type="button" class="btn btn-primary btn-block text-uppercase mb-2 rounded-pill shadow-sm" onclick="GlobalScript.loadCaptcha('login-form');">Sign in</button>
+
+        <button type="button" class="btn btn-primary btn-block text-uppercase mb-2 rounded-pill shadow-sm" onclick="GlobalScript.loadCaptcha('login-form');">Sign in</button>
+
     @*Render the partial view for the captcha when the sign in button is clicked.*@
     <div id="captcha-view"></div>
     @*OAuth Login Methods*@

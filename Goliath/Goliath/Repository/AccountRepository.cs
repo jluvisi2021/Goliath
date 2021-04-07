@@ -400,7 +400,9 @@ namespace Goliath.Repository
         /// <returns> </returns>
         public async Task<SignInResult> PasswordSignInAsync(SignInModel signInModel)
         {
-            return await _signInManager.PasswordSignInAsync(signInModel.Username, signInModel.Password, signInModel.RememberMe, false);
+            SignInResult result = await _signInManager.PasswordSignInAsync(signInModel.Username, signInModel.Password, signInModel.RememberMe, false);
+
+            return result;
         }
 
         /// <summary>

@@ -1,14 +1,12 @@
-﻿using DNTCaptcha.Core;
-using Goliath.Enums;
+﻿using Goliath.Enums;
 using Goliath.Helper;
 using Goliath.Models;
 using Goliath.Repository;
 using Goliath.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -18,6 +16,7 @@ namespace Goliath.Controllers
     /// Manages the Views for Authentication. <br /> ButtonID indicates the radio button to be checked.
     /// </summary>
     [Route("account")]
+    [RequireHttps]
     public sealed class AuthController : Controller
     {
         /// <summary>
@@ -30,31 +29,26 @@ namespace Goliath.Controllers
         /// </summary>
         private readonly SignInManager<ApplicationUser> _signInManager;
 
-        /// <summary>
-        /// Send emails.
-        /// </summary>
-        private readonly IEmailService _emailService;
-
-        private readonly IDNTCaptchaValidatorService _validatorService;
-        private readonly DNTCaptchaOptions _captchaOptions;
+        private readonly ICookieManager _cookieManager;
+        private readonly IValidHumanVerifyTokensRepository _validTokens;
+        private readonly IGoliathCaptchaService _captcha;
 
         public AuthController
             (
             IAccountRepository accountRepository,
             SignInManager<ApplicationUser> signInManager,
-            IEmailService emailService,
-            IDNTCaptchaValidatorService validatorService,
-            IOptions<DNTCaptchaOptions> options
+            ICookieManager cookieManager,
+            IValidHumanVerifyTokensRepository validTokens,
+            IGoliathCaptchaService captcha
             )
         {
             _accountRepository = accountRepository;
             _signInManager = signInManager;
-            _emailService = emailService;
-            _validatorService = validatorService;
-            _captchaOptions = options == null ? throw new ArgumentNullException(nameof(options)) : options.Value;
+            _validTokens = validTokens;
+            _cookieManager = cookieManager;
+            _captcha = captcha;
         }
 
-        // Referred to as "Login" as well.
         public IActionResult Index()
         {
             // If the user is signed in redirect them to the user panel.
@@ -83,19 +77,26 @@ namespace Goliath.Controllers
             // If the user has signed in with valid data.
             if (ModelState.IsValid)
             {
-                if (!_validatorService.HasRequestValidCaptchaEntry(Language.English, DisplayMode.ShowDigits))
+                // Check if captcha is correct.
+                if (!await _captcha.IsCaptchaValidAsync())
                 {
-                    ModelState.AddModelError(_captchaOptions.CaptchaComponent.CaptchaInputName, "Incorrect CAPTCHA.");
+                    ModelState.AddModelError(_captcha.CaptchaValidationError().Key, _captcha.CaptchaValidationError().Value);
                     return View(signInModel);
                 }
 
+                // Attempt to log the user in.
                 Microsoft.AspNetCore.Identity.SignInResult result = await _accountRepository.PasswordSignInAsync(signInModel);
+
                 // If the user name and password match.
                 if (result.Succeeded)
                 {
+                    // Store the fact that the CAPTCHA was completed successfully.
+                    await _captcha.CacheNewCaptchaValidateAsync();
+
+                    // Redirect
                     return RedirectToAction("Index", "UserPanel");
-                    // Else we send the specified errors to the user.
                 }
+                // Else we send the specified errors to the user.
                 else if (result.IsLockedOut)
                 {
                     ModelState.AddModelError(string.Empty, "Please try again later.");
@@ -112,6 +113,8 @@ namespace Goliath.Controllers
                 {
                     ModelState.AddModelError(string.Empty, "Invalid Credentials.");
                 }
+                // If the user had a captcha cookie but failed a login then remove the captcha valid cookie.
+                _captcha.DeleteCaptchaCookie();
             }
             return View(signInModel);
         }
@@ -130,9 +133,9 @@ namespace Goliath.Controllers
             ViewData["ButtonID"] = ButtonID.Register;
             if (ModelState.IsValid)
             {
-                if (!_validatorService.HasRequestValidCaptchaEntry(Language.English, DisplayMode.ShowDigits))
+                if (!await _captcha.IsCaptchaValidAsync())
                 {
-                    ModelState.AddModelError(_captchaOptions.CaptchaComponent.CaptchaInputName, "Incorrect CAPTCHA.");
+                    ModelState.AddModelError(_captcha.CaptchaValidationError().Key, _captcha.CaptchaValidationError().Value);
                     return View(model);
                 }
 
@@ -142,6 +145,7 @@ namespace Goliath.Controllers
 
                 if (!result.Succeeded)
                 {
+                    _captcha.DeleteCaptchaCookie();
                     // For every error that is created during registration we add that to the
                     // eventual bootstrap modal.
                     foreach (IdentityError errorMessage in result.Errors)
@@ -154,6 +158,7 @@ namespace Goliath.Controllers
 
                 // Registration is Valid.
                 ModelState.Clear();
+                await _captcha.CacheNewCaptchaValidateAsync();
                 // Send the user to the index with register tempdata.
                 TempData["Redirect"] = RedirectPurpose.RegisterSuccess;
                 return RedirectToAction("Index");
@@ -185,9 +190,9 @@ namespace Goliath.Controllers
 
             if (user != null)
             {
-                if (!_validatorService.HasRequestValidCaptchaEntry(Language.English, DisplayMode.ShowDigits))
+                if (!await _captcha.IsCaptchaValidAsync())
                 {
-                    ModelState.AddModelError(_captchaOptions.CaptchaComponent.CaptchaInputName, "Incorrect CAPTCHA.");
+                    ModelState.AddModelError(_captcha.CaptchaValidationError().Key, _captcha.CaptchaValidationError().Value);
                     return View();
                 }
 
@@ -209,6 +214,7 @@ namespace Goliath.Controllers
                 model.IsEmailSent = true;
                 // Clear all fields.
                 ModelState.Clear();
+                await _captcha.CacheNewCaptchaValidateAsync();
 
                 return View(model);
             }
@@ -241,14 +247,15 @@ namespace Goliath.Controllers
                     ModelState.AddModelError(string.Empty, "Please confirm your account before doing this.");
                     return View();
                 }
-                if (!_validatorService.HasRequestValidCaptchaEntry(Language.English, DisplayMode.ShowDigits))
+                if (!await _captcha.IsCaptchaValidAsync())
                 {
-                    ModelState.AddModelError(_captchaOptions.CaptchaComponent.CaptchaInputName, "Incorrect CAPTCHA.");
+                    ModelState.AddModelError(_captcha.CaptchaValidationError().Key, _captcha.CaptchaValidationError().Value);
                     return View();
                 }
                 await _accountRepository.GenerateUsername(user, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
                 model.IsEmailSent = true;
                 ModelState.Clear();
+                await _captcha.CacheNewCaptchaValidateAsync();
                 return View(model);
             }
             else
@@ -283,9 +290,9 @@ namespace Goliath.Controllers
                     ModelState.AddModelError(string.Empty, "Account already verified.");
                     return View(model);
                 }
-                if (!_validatorService.HasRequestValidCaptchaEntry(Language.English, DisplayMode.ShowDigits))
+                if (!await _captcha.IsCaptchaValidAsync())
                 {
-                    ModelState.AddModelError(_captchaOptions.CaptchaComponent.CaptchaInputName, "Incorrect CAPTCHA.");
+                    ModelState.AddModelError(_captcha.CaptchaValidationError().Key, _captcha.CaptchaValidationError().Value);
                     return View();
                 }
                 // Generate a token as well as a user agent.
@@ -295,7 +302,7 @@ namespace Goliath.Controllers
                 model.IsEmailSent = true;
                 // Clear all fields.
                 ModelState.Clear();
-
+                await _captcha.CacheNewCaptchaValidateAsync();
                 return View(model);
             }
             else
@@ -354,6 +361,7 @@ namespace Goliath.Controllers
             TempData["Redirect"] = RedirectPurpose.ResetPasswordModal;
             // Serialize the model and pass it.
             TempData["Model"] = JsonConvert.SerializeObject(model);
+
             return RedirectToAction("Index");
         }
 

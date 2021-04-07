@@ -38,8 +38,6 @@ namespace Goliath.Controllers
             return View(model);
         }
 
-
-
         /// <summary>
         /// Returns a specific partial view in Ajax. <br /> Specifically useful for loading a part
         /// of the screen that is unknown at runtime.
@@ -52,6 +50,7 @@ namespace Goliath.Controllers
         public async Task<IActionResult> Logout()
         {
             await _accountRepository.SignOutAsync();
+
             // Redirect the user to the main login screen with information that the user has just
             // been logged out.
             TempData["Redirect"] = RedirectPurpose.LogoutSuccess;
@@ -62,10 +61,13 @@ namespace Goliath.Controllers
 
         public IActionResult Utilities() => View();
 
+        [ResponseCache(Duration = 14400, Location = ResponseCacheLocation.Any, NoStore = false)]
         public IActionResult Help() => View();
 
+        [ResponseCache(Duration = 14400, Location = ResponseCacheLocation.Any, NoStore = false)]
         public IActionResult About() => View();
 
+        [ResponseCache(Duration = 14400, Location = ResponseCacheLocation.Any, NoStore = false)]
         public IActionResult BuildInfo() => View();
 
         public IActionResult AdminPanel() => View();
