@@ -1,5 +1,6 @@
 using DNTCaptcha.Core;
 using Goliath.Data;
+using Goliath.Enums;
 using Goliath.Models;
 using Goliath.Repository;
 using Goliath.Services;
@@ -105,7 +106,7 @@ namespace Goliath
             services.ConfigureApplicationCookie(options =>
             {
                 options.SlidingExpiration = true;
-                options.Cookie.Name = "GoliathAuthenticate";
+                options.Cookie.Name = CookieKeys.AuthenticationCookie;
                 options.Cookie.SameSite = SameSiteMode.Strict;
                 options.Cookie.IsEssential = true;
                 options.Cookie.HttpOnly = true;
@@ -118,7 +119,7 @@ namespace Goliath
                 // Set Cookie properties using CookieBuilder properties.
                 options.HeaderName = "X-CSRF-TOKEN";
                 options.SuppressXFrameOptionsHeader = false;
-                options.Cookie.Name = "AntiForgeryCSRF";
+                options.Cookie.Name = CookieKeys.AntiForgeryCookie;
                 options.Cookie.MaxAge = new TimeSpan(12, 0, 0); // 12 Hour Expire
                 options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             });
@@ -135,7 +136,7 @@ namespace Goliath
         {
             _accountRepository = accountRepository;
             // Create roles and super user if not created.
-            _accountRepository.CreateSuperUser().Wait();
+            _accountRepository.LoadDefaults().Wait();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

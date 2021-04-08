@@ -56,7 +56,7 @@ namespace Goliath.Repository
         /// Creates a "Super User" which can manage all roles in the panel for all users.
         /// </summary>
         /// <returns> </returns>
-        public async Task CreateSuperUser()
+        public async Task LoadDefaults()
         {
             if (!(await _roleManager.RoleExistsAsync(GoliathRoles.Administrator)))
             {

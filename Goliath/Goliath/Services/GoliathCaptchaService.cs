@@ -1,4 +1,5 @@
 ﻿using DNTCaptcha.Core;
+using Goliath.Enums;
 using Goliath.Helper;
 using Goliath.Repository;
 using Microsoft.Extensions.Options;
@@ -41,9 +42,9 @@ namespace Goliath.Services
             if (!(_validatorService.HasRequestValidCaptchaEntry(Language.English, DisplayMode.ShowDigits)))
             {
                 // If the user has a captcha cookie.
-                if (_cookieManager.HasCookie(CookieManager.ValidCaptchaCookie))
+                if (_cookieManager.HasCookie(CookieKeys.ValidateCaptchaCookie))
                 {
-                    bool validToken = await _validTokens.DoesTokenExistAsync(_cookieManager.CookieValue(CookieManager.ValidCaptchaCookie));
+                    bool validToken = await _validTokens.DoesTokenExistAsync(_cookieManager.CookieValue(CookieKeys.ValidateCaptchaCookie));
                     if (!validToken)
                     {
                         // Has a Cached Cookie but an invalid Hash.
@@ -77,9 +78,9 @@ namespace Goliath.Services
                     return false;
                 }
                 // If the user has a captcha cookie.
-                if (_cookieManager.HasCookie(CookieManager.ValidCaptchaCookie))
+                if (_cookieManager.HasCookie(CookieKeys.ValidateCaptchaCookie))
                 {
-                    bool validToken = await _validTokens.DoesTokenExistAsync(_cookieManager.CookieValue(CookieManager.ValidCaptchaCookie));
+                    bool validToken = await _validTokens.DoesTokenExistAsync(_cookieManager.CookieValue(CookieKeys.ValidateCaptchaCookie));
                     if (!validToken)
                     {
                         // Has a Cached Cookie but an invalid Hash.
@@ -107,7 +108,7 @@ namespace Goliath.Services
         {
             string token = GoliathHelper.GenerateSecureRandomNumber();
             _cookieManager.AddCookie(
-                key: CookieManager.ValidCaptchaCookie, // Name of the key.
+                key: CookieKeys.ValidateCaptchaCookie, // Name of the key.
                 value: GoliathHash.HashStringSHA256(token), // A hash derived from token.
                 expireTime: DateTime.UtcNow.AddMinutes(5) // Expires in 5 minutes.
                 );
@@ -120,7 +121,7 @@ namespace Goliath.Services
         /// </summary>
         public void DeleteCaptchaCookie()
         {
-            _cookieManager.DeleteCookie(CookieManager.ValidCaptchaCookie);
+            _cookieManager.DeleteCookie(CookieKeys.ValidateCaptchaCookie);
         }
 
         /// <summary>

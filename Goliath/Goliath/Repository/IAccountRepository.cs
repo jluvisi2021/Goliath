@@ -32,7 +32,7 @@ namespace Goliath.Repository
 
         Task GenerateUsername(ApplicationUser user, DeviceParser device);
 
-        Task CreateSuperUser();
+        Task LoadDefaults();
 
         Task<bool> IsAdmin(ApplicationUser user);
 

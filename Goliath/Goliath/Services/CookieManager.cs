@@ -8,11 +8,6 @@ namespace Goliath.Services
     /// </summary>
     public class CookieManager : ICookieManager
     {
-        /// <summary>
-        /// The key value of the cookie which repersents captcha caching.
-        /// </summary>
-        public const string ValidCaptchaCookie = "CaptchaValid";
-
         private readonly IHttpContextAccessor _context;
 
         public CookieManager(IHttpContextAccessor context)

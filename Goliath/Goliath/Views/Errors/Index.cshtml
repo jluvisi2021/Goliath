@@ -45,7 +45,7 @@
                     Either it does not exist or needs to be updated.
                 </p>
                 <hr class="my-4">
-                <div class="text-dark btn-hover-text-primary" id="collapse" data-toggle="collapse" data-target="#information" aria-expanded="false" aria-controls="information" onclick="update();">
+                <div class="text-dark btn-hover-text-primary" id="collapse" data-toggle="collapse" data-target="#information" aria-expanded="false" aria-controls="information" onclick="ErrorScript.updateArrow();">
                     <i id="arrow" class="fas fa-arrow-right mr-2"></i>Additional Information
                 </div>
 
@@ -101,7 +101,7 @@
                 <hr />
 
                 <p>
-                    <a class="btn btn-danger" data-toggle="tooltip" data-placement="right" data-html="true" title="<div id=&quot;&quot;> <div id=&quot;inner&quot;> <span class=&quot;text-danger&quot;> <i class=&quot;fas fa-exclamation-circle&quot;></i> <strong>Notice</strong> </span> <br /> <p>Only report this as an issue if you believe that this page should be getting rendered but is not.</p> </div> </div>" data-original-title="Issue Notice" href="#!" onclick="reportError();" role="button">
+                    <a class="btn btn-danger" data-toggle="tooltip" data-placement="right" data-html="true" title="<div id=&quot;&quot;> <div id=&quot;inner&quot;> <span class=&quot;text-danger&quot;> <i class=&quot;fas fa-exclamation-circle&quot;></i> <strong>Notice</strong> </span> <br /> <p>Only report this as an issue if you believe that this page should be getting rendered but is not.</p> </div> </div>" data-original-title="Issue Notice" href="#!" onclick="ErrorScript.reportError();" role="button">
 
                         <i class="fas fa-bug mr-2"></i>Report as Issue
                     </a>
@@ -117,25 +117,25 @@
 @if (_signInManager.IsSignedIn(User))
 {
     <script>
-        updateText("#logged-in", true);
+        ErrorScript.updateText("#logged-in", true);
     </script>
 }
 else
 {
     <script>
-        updateText("#logged-in", false);
+        ErrorScript.updateText("#logged-in", false);
     </script>
 
 }
 @if (TempData["Redirect"] != null)
 {
     <script>
-        updateText("#is-redirect", true);
+        ErrorScript.updateText("#is-redirect", true);
     </script>
 }
 else
 {
     <script>
-        updateText("#is-redirect", false);
+        ErrorScript.updateText("#is-redirect", false);
     </script>
 }

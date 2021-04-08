@@ -1,8 +1,22 @@
-﻿/**
- * Update the navbar to highlight a specific nav item.
- * @param {string} name
+﻿"use strict";
+
+/** 
+ *
+ * Namespace for executing JavaScript methods for
+ * the UserPanel controller.
+ * 
  */
-function updateNav(name) {
-    $(".nav-item").removeClass("active");
-    $("#" + name + "-nav").addClass("active");
-}
+const UserPanelScript = (() => {
+    return {
+        /**
+         * Update nav for userpanel clicks.
+         * @param {string} name
+         */
+        updateNav: (name) => {
+            $(document).ready(() => {
+                $(".nav-item").removeClass("active");
+                $("#" + name + "-nav").addClass("active");
+            });
+        }
+    };
+})();

@@ -1,32 +1,41 @@
-﻿/*
+﻿"use strict";
+/*
  * JavaScript which should be accessed in all browser windows.
  * Hence name: "GlobalScript"
  */
 
 // When the user scrolls to the bottom of a scrollable page remove the footer.
 $(window).scroll(() => {
+    const footerElement = $("#footer");
+
     if (!($(document).height() > $(window).height())) {
-        $("#footer").css({
+        footerElement.css({
             "visibility": "visible"
         });
         return;
     }
+
     const scrollHeight = $(document).height();
     const scrollPosition = $(window).height() + $(window).scrollTop();
 
     if (scrollHeight - scrollPosition <= 1) {
-        $("#footer").css({
+        footerElement.css({
             "visibility": "hidden"
         });
     } else {
-        $("#footer").css({
+        footerElement.css({
             "visibility": "visible"
         });
     }
 });
-/** Access data from global.js */
+
+/** 
+ * Namespace for the GlobalScript.js which contains
+ * universal methods and variables that each
+ * controller and action method can run.
+ * 
+ */
 const GlobalScript = (() => {
-    /** Private Variables */
 
     /*Types of banners for notifications on home screen */
     const _bannerTypes = Object.freeze({
@@ -43,26 +52,26 @@ const GlobalScript = (() => {
             return _bannerTypes;
         },
         /**
-    * Automatically displays a notification alert at a parent div.
-    * This function makes a new child banner immediatly below the parent div
-    *
-    * Types:
-    * 1- Primary (Dark Blue)
-    * 2- Secondary (Blue)
-    * 3- Success (Green)
-    * 4- Error (Red)
-    * 5- Primary Dark (Dark)
-    *
-    * NOTE:
-    * - Requires that the type be in range
-    *
-    * @param {string} textHeader (BOLD TEXT)
-    * @param {string} text
-    * @param {GlobalScript.BannerTypes} type
-    * @param {string} divParentID
-    * @param {string} id (Optional)
-    *
-    */
+         * Automatically displays a notification alert at a parent div.
+         * This function makes a new child banner immediatly below the parent div
+         *
+         * Types:
+         * 1- Primary (Dark Blue)
+         * 2- Secondary (Blue)
+         * 3- Success (Green)
+         * 4- Error (Red)
+         * 5- Primary Dark (Dark)
+         *
+         * NOTE:
+         * - Requires that the type be in range
+         *
+         * @param {string} textHeader (BOLD TEXT)
+         * @param {string} text
+         * @param {GlobalScript.BannerTypes} type
+         * @param {string} divParentID
+         * @param {string} id (Optional)
+         *
+         */
         displayNotification: (textHeader, text, type, divParentID) => {
             let typeStr = "";
             switch (type) {
@@ -89,23 +98,23 @@ const GlobalScript = (() => {
             }
 
             $("#" + divParentID).prepend(
-                '<div class="alert ' + typeStr + ' alert-dismissible fade show" role="alert">'
-                + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'
-                + '<span aria-hidden="true">×</span>'
-                + '</button>'
-                + '<strong>' + textHeader + '</strong> ' + text
-                + '</div>'
+                '<div class="alert ' + typeStr + ' alert-dismissible fade show" role="alert">' +
+                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                '<span aria-hidden="true">×</span>' +
+                '</button>' +
+                '<strong>' + textHeader + '</strong> ' + text +
+                '</div>'
             );
         },
         /**
-    * Displays a modal to the user.
-    * The modal only has a close option and its buttons
-    * are set to the primary color.
-    * The modal is appended to the #RenderBody.
-    *
-    * @param {string} title [Supports HTML(Use ``)]
-    * @param {string} body [Supports HTML(Use ``)]
-    */
+         * Displays a modal to the user.
+         * The modal only has a close option and its buttons
+         * are set to the primary color.
+         * The modal is appended to the #RenderBody.
+         *
+         * @param {string} title [Supports HTML(Use ``)]
+         * @param {string} body [Supports HTML(Use ``)]
+         */
         displayModal: (title, body) => {
             $("#outer").append(`
         <div class="modal fade" id="render-model" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -126,8 +135,7 @@ const GlobalScript = (() => {
                 </div>
             </div>
         </div >
-        `
-            );
+        `);
             $('#render-model').modal('show');
         },
         /**
@@ -140,8 +148,7 @@ const GlobalScript = (() => {
         checkBrowser: (action = true) => {
             if (navigator.userAgent.search("Chrome") >= 0) {
                 return true;
-            }
-            else if (navigator.userAgent.search("Safari") >= 0) {
+            } else if (navigator.userAgent.search("Safari") >= 0) {
                 return true;
             } else if (navigator.userAgent.search("Firefox") >= 0) {
                 return true;
@@ -149,11 +156,14 @@ const GlobalScript = (() => {
             if (!action) {
                 return false;
             }
+
             GlobalScript.displayNotification("Warning", "Goliath does not support this browser. Goliath may continue to function but not all features may work.", GlobalScript.BannerTypes()["alert-danger"], "center-banner");
-            $("#footer-text").addClass("font-weight-bold");
-            $("#footer-text").addClass("text-danger");
-            $("#footer-text").html($("#footer-text").html() + ' [Unsupported]');
-            $("#footer-text").attr("title", $("#footer-text").attr("title").toString() + ' <div class="font-weight-bold text-danger">WARNING: You are using an unsupported browser. Not all features may function correctly.</div>');
+            const footerElementText = $("#footer-text");
+
+            footerElementText.addClass("font-weight-bold")
+                .addClass("text-danger")
+                .html(footerElementText.html() + ' [Unsupported]')
+                .attr("title", footerElementText.attr("title").toString() + ' <div class="font-weight-bold text-danger">WARNING: You are using an unsupported browser. Not all features may function correctly.</div>');
             return false;
         },
         /**
@@ -167,4 +177,4 @@ const GlobalScript = (() => {
             $("#captcha-view").load("/Captcha/LoadCaptcha?formID=" + formID);
         }
     };
-})(); 
+})();

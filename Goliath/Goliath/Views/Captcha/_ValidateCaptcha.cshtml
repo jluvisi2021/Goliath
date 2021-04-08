@@ -7,7 +7,7 @@
 
 @{
 @*If the user completed a captcha recently (they have the cookie) then submit them. *@
-    if(_cookieManager.HasCookie(CookieManager.ValidCaptchaCookie))
+    if(_cookieManager.HasCookie(CookieKeys.ValidateCaptchaCookie))
             {
     <script>
                     $('#@ViewData["FormID"]').submit();
@@ -41,7 +41,7 @@
     </div>
 </div>
 
-    @if (!_cookieManager.HasCookie(CookieManager.ValidCaptchaCookie))
+    @if (!_cookieManager.HasCookie(CookieKeys.ValidateCaptchaCookie))
             {
     <script type="text/javascript">$('#captchaModal').modal('show');</script>
             }

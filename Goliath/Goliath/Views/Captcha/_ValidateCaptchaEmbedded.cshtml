@@ -5,7 +5,7 @@
     Every Captcha should use this as a partial view.
     Can be used in either Modal or directly on page.
 *@
-@if (_cookieManager.HasCookie(CookieManager.ValidCaptchaCookie))
+@if (_cookieManager.HasCookie(CookieKeys.ValidateCaptchaCookie))
 {
     <p><span class="font-weight-bold" style="color: #3aa120">Captcha Validated.</span></p>
 }
