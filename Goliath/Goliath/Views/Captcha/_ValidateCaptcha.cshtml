@@ -27,7 +27,13 @@
             <div class="modal-body">
                 <p>
                     Please complete the
-                    <a href="https://www.cloudflare.com/learning/bots/how-captchas-work/" target="_blank">CAPTCHA </a>
+
+                    <a asp-controller="Redirect" 
+                       asp-action="Index"
+                       asp-route-redirectUrl="https://www.cloudflare.com/learning/bots/how-captchas-work/"
+                       asp-route-returnUrl="@Url.Action("Index", "Auth")"
+                       target="_blank">CAPTCHA </a>
+
                     prompt below to sign in.
                 </p>
                 <hr />

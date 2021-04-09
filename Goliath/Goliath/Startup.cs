@@ -118,11 +118,12 @@ namespace Goliath
             {
                 // Set Cookie properties using CookieBuilder properties.
                 options.HeaderName = "X-CSRF-TOKEN";
-                options.SuppressXFrameOptionsHeader = false;
                 options.Cookie.Name = CookieKeys.AntiForgeryCookie;
                 options.Cookie.MaxAge = new TimeSpan(12, 0, 0); // 12 Hour Expire
                 options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.SuppressXFrameOptionsHeader = true;
             });
+           
 
             // Change password hash iteration count.
             services.Configure<PasswordHasherOptions>(option =>
@@ -148,10 +149,11 @@ namespace Goliath
                     app.UseHsts();
                 }
             }
+
             app.UseExceptionHandler("/Errors/GeneralException");
             app.UseStatusCodePages(options =>
             {
-                options.UseStatusCodePagesWithRedirects("/Errors/Index?code={0}");
+                options.UseStatusCodePagesWithRedirects("/errors?code={0}");
             });
 
             if (bool.Parse(_config["General:HTTPSRedirection"]))

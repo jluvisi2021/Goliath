@@ -15,6 +15,15 @@ $(window).ready(() => {
             "color": "red"
         });
     }
+
+    $("#collapse").click(() => {
+        ErrorScript.updateArrow();
+    });
+    $("#report-error-btn").click(() => {
+        ErrorScript.reportError();
+    });
+
+
 });
 // Enable tool tips
 $(document).ready(() => {
@@ -34,7 +43,7 @@ const ErrorScript = (() => {
          * Update the text in the DOM depending on
          * different values read.
          * @param {string} id
-         * @param {string} val
+         * @param {boolean} val
          */
         updateText: (id, val) => {
             const elementID = $(id);

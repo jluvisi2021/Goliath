@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace Goliath.Controllers
 {
@@ -29,23 +30,17 @@ namespace Goliath.Controllers
         /// </summary>
         private readonly SignInManager<ApplicationUser> _signInManager;
 
-        private readonly ICookieManager _cookieManager;
-        private readonly IValidHumanVerifyTokensRepository _validTokens;
         private readonly IGoliathCaptchaService _captcha;
 
         public AuthController
             (
             IAccountRepository accountRepository,
             SignInManager<ApplicationUser> signInManager,
-            ICookieManager cookieManager,
-            IValidHumanVerifyTokensRepository validTokens,
             IGoliathCaptchaService captcha
             )
         {
             _accountRepository = accountRepository;
             _signInManager = signInManager;
-            _validTokens = validTokens;
-            _cookieManager = cookieManager;
             _captcha = captcha;
         }
 
@@ -74,48 +69,53 @@ namespace Goliath.Controllers
         {
             ViewData["ButtonID"] = ButtonID.Login;
 
-            // If the user has signed in with valid data.
-            if (ModelState.IsValid)
+            // Check if fields are entered and match checks.
+            if(!ModelState.IsValid)
             {
-                // Check if captcha is correct.
-                if (!await _captcha.IsCaptchaValidAsync())
-                {
-                    ModelState.AddModelError(_captcha.CaptchaValidationError().Key, _captcha.CaptchaValidationError().Value);
-                    return View(signInModel);
-                }
-
-                // Attempt to log the user in.
-                Microsoft.AspNetCore.Identity.SignInResult result = await _accountRepository.PasswordSignInAsync(signInModel);
-
-                // If the user name and password match.
-                if (result.Succeeded)
-                {
-                    // Store the fact that the CAPTCHA was completed successfully.
-                    await _captcha.CacheNewCaptchaValidateAsync();
-
-                    // Redirect
-                    return RedirectToAction("Index", "UserPanel");
-                }
-                // Else we send the specified errors to the user.
-                else if (result.IsLockedOut)
-                {
-                    ModelState.AddModelError(string.Empty, "Please try again later.");
-                }
-                else if (result.IsNotAllowed)
-                {
-                    ModelState.AddModelError(string.Empty, "You must verify your email!");
-                }
-                else if (result.RequiresTwoFactor)
-                {
-                    ModelState.AddModelError(string.Empty, "You must login through 2FA.");
-                }
-                else
-                {
-                    ModelState.AddModelError(string.Empty, "Invalid Credentials.");
-                }
-                // If the user had a captcha cookie but failed a login then remove the captcha valid cookie.
-                _captcha.DeleteCaptchaCookie();
+                return View(signInModel);
             }
+
+            // Model State is Valid; Check Captcha
+            if (!await _captcha.IsCaptchaValidAsync())
+            {
+                ModelState.AddModelError(_captcha.CaptchaValidationError().Key, _captcha.CaptchaValidationError().Value);
+                return View(signInModel);
+            }
+
+            // Attempt to sign the user in.
+            SignInResult result = await _accountRepository.PasswordSignInAsync(signInModel);
+
+            if(result.Succeeded)
+            {
+                // Store the fact that the CAPTCHA was completed successfully.
+                await _captcha.CacheNewCaptchaValidateAsync();
+
+                // Redirect
+                return RedirectToAction("Index", "UserPanel");
+            }
+            // Result failed.
+            // Check for reason why.
+
+            if (result.IsLockedOut)
+            {
+                ModelState.AddModelError(string.Empty, "Please try again later.");
+            }
+            else if (result.IsNotAllowed)
+            {
+                ModelState.AddModelError(string.Empty, "You must verify your email!");
+            }
+            else if (result.RequiresTwoFactor)
+            {
+                ModelState.AddModelError(string.Empty, "You must login through 2FA.");
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Invalid Credentials.");
+            }
+            GoliathHelper.PrintDebugger("LOL");
+            // Invalidate Captcha Cookie.
+            _captcha.DeleteCaptchaCookie();
+            // Return view with errors.
             return View(signInModel);
         }
 
@@ -131,39 +131,46 @@ namespace Goliath.Controllers
         public async Task<IActionResult> Register(SignUpUserModel model)
         {
             ViewData["ButtonID"] = ButtonID.Register;
-            if (ModelState.IsValid)
-            {
-                if (!await _captcha.IsCaptchaValidAsync())
-                {
-                    ModelState.AddModelError(_captcha.CaptchaValidationError().Key, _captcha.CaptchaValidationError().Value);
-                    return View(model);
-                }
 
-                // Pass in the information for the confirmation email.
-                IdentityResult result = await _accountRepository.CreateUserAsync(model,
+            // Check if fields match checks.
+            if(!ModelState.IsValid)
+            {
+                return View();
+            }
+            
+
+            // Model State Valid; Check Captcha
+            if(!await _captcha.IsCaptchaValidAsync())
+            {
+                ModelState.AddModelError(_captcha.CaptchaValidationError().Key, _captcha.CaptchaValidationError().Value);
+                return View(model);
+            }
+
+            // Attempt to create a new user.
+            IdentityResult result = await _accountRepository.CreateUserAsync(model,
                 new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
 
-                if (!result.Succeeded)
-                {
-                    _captcha.DeleteCaptchaCookie();
-                    // For every error that is created during registration we add that to the
-                    // eventual bootstrap modal.
-                    foreach (IdentityError errorMessage in result.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, errorMessage.Description);
-                    }
-
-                    return View(model);
-                }
-
+            if(result.Succeeded)
+            {
                 // Registration is Valid.
                 ModelState.Clear();
                 await _captcha.CacheNewCaptchaValidateAsync();
                 // Send the user to the index with register tempdata.
                 TempData["Redirect"] = RedirectPurpose.RegisterSuccess;
+                // Send back to index.
                 return RedirectToAction("Index");
             }
-            return View();
+            // Registration Failed
+
+            _captcha.DeleteCaptchaCookie();
+            // For every error that is created during registration we add that to the
+            // eventual bootstrap modal.
+            foreach (IdentityError errorMessage in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, errorMessage.Description);
+            }
+
+            return View(model);
         }
 
         [Route("register/method")]
@@ -185,45 +192,45 @@ namespace Goliath.Controllers
         public async Task<IActionResult> ForgotPassword(ForgotPasswordModel model)
         {
             ViewData["ButtonID"] = ButtonID.ForgotPassword;
+
             // Verify that the user exists with the specified email.
             ApplicationUser user = await _accountRepository.FindByEmailAsync(model.Email);
 
-            if (user != null)
-            {
-                if (!await _captcha.IsCaptchaValidAsync())
-                {
-                    ModelState.AddModelError(_captcha.CaptchaValidationError().Key, _captcha.CaptchaValidationError().Value);
-                    return View();
-                }
-
-                // If the username does not match.
-                if (!(user.UserName.Equals(model.Username)))
-                {
-                    ModelState.AddModelError(string.Empty, $"Invalid Username \"{model.Username}\" for {model.Email}");
-                    return View();
-                }
-                // If the email is not confirmed
-                if (!user.EmailConfirmed)
-                {
-                    ModelState.AddModelError(string.Empty, "Confirm your account before resetting your password.");
-                    return View();
-                }
-                // Generate a token as well as a user agent.
-                await _accountRepository.GenerateForgotPasswordToken(user, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
-                // Indicate to the View that the email was sent.
-                model.IsEmailSent = true;
-                // Clear all fields.
-                ModelState.Clear();
-                await _captcha.CacheNewCaptchaValidateAsync();
-
-                return View(model);
-            }
-            else
+            if(user == null)
             {
                 ModelState.AddModelError(string.Empty, $"We could not find user: {model.Email}");
+                return View();
+            }
+            // User Exists; Check Valid Captcha
+            if (!await _captcha.IsCaptchaValidAsync())
+            {
+                ModelState.AddModelError(_captcha.CaptchaValidationError().Key, _captcha.CaptchaValidationError().Value);
+                return View();
             }
 
-            return View();
+            // User exists but username does not match email.
+            if(!user.UserName.Equals(model.Username))
+            {
+                ModelState.AddModelError(string.Empty, $"Invalid Username \"{model.Username}\" for {model.Email}");
+                return View();
+            }
+            // Email is not confirmed.
+            if (!user.EmailConfirmed)
+            {
+                ModelState.AddModelError(string.Empty, "Confirm your account before resetting your password.");
+                return View();
+            }
+
+            // Generate a token as well as a user agent.
+            await _accountRepository.GenerateForgotPasswordToken(user, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
+            // Indicate to the View that the email was sent.
+            model.IsEmailSent = true;
+            // Clear all fields.
+            ModelState.Clear();
+            // Cache Captcha Validation.
+            await _captcha.CacheNewCaptchaValidateAsync();
+
+            return View(model);
         }
 
         [Route("restore/username")]
@@ -240,30 +247,29 @@ namespace Goliath.Controllers
             ViewData["ButtonID"] = ButtonID.ForgotUsername;
             ApplicationUser user = await _accountRepository.FindByEmailAsync(model.Email);
 
-            if (user != null)
-            {
-                if (!user.EmailConfirmed)
-                {
-                    ModelState.AddModelError(string.Empty, "Please confirm your account before doing this.");
-                    return View();
-                }
-                if (!await _captcha.IsCaptchaValidAsync())
-                {
-                    ModelState.AddModelError(_captcha.CaptchaValidationError().Key, _captcha.CaptchaValidationError().Value);
-                    return View();
-                }
-                await _accountRepository.GenerateUsername(user, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
-                model.IsEmailSent = true;
-                ModelState.Clear();
-                await _captcha.CacheNewCaptchaValidateAsync();
-                return View(model);
-            }
-            else
+            if(user == null)
             {
                 ModelState.AddModelError(string.Empty, $"We could not find user: {model.Email}");
+                return View();
             }
 
-            return View();
+            if (!user.EmailConfirmed)
+            {
+                ModelState.AddModelError(string.Empty, "Please confirm your account before doing this.");
+                return View();
+            }
+
+            if (!await _captcha.IsCaptchaValidAsync())
+            {
+                ModelState.AddModelError(_captcha.CaptchaValidationError().Key, _captcha.CaptchaValidationError().Value);
+                return View();
+            }
+
+            await _accountRepository.GenerateUsername(user, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
+            model.IsEmailSent = true;
+            ModelState.Clear();
+            await _captcha.CacheNewCaptchaValidateAsync();
+            return View(model);
         }
 
         [Route("verify")]
@@ -281,36 +287,34 @@ namespace Goliath.Controllers
             // Verify that the user exists with the specified email.
             ApplicationUser user = await _accountRepository.FindByEmailAsync(model.Email);
 
-            if (user != null)
-            {
-                // If the email is already confirmed.
-                if (user.EmailConfirmed)
-                {
-                    model.IsConfirmed = true;
-                    ModelState.AddModelError(string.Empty, "Account already verified.");
-                    return View(model);
-                }
-                if (!await _captcha.IsCaptchaValidAsync())
-                {
-                    ModelState.AddModelError(_captcha.CaptchaValidationError().Key, _captcha.CaptchaValidationError().Value);
-                    return View();
-                }
-                // Generate a token as well as a user agent.
-                await _accountRepository.GenerateEmailConfirmationToken(user, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
-
-                // Indicate to the View that the email was sent.
-                model.IsEmailSent = true;
-                // Clear all fields.
-                ModelState.Clear();
-                await _captcha.CacheNewCaptchaValidateAsync();
-                return View(model);
-            }
-            else
+            if(user == null)
             {
                 ModelState.AddModelError(string.Empty, $"We could not find user: {model.Email}");
+                return View();
             }
 
-            return View();
+            if (user.EmailConfirmed)
+            {
+                model.IsConfirmed = true;
+                ModelState.AddModelError(string.Empty, "Account already verified.");
+                return View(model);
+            }
+
+            if (!await _captcha.IsCaptchaValidAsync())
+            {
+                ModelState.AddModelError(_captcha.CaptchaValidationError().Key, _captcha.CaptchaValidationError().Value);
+                return View();
+            }
+
+            // Generate a token as well as a user agent.
+            await _accountRepository.GenerateEmailConfirmationToken(user, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
+
+            // Indicate to the View that the email was sent.
+            model.IsEmailSent = true;
+            // Clear all fields.
+            ModelState.Clear();
+            await _captcha.CacheNewCaptchaValidateAsync();
+            return View(model);
         }
 
         /// <summary>
@@ -323,18 +327,22 @@ namespace Goliath.Controllers
         [HttpGet("verify-email")]
         public async Task<IActionResult> VerifyEmail(string uid, string token)
         {
-            // If the unique ID as well as the user exist.
-            if (!string.IsNullOrWhiteSpace(uid) && !string.IsNullOrWhiteSpace(token))
+            // Check for blanks in URL query.
+            if(string.IsNullOrWhiteSpace(uid) || string.IsNullOrWhiteSpace(token))
             {
-                token = token.Replace(' ', '+');
-                // Check to make sure the token has not expired or is invalid.
-                IdentityResult result = await _accountRepository.ConfirmEmailAsync(uid, token);
-                if (result.Succeeded)
-                {
-                    // If the email confirmation is a success then we can pass that info into the view.
-                    TempData["Redirect"] = RedirectPurpose.VerifiedEmailSuccess;
-                    return RedirectToAction("Index");
-                }
+                // Alert to the view that the verification failed.
+                TempData["Redirect"] = RedirectPurpose.VerifiedEmailFailure;
+                return RedirectToAction("Index");
+            }
+
+            token = token.Replace(' ', '+');
+            // Check to make sure the token has not expired or is invalid.
+            IdentityResult result = await _accountRepository.ConfirmEmailAsync(uid, token);
+            if (result.Succeeded)
+            {
+                // If the email confirmation is a success then we can pass that info into the view.
+                TempData["Redirect"] = RedirectPurpose.VerifiedEmailSuccess;
+                return RedirectToAction("Index");
             }
             // Alert to the view that the verification failed.
             TempData["Redirect"] = RedirectPurpose.VerifiedEmailFailure;
@@ -369,6 +377,7 @@ namespace Goliath.Controllers
         public async Task<IActionResult> ResetPassword(ResetPasswordModel model)
         {
             ViewData["ButtonID"] = ButtonID.ForgotPassword;
+
             List<string> errors = new();
             if (ModelState.IsValid)
             {

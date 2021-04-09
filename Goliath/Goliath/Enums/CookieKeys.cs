@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Goliath.Enums
+﻿namespace Goliath.Enums
 {
     /// <summary>
     /// The individual names of the keys of cookies made by Goliath.

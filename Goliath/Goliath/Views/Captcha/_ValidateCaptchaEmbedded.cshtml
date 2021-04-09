@@ -7,7 +7,13 @@
 *@
 @if (_cookieManager.HasCookie(CookieKeys.ValidateCaptchaCookie))
 {
-    <p><span class="font-weight-bold" style="color: #3aa120">Captcha Validated.</span></p>
+<div class="alert alert-success" role="alert">
+    <strong>
+        <i class="fas fa-check mr-2"></i>
+        Captcha Auto-Validated. 
+        <i type="button" class="far fa-question-circle" tabindex="0" data-trigger="focus" data-toggle="popover" title="What is this?" data-content="Your CAPTCHA has been auto-validated due to previous successful CAPTCHA attempts."></i>
+    </strong>
+</div>
 }
 else
 {

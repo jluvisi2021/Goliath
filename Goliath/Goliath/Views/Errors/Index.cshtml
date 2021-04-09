@@ -30,6 +30,18 @@
     <script src="~/js/Errors/ErrorScript.js" asp-append-version="true"></script>
 </head>
 <body>
+
+    <noscript>
+        <style type="text/css">
+            #collapse {
+                display: none;
+            }
+            #collapse-no-js {
+                display: unset;
+            }
+        </style>
+    </noscript>
+
     <main id="outer" class="bg-dark">
         <section id="inner">
             <div class="jumbotron">
@@ -45,15 +57,27 @@
                     Either it does not exist or needs to be updated.
                 </p>
                 <hr class="my-4">
-                <div class="text-dark btn-hover-text-primary" id="collapse" data-toggle="collapse" data-target="#information" aria-expanded="false" aria-controls="information" onclick="ErrorScript.updateArrow();">
+
+                <div class="text-dark btn-hover-text-primary hvr-grow" id="collapse" data-toggle="collapse" data-target="#information" aria-expanded="false" aria-controls="information">
                     <i id="arrow" class="fas fa-arrow-right mr-2"></i>Additional Information
                 </div>
+                <div class="text-dark btn-hover-text-danger hvr-grow" id="collapse-no-js">
+                    <i id="arrow" class="fas fa-times mr-1"></i>
+                    Additional Information
+                    <br />
+                    <p class="font-italic">Enable JavaScript to view additional information.</p>
+                </div>
+
 
                 <div class="collapse" id="information">
                     <div class="card card-body">
                         <p>
 
-                            <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/@Model.StatusCode" target="_blank">
+                            <a asp-controller="Redirect"
+                               asp-action="Index"
+                               asp-route-redirectUrl="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/@Model.StatusCode"
+                               asp-route-returnUrl="@Context.Request.Path@Context.Request.QueryString"
+                               target="_blank">
                                 HTTP ERROR: STATUS @Model.StatusCode
                             </a>
 
@@ -74,25 +98,25 @@
                 </div>
                 <p class="lead">
                     <div id="buttons">
-                        <a href="javascript: history.go(-1)" class="btn btn-primary" role="button">
-                            <i class="fas fa-undo-alt mr-2"></i>Go Back
+                        <a href="javascript: history.go(-1)" class="btn btn-primary hvr-icon-spin" role="button">
+                            <i class="fas fa-undo-alt mr-2 hvr-icon"></i>Go Back
                         </a>
                         <br id="spacer" />
                         @if (_signInManager.IsSignedIn(User))
                         {
-                            <a asp-controller="UserPanel" asp-action="Logout" class="btn btn-primary" role="button">
-                                <i class="fas fa-sign-in-alt mr-2"></i>Go to Login
+                            <a asp-controller="UserPanel" asp-action="Logout" class="btn btn-primary hvr-icon-forward" role="button">
+                                <i class="fas fa-sign-in-alt mr-2 hvr-icon"></i>Go to Login
                             </a>
                         }
                         else
                         {
-                            <a asp-controller="Auth" asp-action="Index" class="btn btn-primary" role="button">
-                                <i class="fas fa-sign-in-alt mr-2"></i>Go to Login
+                            <a asp-controller="Auth" asp-action="Index" class="btn btn-primary hvr-icon-forward" role="button">
+                                <i class="fas fa-sign-in-alt mr-2 hvr-icon"></i>Go to Login
                             </a>
                         }
                         <br id="spacer" />
-                        <a asp-controller="UserPanel" asp-action="Index" class="btn btn-primary" role="button">
-                            <i class="fas fa-database"></i>
+                        <a asp-controller="UserPanel" asp-action="Index" class="btn btn-primary hvr-icon-drop" role="button">
+                            <i class="fas fa-database hvr-icon"></i>
                             Go to UserPanel
                         </a>
                     </div>
@@ -101,9 +125,9 @@
                 <hr />
 
                 <p>
-                    <a class="btn btn-danger" data-toggle="tooltip" data-placement="right" data-html="true" title="<div id=&quot;&quot;> <div id=&quot;inner&quot;> <span class=&quot;text-danger&quot;> <i class=&quot;fas fa-exclamation-circle&quot;></i> <strong>Notice</strong> </span> <br /> <p>Only report this as an issue if you believe that this page should be getting rendered but is not.</p> </div> </div>" data-original-title="Issue Notice" href="#!" onclick="ErrorScript.reportError();" role="button">
+                    <a id="report-error-btn" class="btn btn-danger hvr-icon-buzz-out" data-toggle="tooltip" data-placement="right" data-html="true" title="<div id=&quot;&quot;> <div id=&quot;inner&quot;> <span class=&quot;text-danger&quot;> <i class=&quot;fas fa-exclamation-circle&quot;></i> <strong>Notice</strong> </span> <br /> <p>Only report this as an issue if you believe that this page should be getting rendered but is not.</p> </div> </div>" data-original-title="Issue Notice" href="#!" role="button">
 
-                        <i class="fas fa-bug mr-2"></i>Report as Issue
+                        <i class="fas fa-bug mr-2 hvr-icon"></i>Report as Issue
                     </a>
                     <br />
                     @DateTime.Now

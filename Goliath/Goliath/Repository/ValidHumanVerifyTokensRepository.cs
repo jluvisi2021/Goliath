@@ -33,25 +33,16 @@ namespace Goliath.Repository
             {
                 return false;
             }
-            List<string> result = _context.ValidTokens.Select(u => u.Token).ToList();
 
+            // Remove old tokens before searching database.
+            await CleanUpUnusedTokens();
+
+            List<string> result = _context.ValidTokens.Select(u => u.Token).ToList();
+            
             for (int i = 0; i < result.Count; i++)
             {
                 if (GoliathHash.HashStringSHA256(result[i]).Equals(hashCode))
                 {
-                    await CleanUpUnusedTokens();
-
-                    /*
-                    // Delete first element in EF Core to compensate for adding a new one. (1 Token
-                    // per user). Do not delete the token if the date time is not yet expired. (5 Minutes)
-                    ValidHumanVerifyTokens m = _context.ValidTokens.OrderByDescending(u => u.NumericID).LastOrDefault();
-                    // If the oldest element in the EF Database is over 5 minutes old then delete it.
-                    if (DateTime.Parse(m.GeneratedDateTime) < DateTime.UtcNow.Subtract(new TimeSpan(0, 5, 0))) {
-                        _context.ValidTokens.Remove(m);
-                        await _context.SaveChangesAsync();
-                    }
-                    */
-
                     return true;
                 }
             }

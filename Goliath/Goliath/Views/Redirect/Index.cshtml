@@ -1,0 +1,66 @@
+﻿@model Goliath.Models.RedirectUrlModel
+@{ 
+    ViewData["Title"] = "Redirect";
+}
+<main id="outer" class="bg-dark">
+    <section id="inner">
+        <div class="card bg-white text-dark mb-3 text-center">
+            <div class="card-body">
+                <div class="card-title">
+                    <p>
+
+                        <span class="display-4">
+                            <i class="fas fa-shield-alt"></i>
+                            Goliath Redirection
+                            <i class="fas fa-shield-alt"></i>
+                        </span>
+                    
+                    </p>
+                    <p>
+                        <span class="font-italic text-muted">
+                            Goliath redirect protection exists to inform users about leaving to external links.
+                        </span>
+                    </p>
+                </div>
+                <hr />
+                <div class="card-text">
+                    <p>
+                        <span class="lead">
+                            You are about to be redirected to a website outside of Goliath.
+                        </span>
+                        <br />
+                        <span class="text-muted">
+                            Goliath cannot ensure that any websites outside of this application do not have malicious content.
+                        </span>
+                    </p>
+                </div>
+                <div class="card">
+                    
+                    <div class="card-body">
+
+                        <p class="card-text">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <button class="btn btn-primary" type="button">
+                                        <i class="fas fa-link"></i>
+                                    </button>
+                                </div>
+                                <input type="text" class="form-control" value="@Model.Url" readonly>
+                            </div>
+                        </p>
+
+                            <a href="@Model.Url" class="btn btn-primary mb-1 mr-1">
+                                <i class="fas fa-link mr-1"></i>Go to external link
+                            </a>
+
+                            <a href="@Model.ReturnUrl" class="btn btn-primary mb-1 mr-1">
+                                <i class="fas fa-shield-alt mr-1"></i>Return to Goliath
+                            </a>
+
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>

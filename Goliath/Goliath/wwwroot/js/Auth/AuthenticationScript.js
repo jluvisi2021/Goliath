@@ -1,4 +1,5 @@
 ﻿/** RUNTIME PAGELOAD **/
+
 $(window).ready((e) => {
     // Fixes a bug with the "Other" radio button where it would be clicked
     // and selected but the button would not be registered.
@@ -8,7 +9,18 @@ $(window).ready((e) => {
             e.stopImmediatePropagation();
         }
     });
+    $("#toggle-dark").click(() => {
+        AuthScript.toggleDarkTheme();
+    });
+    $("#login-submit-btn").click(() => {
+        GlobalScript.loadCaptcha('login-form');
+    });
+    $("#register-submit-btn").click(() => {
+        GlobalScript.loadCaptcha('register-form');
+    });
+
 });
+
 
 /* Page load end */
 

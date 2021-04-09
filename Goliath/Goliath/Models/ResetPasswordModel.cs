@@ -7,12 +7,14 @@ namespace Goliath.Models
     /// </summary>
     public class ResetPasswordModel
     {
-        [Required]
+        [Required(ErrorMessage = "Invalid UserID. Please try again.")]
         [DataType(DataType.Text)]
+        [StringLength(maximumLength: 300, MinimumLength = 20, ErrorMessage = "Invalid UserID. Please try again.")]
         public string UserId { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Invalid Token. Please try again.")]
         [DataType(DataType.Text)]
+        [StringLength(maximumLength: 300, MinimumLength = 20, ErrorMessage = "Invalid Token. Please try again.")]
         public string Token { get; set; }
 
         [Required(ErrorMessage = "Please enter a password.")]

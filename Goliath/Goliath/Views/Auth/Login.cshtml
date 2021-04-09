@@ -51,7 +51,7 @@
     </div>
     <hr />
 
-        <button type="button" class="btn btn-primary btn-block text-uppercase mb-2 rounded-pill shadow-sm" onclick="GlobalScript.loadCaptcha('login-form');">Sign in</button>
+        <button id="login-submit-btn" type="button" class="btn btn-primary btn-block text-uppercase mb-2 rounded-pill shadow-sm">Sign in</button>
 
     @*Render the partial view for the captcha when the sign in button is clicked.*@
     <div id="captcha-view"></div>
@@ -84,7 +84,7 @@
             <br />
         </p>
         <hr />
-        <button id="toggle-dark" type="button" class="btn btn-dark" onclick="AuthScript.toggleDarkTheme();" data-toggle="tooltip" data-placement="right" title="Toggle dark theme for this browser.">
+        <button id="toggle-dark" type="button" class="btn btn-dark" data-toggle="tooltip" data-placement="right" title="Toggle dark theme for this browser.">
             <span class="fas fa-adjust"></span>
         </button>
     </div>

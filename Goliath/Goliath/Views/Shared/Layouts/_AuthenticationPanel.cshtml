@@ -15,6 +15,7 @@
 }
 @* Specific to _AuthenticationPanel. *@
 @section UniqueHeader {
+    <link type="text/css" href="https://unpkg.com/aos@next/dist/aos.css" asp-append-version="true" />
     <link href="~/css/Auth/LoginStyle.css" rel="stylesheet" asp-append-version="true" />
     <script src="~/js/Auth/AuthenticationScript.js" asp-append-version="true"></script>
 }
@@ -112,7 +113,12 @@
                                                 <a class="dropdown-item py-xl-1" href="#!"><i id="signin-google-icon" class="fab fa-google px-sm-2 dropdown-bottom-icons"></i>Sign in with Google</a>
                                                 <a class="dropdown-item" href="/idk"><i id="signin-ms-icon" class="fab fa-microsoft px-sm-2 dropdown-bottom-icons"></i>Sign in with Microsoft</a>
                                                 <a class="dropdown-item" href="/idk"><i id="signin-fb-icon" class="fab fa-facebook-square px-sm-2 dropdown-bottom-icons"></i>Sign in with Facebook</a>
-                                                <a class="dropdown-item" href="https://github.com/jluvisi2021/Goliath" target="_blank"><i id="dd-git-icon" class="fab fa-github px-sm-2 dropdown-bottom-icons"></i>View GitHub</a>
+                                                <a 
+                                                   asp-controller="Redirect"
+                                                   asp-action="Index"
+                                                   asp-route-redirectUrl="https://github.com/jluvisi2021/Goliath"
+                                                   asp-route-returnUrl="@Context.Request.Path"
+                                                   class="dropdown-item" target="_blank"><i id="dd-git-icon" class="fab fa-github px-sm-2 dropdown-bottom-icons"></i>View GitHub</a>
                                             </div>
                                             <!-- Other Drop Down End -->
                                         </div>
@@ -141,9 +147,11 @@
 </main>
 
 @section Scripts {
-    <script type="text/javascript" defer>
+    <script type="text/javascript">
             @*Highlight individual button elements depending on the current page*@
         AuthScript.loadButtonElements("@ViewData["ButtonID"]");
         AuthScript.changeTheme();
     </script>
+    <script src="https://unpkg.com/aos@next/dist/aos.js" integrity="sha384-ZGo5k5ISlEzWLoXyt+lnvKt9j03Z7GkxXh14zLqVy098XJhcdKHjL8pQYVMI8WiH" crossorigin="anonymous" asp-append-version="true"></script>
+    <script>AOS.init();</script>
 }

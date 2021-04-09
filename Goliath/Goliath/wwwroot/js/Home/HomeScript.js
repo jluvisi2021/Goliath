@@ -15,7 +15,6 @@
         maxDistance: 22.00,
         spacing: 16.00
     });
-    AOS.init();
     // Make background visible after loading.
     $("#vanta-js").css({
         "visibility": "visible"
