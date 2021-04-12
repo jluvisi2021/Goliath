@@ -1,0 +1,24 @@
+﻿@model Goliath.Models.ProfileSettingsGeneralModel
+@{
+    var user = await _repository.GetUserByName(User.Identity.Name);
+}
+<p id="option-text">CHANGE EMAIL</p>
+<div class="ht-tm-element input-group mb-3">
+    <div class="input-group-prepend ">
+        <button class="btn btn-outline-primary" type="button">
+            <i class="fas fa-envelope"></i>
+        </button>
+    </div>
+    <input asp-for="CurrentEmail" value="@user.Email" placeholder="" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" readonly />
+
+</div>
+<div class="ht-tm-element input-group mb-3">
+    <div class="input-group-prepend ">
+        <button class="btn btn-outline-primary" type="button">
+            <i class="fas fa-envelope"></i>
+        </button>
+    </div>
+
+    <input asp-for="NewEmail" placeholder="Enter New Email." required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
+
+</div>

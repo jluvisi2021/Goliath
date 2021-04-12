@@ -30,16 +30,5 @@ namespace Goliath.Controllers
             return View();
         }
 
-        [Route("privacy")]
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [Route("contact")]
-        public IActionResult Contact()
-        {
-            return View();
-        }
     }
 }

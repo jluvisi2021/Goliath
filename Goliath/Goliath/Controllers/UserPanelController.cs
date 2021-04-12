@@ -1,4 +1,5 @@
 ﻿using Goliath.Enums;
+using Goliath.Helper;
 using Goliath.Models;
 using Goliath.Repository;
 using Microsoft.AspNetCore.Mvc;
@@ -33,8 +34,17 @@ namespace Goliath.Controllers
         }
 
         [HttpPost, ValidateAntiForgeryToken]
-        public IActionResult Profile(ProfileSettingsGeneralModel model)
+        public async Task<IActionResult> Profile(ProfileSettingsGeneralModel model)
         {
+            if(!ModelState.IsValid)
+            {
+                GoliathHelper.PrintDebugger("Model State not valid.");
+                return View();
+            }
+
+            var goliathUser = await _accountRepository.GetUserByName(User.Identity.Name);
+            goliathUser.BackgroundColor = model.BackgroundColor;
+            await _accountRepository.UpdateUser(goliathUser);
             return View(model);
         }
 

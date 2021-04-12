@@ -1,0 +1,36 @@
+﻿@model Goliath.Models.ProfileSettingsGeneralModel
+@{
+    var user = await _repository.GetUserByName(User.Identity.Name);
+}
+
+<p id="option-text">TWO-FACTOR AUTHENTICATION</p>
+@if (user.TwoFactorEnabled)
+{
+    <div class="alert alert-success" role="alert">
+        <p>
+            <h4 class="alert-heading">Enabled <i class="fas fa-user-lock ml-1"></i></h4>
+            Two-Factor authentication is currently enabled.
+            <br />
+            <button class="btn btn-danger mb-2 mt-2">Click to Disable.</button>
+            <br />
+            <a href="#!" class="alert-link">Learn more about Two-Factor Authentication.</a>
+        </p>
+    </div>
+    <button class="btn btn-primary">
+        <i class="fas fa-file mr-2"></i>Recover 2FA Codes</button>
+}
+else
+{
+    <div class="alert alert-danger" role="alert">
+        <p>
+            <h4 class="alert-heading">Disabled</h4>
+            Two-Factor authentication is currently disabled.
+            <br />
+            <button class="btn btn-danger mb-2 mt-2">Click to Enable.</button>
+            <br />
+            <a href="#!" class="alert-link">Learn more about Two-Factor Authentication.</a>
+        </p>
+
+
+    </div>
+}

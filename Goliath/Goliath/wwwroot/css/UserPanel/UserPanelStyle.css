@@ -22,10 +22,10 @@ body {
 /**The primary container for the profile. (TODO: Look into updating)*/
 #primary-container {
     width: 250%;
-    height: 150%;
     min-width: 100%;
     min-height: 100%;
     background-color: white;
+    padding-bottom: 5%;
 }
 
 /*Make the navbar font large.*/

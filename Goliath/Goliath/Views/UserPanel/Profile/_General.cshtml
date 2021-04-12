@@ -1,22 +1,46 @@
 ﻿<h3>All Available Settings</h3>
 <hr />
-<form asp-action="Profile" asp-antiforgery="true">
+<div class="text-danger" asp-validation-summary="All"></div>
+<hr />
+<form asp-action="Profile" asp-antiforgery="true" novalidate>
     <div class="container">
-        <div class="row">
-            <div class="text-left">
-                <!-- Background Color Option -->
-                <partial name="~/Views/UserPanel/Profile/Settings/_ChangeBackgroundColor.cshtml" />
-                <!-- Background Color Option End -->
-                <hr />
-                <!-- Enable Dark Theme Option -->
-                <partial name="~/Views/UserPanel/Profile/Settings/_ToggleDarkTheme.cshtml" />
-                <!-- Enable Dark Theme Option End-->
-                <hr />
-            </div>
-        </div>
-    </div>
+        <div class="text-left">
 
-    <button type="submit" class="btn btn-secondary">
+            <!-- Background Color Option -->
+            <div class="row col-8">
+                <partial name="~/Views/UserPanel/Profile/Settings/_ChangeBackgroundColor.cshtml" />
+            </div>
+
+            <!-- Background Color Option End -->
+            <hr />
+            <!-- Enable Dark Theme Option -->
+            <partial name="~/Views/UserPanel/Profile/Settings/_ToggleDarkTheme.cshtml" />
+            <!-- Enable Dark Theme Option End-->
+            <hr />
+            <div class="row col-8">
+                <partial name="~/Views/UserPanel/Profile/Settings/_ChangeEmail.cshtml" />
+            </div>
+            <hr />
+            <div class="row col-8">
+                <partial name="~/Views/UserPanel/Profile/Settings/_ChangePassword.cshtml" />
+            </div>
+
+            <hr />
+            <div class="row col-8">
+                <partial name="~/Views/UserPanel/Profile/Settings/_ChangePhoneNumber.cshtml" />
+            </div>
+            <hr />
+            <partial name="~/Views/UserPanel/Profile/Settings/_TwoFactor.cshtml" />
+            <hr />
+            <partial name="~/Views/UserPanel/Profile/Settings/_LoggedInTrace.cshtml" />
+            <hr />
+            <partial name="~/Views/UserPanel/Profile/Settings/_DownloadMyData.cshtml" />
+            <hr />
+            <partial name="~/Views/UserPanel/Profile/Settings/_MemoryFootprint.cshtml" />
+        </div>
+        </div>
+
+    <button type="submit" class="btn btn-secondary mt-4">
         <i class="fas fas fa-tools mr-2"></i>
         Submit
     </button>

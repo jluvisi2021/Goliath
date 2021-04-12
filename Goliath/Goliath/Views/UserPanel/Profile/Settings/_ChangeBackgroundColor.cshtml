@@ -1,5 +1,7 @@
 ﻿@model Goliath.Models.ProfileSettingsGeneralModel
-
+@{
+    var user = await _repository.GetUserByName(User.Identity.Name);
+}
 <p id="option-text">BACKGROUND COLOR</p>
 <div class="ht-tm-element input-group mb-3">
     <div class="input-group-prepend ">
@@ -7,6 +9,6 @@
             <i class="fas fa-tint"></i>
         </button>
     </div>
-    <input asp-for="BackgroundColor" placeholder="Enter HEX Value" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
+    <input asp-for="BackgroundColor" value="@user.BackgroundColor" placeholder="Enter HEX Value" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
     <button type="button" class="btn btn-outline-primary ml-2" data-toggle="tooltip" data-placement="right" title="Click to open a color selection menu.">Select</button>
 </div>

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Goliath.Helper
 {
@@ -45,10 +47,24 @@ namespace Goliath.Helper
             }
         }
 
+        /// <summary>
+        /// Generates a secure random number using the RNGCryptoServiceProvider.
+        /// </summary>
+        /// <returns></returns>
         public static string GenerateSecureRandomNumber()
         {
-            Random rand = new Random();
-            return $"{rand.Next(7650000)}";
+            StringBuilder validCode = new();
+            RNGCryptoServiceProvider provider = new();
+            byte[] byteArray = new byte[4];
+            provider.GetBytes(byteArray);
+            uint randomInteger = BitConverter.ToUInt32(byteArray, 0);
+            string x = System.Convert.ToString(randomInteger);
+            for (int i = 0; i < x.Length; i++)
+            {
+                validCode.Append(x[i]);
+            }
+            provider.Dispose();
+            return validCode.ToString();
         }
     }
 }

@@ -65,5 +65,10 @@ namespace Goliath.Repository
         Task<ApplicationUser> GetFromUserClaim(ClaimsPrincipal claimsPrincipal);
 
         Task<ApplicationUser> GetUserByName(string name);
+
+        Task<IdentityResult> UpdateUser(ApplicationUser user);
+
+        bool HasPhoneNumber(ApplicationUser user);
+        bool HasConfirmedPhoneNumber(ApplicationUser user);
     }
 }

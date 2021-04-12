@@ -82,6 +82,8 @@ namespace Goliath.Controllers
                 return View(signInModel);
             }
 
+
+
             // Attempt to sign the user in.
             SignInResult result = await _accountRepository.PasswordSignInAsync(signInModel);
 

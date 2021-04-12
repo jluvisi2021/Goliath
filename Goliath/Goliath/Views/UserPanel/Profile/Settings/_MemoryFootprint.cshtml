@@ -1,0 +1,23 @@
+﻿@model Goliath.Models.ProfileSettingsGeneralModel
+@{
+    var user = await _repository.GetUserByName(User.Identity.Name);
+}
+
+<p id="option-text">MEMORY FOOTPRINT</p>
+
+    <div class="ht-tm-element input-group mb-3">
+        <div class="input-group-prepend ">
+            <button class="btn btn-outline-primary" type="button">
+                <i class="fas fa-sd-card"></i>
+            </button>
+        </div>
+        <input value="@((System.Text.ASCIIEncoding.ASCII.GetByteCount(user.UserData)/1024F)) KB" placeholder="Enter HEX Value" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" readonly />
+
+    </div>
+
+<p class="text-muted font-italic">Footprint: @Math.Round((System.Text.ASCIIEncoding.ASCII.GetByteCount(user.UserData) / 1024F), 2) KB / 100 KB </p>
+<div class="progress">
+    <div class="progress-bar bg-primary progress-bar-striped progress-bar-animated" role="progressbar" style="width: @(System.Text.ASCIIEncoding.ASCII.GetByteCount(user.UserData)/1024F)%;" aria-valuenow="@((System.Text.ASCIIEncoding.ASCII.GetByteCount(user.UserData)/1024F))"
+         aria-valuemin="0" aria-valuemax="100"></div>
+</div>
+

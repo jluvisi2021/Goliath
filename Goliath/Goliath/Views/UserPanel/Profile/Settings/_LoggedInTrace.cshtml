@@ -1,0 +1,39 @@
+﻿@model Goliath.Models.ProfileSettingsGeneralModel
+@{
+    var user = await _repository.GetUserByName(User.Identity.Name);
+}
+
+<p id="option-text">LOGIN TRACEBACK</p>
+<p class="text-muted font-italic">Goliath keeps track of the last 10 logins on your account.</p>
+<table class="table table-hover table-striped">
+    <thead class="thead-dark">
+        <tr>
+            <th>#</th>
+            <th>Time (UTC)</th>
+            <th>Time from Now (UTC)</th>
+            <th>IP Address</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th scope="row">1</th>
+            <td>5:00 PM</td>
+            <td>30 Mins Ago.</td>
+            <td>72.160.48.391</td>
+        </tr>
+        <tr>
+            <th scope="row">2</th>
+            <td>6:00 PM</td>
+            <td>1 Hour Ago Ago.</td>
+            <td>72.160.48.391</td>
+        </tr>
+
+        <tr class="table-danger">
+            <th scope="row">3</th>
+            <td>6:30 PM</td>
+            <td>2 Hours Ago.</td>
+            <td>72.160.48.391</td>
+        </tr>
+
+    </tbody>
+</table>

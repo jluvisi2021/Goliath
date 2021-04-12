@@ -42,6 +42,7 @@ namespace Goliath
             // Setup custom Identity Core.
             services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<GoliathContext>().AddDefaultTokenProviders();
+            
 
             // Setup the SMTPConfig model to use values directly from the appsettings.
             services.Configure<SMTPConfigModel>(_config.GetSection("SMTPConfig"));

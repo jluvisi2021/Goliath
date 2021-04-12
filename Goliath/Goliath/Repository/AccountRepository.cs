@@ -50,6 +50,7 @@ namespace Goliath.Repository
             _roleManager = roleManager;
             _emailService = emailService;
             _config = config;
+
         }
 
         /// <summary>
@@ -276,6 +277,21 @@ namespace Goliath.Repository
             return await _userManager.FindByNameAsync(claimsPrincipal.Identity.Name);
         }
 
+        public async Task<IdentityResult> UpdateUser(ApplicationUser user)
+        {
+            return await _userManager.UpdateAsync(user);
+        }
+
+        public bool HasPhoneNumber(ApplicationUser user)
+        {
+            return user.PhoneNumber == "NULL";
+        }
+
+        public bool HasConfirmedPhoneNumber(ApplicationUser user)
+        {
+            return user.PhoneNumberConfirmed;
+        }
+
         /// <summary>
         /// Creates the user and adds them to the database using Identity core.
         /// </summary>
@@ -284,6 +300,7 @@ namespace Goliath.Repository
         /// <returns> </returns>
         public async Task<IdentityResult> CreateUserAsync(SignUpUserModel userModel, DeviceParser device)
         {
+       
             try
             {
                 // Create a new application user.
