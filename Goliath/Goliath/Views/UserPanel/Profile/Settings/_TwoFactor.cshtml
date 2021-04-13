@@ -3,7 +3,14 @@
     var user = await _repository.GetUserByName(User.Identity.Name);
 }
 
-<p id="option-text">TWO-FACTOR AUTHENTICATION</p>
+<p id="option-text">
+    TWO-FACTOR AUTHENTICATION
+    <i class="fas fa-question-circle item-info hvr-grow"
+       tabindex="0" role="button" data-toggle="popover"
+       data-trigger="focus"
+       title="Two-Factor Authentication" data-html="false"
+       data-content="Two-Factor authentication provides additional security to your account by requiring additional verification on login or while editing confidential credentials.">
+    </i></p>
 @if (user.TwoFactorEnabled)
 {
     <div class="alert alert-success" role="alert">
@@ -11,7 +18,7 @@
             <h4 class="alert-heading">Enabled <i class="fas fa-user-lock ml-1"></i></h4>
             Two-Factor authentication is currently enabled.
             <br />
-            <button class="btn btn-danger mb-2 mt-2">Click to Disable.</button>
+            <button type="button" class="btn btn-danger mb-2 mt-2">Click to Disable</button>
             <br />
             <a href="#!" class="alert-link">Learn more about Two-Factor Authentication.</a>
         </p>
@@ -26,7 +33,7 @@ else
             <h4 class="alert-heading">Disabled</h4>
             Two-Factor authentication is currently disabled.
             <br />
-            <button class="btn btn-danger mb-2 mt-2">Click to Enable.</button>
+            <button type="button" class="btn btn-danger mb-2 mt-2">Click to Enable</button>
             <br />
             <a href="#!" class="alert-link">Learn more about Two-Factor Authentication.</a>
         </p>

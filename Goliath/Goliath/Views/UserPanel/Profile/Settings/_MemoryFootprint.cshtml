@@ -1,9 +1,21 @@
 ﻿@model Goliath.Models.ProfileSettingsGeneralModel
 @{
     var user = await _repository.GetUserByName(User.Identity.Name);
+    var footprint = 0.00f;
+    if(user.UserData != null)
+    {
+        footprint = System.Text.ASCIIEncoding.ASCII.GetByteCount(user.UserData) / 1024F;
+            }
 }
 
-<p id="option-text">MEMORY FOOTPRINT</p>
+<p id="option-text">MEMORY FOOTPRINT
+    <i class="fas fa-question-circle item-info hvr-grow"
+       tabindex="0" role="button" data-toggle="popover"
+       data-trigger="focus"
+       title="Memory Footprint" data-html="true"
+       data-content="Your memory footprint is the total size your information takes up on Goliath's databases. Each user is limited to <strong>100KB<strong> of data maximum.">
+    </i>
+    </p>
 
     <div class="ht-tm-element input-group mb-3">
         <div class="input-group-prepend ">
@@ -11,13 +23,13 @@
                 <i class="fas fa-sd-card"></i>
             </button>
         </div>
-        <input value="@((System.Text.ASCIIEncoding.ASCII.GetByteCount(user.UserData)/1024F)) KB" placeholder="Enter HEX Value" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" readonly />
+        <input value="@footprint KB" placeholder="Enter HEX Value" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" readonly />
 
     </div>
 
-<p class="text-muted font-italic">Footprint: @Math.Round((System.Text.ASCIIEncoding.ASCII.GetByteCount(user.UserData) / 1024F), 2) KB / 100 KB </p>
+<p class="text-muted font-italic">Footprint: @Math.Round(footprint, 2) KB / 100 KB </p>
 <div class="progress">
-    <div class="progress-bar bg-primary progress-bar-striped progress-bar-animated" role="progressbar" style="width: @(System.Text.ASCIIEncoding.ASCII.GetByteCount(user.UserData)/1024F)%;" aria-valuenow="@((System.Text.ASCIIEncoding.ASCII.GetByteCount(user.UserData)/1024F))"
+    <div class="progress-bar bg-primary progress-bar-striped progress-bar-animated" role="progressbar" style="width: @footprint%;" aria-valuenow="@footprint"
          aria-valuemin="0" aria-valuemax="100"></div>
 </div>
 

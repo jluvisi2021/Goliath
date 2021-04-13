@@ -2,7 +2,15 @@
 @{
     var user = await _repository.GetUserByName(User.Identity.Name);
 }
-<p id="option-text">CHANGE EMAIL</p>
+<p id="option-text">
+    CHANGE EMAIL
+    <i class="fas fa-question-circle item-info hvr-grow"
+       tabindex="0" role="button" data-toggle="popover"
+       data-trigger="focus"
+       title="Update Email"
+       data-content="Update the email for your account. This will require a reverification.">
+    </i>
+</p>
 <div class="ht-tm-element input-group mb-3">
     <div class="input-group-prepend ">
         <button class="btn btn-outline-primary" type="button">
@@ -22,3 +30,17 @@
     <input asp-for="NewEmail" placeholder="Enter New Email." required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
 
 </div>
+@if (user.EmailConfirmed)
+{
+    <span class="badge badge-success">
+        <i class="fas fa-check-circle mr-1"></i>
+        Confirmed
+    </span>
+}
+else
+{
+    <span class="badge badge-danger">
+        <i class="fas fa-check-circle mr-1"></i>
+        Not Confirmed
+    </span>
+}

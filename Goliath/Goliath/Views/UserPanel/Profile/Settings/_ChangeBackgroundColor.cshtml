@@ -2,7 +2,16 @@
 @{
     var user = await _repository.GetUserByName(User.Identity.Name);
 }
-<p id="option-text">BACKGROUND COLOR</p>
+<p id="option-text">
+    BACKGROUND COLOR
+    <i class="fas fa-question-circle item-info hvr-grow"
+       tabindex="0" role="button" data-toggle="popover"
+       data-trigger="focus" 
+       title="Background Color"
+       data-content="Adjust the background color theme. This option does not work over dark themes.">
+    </i>
+</p>
+
 <div class="ht-tm-element input-group mb-3">
     <div class="input-group-prepend ">
         <button class="btn btn-outline-primary" type="button">
