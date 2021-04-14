@@ -65,7 +65,29 @@ namespace Goliath.Controllers
                 hasChanged = true;
                 goliathUser.PhoneNumber = model.NewPhoneNumber;
             }
-            if(hasChanged)
+            // If the new password entered does not match the users current password.
+            
+            if(!string.IsNullOrWhiteSpace(model.NewPassword)) 
+            {
+                if (await _accountRepository.IsPasswordValid(goliathUser, model.NewPassword))
+                {
+                    ModelState.AddModelError(string.Empty, "Your new password matches your old password.");
+                    return View(model);
+                }
+                var result = await _accountRepository.UpdatePasswordAsync(goliathUser, model.CurrentPassword, model.NewPassword);
+                if(result.Succeeded)
+                {
+                    hasChanged = true;
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Your entry in \"Current Password\" field does not match your account password.");
+                    return View(model);
+                }
+            }
+
+
+            if (hasChanged)
             {
                 await _accountRepository.UpdateUser(goliathUser);
             }

@@ -72,5 +72,7 @@ namespace Goliath.Repository
         Task<bool> HasConfirmedPhoneNumber(ApplicationUser user);
 
         Task UpdatePhone(ApplicationUser user, string number);
+        Task<IdentityResult> UpdatePasswordAsync(ApplicationUser user, string currPassword, string newPassword);
+        Task<bool> IsPasswordValid(ApplicationUser user, string pass);
     }
 }

@@ -77,6 +77,10 @@ namespace Goliath.Repository
                     UserName = _config["SuperUser:Username"],
                     Email = _config["SuperUser:Email"],
                     EmailConfirmed = true,
+                    BackgroundColor = "#FFFFFF",
+                    DarkTheme = "false",
+                    UserData = "",
+                    PendingNotifications = ""
                 },
                 password: _config["SuperUser:Password"]
                 );
@@ -282,6 +286,16 @@ namespace Goliath.Repository
             return await _userManager.UpdateAsync(user);
         }
 
+        public async Task<bool> IsPasswordValid(ApplicationUser user, string pass)
+        {
+            return await _userManager.CheckPasswordAsync(user, pass);
+        }
+
+        public async Task<IdentityResult> UpdatePasswordAsync(ApplicationUser user, string currPassword, string newPassword)
+        {
+            return await _userManager.ChangePasswordAsync(user, currPassword, newPassword);
+        }
+
         public async Task<bool> HasPhoneNumber(ApplicationUser user)
         {
             return ((await _userManager.GetPhoneNumberAsync(user)) != null);
@@ -311,6 +325,10 @@ namespace Goliath.Repository
                 // Create a new application user.
                 ApplicationUser user = new()
                 {
+                    BackgroundColor = "#FFFFFF",
+                    DarkTheme = "false",
+                    UserData = "",
+                    PendingNotifications = "",
                     UserName = userModel.Username,
                     Email = userModel.Email,
                 };
