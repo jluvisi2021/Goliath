@@ -38,14 +38,58 @@ namespace Goliath.Controllers
         {
             if(!ModelState.IsValid)
             {
-                GoliathHelper.PrintDebugger("Model State not valid.");
                 return View();
             }
 
             var goliathUser = await _accountRepository.GetUserByName(User.Identity.Name);
-            goliathUser.BackgroundColor = model.BackgroundColor;
-            await _accountRepository.UpdateUser(goliathUser);
+            // track if there has been any updates.
+            bool hasChanged = false;
+
+            if(hasValueChanged(model.BackgroundColor, goliathUser.BackgroundColor))
+            {
+                hasChanged = true;
+                goliathUser.BackgroundColor = model.BackgroundColor;
+            }
+            if(hasValueChanged(model.DarkThemeEnabled, goliathUser.DarkTheme))
+            {
+                hasChanged = true;
+                goliathUser.DarkTheme = model.DarkThemeEnabled;
+            }
+            if(hasValueChanged(model.NewEmail, goliathUser.Email))
+            {
+                hasChanged = true;
+                goliathUser.Email = model.NewEmail;
+            }
+            if(hasValueChanged(model.NewPhoneNumber, goliathUser.PhoneNumber))
+            {
+                hasChanged = true;
+                goliathUser.PhoneNumber = model.NewPhoneNumber;
+            }
+            if(hasChanged)
+            {
+                await _accountRepository.UpdateUser(goliathUser);
+            }
+
             return View(model);
+        }
+
+        private bool hasValueChanged(string model, string user)
+        {
+            if(string.IsNullOrWhiteSpace(model))
+            {
+                GoliathHelper.PrintDebugger("No Changes detected");
+                return false;
+            }
+            if(string.IsNullOrWhiteSpace(user) || user == "NULL")
+            {
+                return true;
+            }
+            if (!model.Equals(user))
+            {
+                return true;
+            }
+            GoliathHelper.PrintDebugger("No Changes detected");
+            return false;
         }
 
         /// <summary>

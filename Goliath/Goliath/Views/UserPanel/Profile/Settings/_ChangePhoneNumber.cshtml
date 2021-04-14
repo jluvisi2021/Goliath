@@ -1,5 +1,5 @@
 ﻿@model Goliath.Models.ProfileSettingsGeneralModel
-@{ 
+@{
     var user = await _repository.GetUserByName(User.Identity.Name);
 }
 
@@ -18,16 +18,15 @@
             <i class="fas fa-mobile-alt"></i>
         </button>
     </div>
-    @if (_repository.HasPhoneNumber(user))
+    @if (await _repository.HasPhoneNumber(user))
     {
-        <input asp-for="CurrentPhoneNumber" value="Current Number..." placeholder="" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" readonly />
+        <input asp-for="CurrentPhoneNumber" value="@user.PhoneNumber" placeholder="" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" readonly />
 
     }
     else
     {
         <input asp-for="CurrentPhoneNumber" value="None Specified" placeholder="" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" readonly />
     }
-
 </div>
 <div class="ht-tm-element input-group mb-3">
     <div class="input-group-prepend ">
@@ -36,18 +35,17 @@
         </button>
     </div>
 
-    <input asp-for="NewPhoneNumber" placeholder="Enter New Phone." required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
+    <input id="phone-setting" asp-for="NewPhoneNumber" placeholder="Enter New Phone." required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
 </div>
-@if (_repository.HasConfirmedPhoneNumber(user))
+@if (await _repository.HasConfirmedPhoneNumber(user))
 {
     <span class="badge badge-success">Phone Number Confirmed</span>
 }
 else
 {
-    if (_repository.HasPhoneNumber(user))
+    if (await _repository.HasPhoneNumber(user))
     {
         <span class="badge badge-danger">Phone Number Not Confirmed</span>
-        <br />
         <a href="#!">Click to confirm your phone number.</a>
     }
 

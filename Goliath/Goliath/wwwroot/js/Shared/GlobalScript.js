@@ -31,27 +31,22 @@ $(window).scroll(() => {
 
 // Run immediately.
 $(document).ready(() => {
-        $('[data-toggle="popover"]').popover();
-        GlobalScript.loadSavedNotifications();
-        // When a notification is closed.
-        $(".close").click((e) => {
-            // Get id of the notification and delete it from localStorage.
-            GlobalScript.deleteNotification($(e.target).closest('div').attr('id'));
-
-        });
-    
+    $('[data-toggle="popover"]').popover();
+    GlobalScript.loadSavedNotifications();
+    // When a notification is closed.
+    $(".close").click((e) => {
+        // Get id of the notification and delete it from localStorage.
+        GlobalScript.deleteNotification($(e.target).closest('div').attr('id'));
+    });
 });
 
-
-
-/** 
+/**
  * Namespace for the GlobalScript.js which contains
  * universal methods and variables that each
  * controller and action method can run.
- * 
+ *
  */
 const GlobalScript = (() => {
-
     /*Types of banners for notifications on home screen */
     const _bannerTypes = Object.freeze({
         "alert-primary": 0,
@@ -66,7 +61,7 @@ const GlobalScript = (() => {
         BannerTypes: () => {
             return _bannerTypes;
         },
-        
+
         /**
          * Takes a notification and makes it into an object and appends
          * it to a JSON which is stored in local storage.
@@ -125,15 +120,14 @@ const GlobalScript = (() => {
                     }
                 }
             }
-            
+
             localStorage.setItem("Notifications", JSON.stringify(notifications));
         },
-        /** 
+        /**
          * Gets the current text in localStorage. Turns it into a JSON object.
          * Displays notifications on the screen for each notification object in the JSON object.
          */
         loadSavedNotifications: () => {
-
             let notifications = JSON.parse(localStorage.getItem("Notifications"));
             // If no notifications are saved.
             if (notifications === null) {
@@ -144,20 +138,19 @@ const GlobalScript = (() => {
                 // Display the notification but do not save it in localStorage because it is already there.
                 GlobalScript.displayNotification(notification.header, notification.body, _bannerTypes[notification.type], notification.parentDiv, false, notification.id);
             }
-            
         },
         /**
          * Automatically displays a notification alert at a parent div.
          * This function makes a new child banner immediately below the parent div.
-         * 
+         *
          * This function also grants the option on whether or not to instantly display it.
-         * 
+         *
          * If save=true, the notification will display immediately without reload but will
-         * not be saved in local storage. 
+         * not be saved in local storage.
          * If save=false, the notification will not display but will be saved as a JSON to the
-         * "Notifications" key in localStorage and will display on each new window until it 
+         * "Notifications" key in localStorage and will display on each new window until it
          * is closed.
-         * 
+         *
          * Each notification is given a random ID to recognize it.
          *
          * Types:
@@ -166,7 +159,7 @@ const GlobalScript = (() => {
          * 3- Success (Green)
          * 4- Error (Red)
          * 5- Primary Dark (Dark)
-         * 
+         *
          * @param {string} textHeader (BOLD TEXT)
          * @param {string} text
          * @param {GlobalScript.BannerTypes} type
@@ -174,7 +167,6 @@ const GlobalScript = (() => {
          * @param {boolean} save (Should the notification be saved in localStorage?)
          */
         displayNotification: (textHeader, text, type, divParentID, save = true, id = "") => {
-            
             let typeStr = "";
             switch (type) {
                 case 0:
@@ -209,7 +201,7 @@ const GlobalScript = (() => {
             // Notification will not be saved to localStorage so we display it now with DOM Injection.
             if (!save) {
                 $("#" + divParentID).prepend(
-                    '<div id='+id+' class="alert ' + typeStr + ' alert-dismissible fade show" role="alert">' +
+                    '<div id=' + id + ' class="alert ' + typeStr + ' alert-dismissible fade show" role="alert">' +
                     '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
                     '<span aria-hidden="true">×</span>' +
                     '</button>' +
@@ -217,10 +209,8 @@ const GlobalScript = (() => {
                     '</div>'
                 );
             }
-            
-            
         },
-        /** 
+        /**
          * Creates a random UUID.
          * Credit: https://www.w3resource.com/javascript-exercises/javascript-math-exercise-23.php
          */

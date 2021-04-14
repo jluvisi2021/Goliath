@@ -19,8 +19,6 @@
     $("#vanta-js").css({
         "visibility": "visible"
     });
-
-
 }
 
 /// Runtime ///
@@ -32,12 +30,6 @@
  * can be run on Action Methods within the HomeController.
  */
 const HomeScript = (() => {
-
-    function hello() {
-        console.log("F");
-    }
-    hello();
-
     const scrollable = $("html,body");
     const homeNav = $("#home-nav");
     const featuresNav = $("#features-nav");
@@ -92,29 +84,33 @@ const HomeScript = (() => {
     });
 
     return {
-        /** 
+        /**
          * Updates the navbar depending on where the users
          * scrollbar is.
          */
         updateNav: () => {
+            const nav = $(".nav-item");
             if ($(this).scrollTop() <= scrollFeatures) {
-                $(".nav-item").removeClass("active");
+                nav.removeClass("active");
                 homeNav.addClass("active");
+                return;
             }
-
             if ($(this).scrollTop() >= scrollFeatures
                 && $(this).scrollTop() <= scrollPrivacy) {
-                $(".nav-item").removeClass("active");
+                nav.removeClass("active");
                 featuresNav.addClass("active");
+                return;
             }
             if ($(this).scrollTop() >= scrollPrivacy
                 && $(this).scrollTop() <= scrollContact) {
-                $(".nav-item").removeClass("active");
+                nav.removeClass("active");
                 privacyNav.addClass("active");
+                return;
             }
             if ($(this).scrollTop() >= scrollContact) {
-                $(".nav-item").removeClass("active");
+                nav.removeClass("active");
                 contactNav.addClass("active");
+                return;
             }
         }
     }

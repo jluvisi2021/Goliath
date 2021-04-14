@@ -18,7 +18,6 @@
         </button>
     </div>
     <input asp-for="CurrentEmail" value="@user.Email" placeholder="" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" readonly />
-
 </div>
 <div class="ht-tm-element input-group mb-3">
     <div class="input-group-prepend ">
@@ -27,8 +26,7 @@
         </button>
     </div>
 
-    <input asp-for="NewEmail" placeholder="Enter New Email." required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
-
+    <input id="email-setting" asp-for="NewEmail" placeholder="Enter New Email." required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
 </div>
 @if (user.EmailConfirmed)
 {

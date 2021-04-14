@@ -18,9 +18,7 @@ $(window).ready((e) => {
     $("#register-submit-btn").click(() => {
         GlobalScript.loadCaptcha('register-form');
     });
-
 });
-
 
 /* Page load end */
 
@@ -110,5 +108,4 @@ const AuthScript = (() => {
             }
         }
     }
-
 })();

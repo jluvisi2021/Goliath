@@ -39,16 +39,17 @@ namespace Goliath.Validators
                 var settings = (ProfileSettingsGeneralModel)validationContext.ObjectInstance;
                 if(!BackgroundColorValid(settings.BackgroundColor))
                 {
-                    return new ValidationResult("Background Color: Invalid");
+                    if(string.IsNullOrWhiteSpace(settings.BackgroundColor))
+                    {
+                        return ValidationResult.Success;
+                    }
+                    return new ValidationResult("Input a valid background color.");
                 }
                 if(string.IsNullOrWhiteSpace(settings.DarkThemeEnabled))
                 {
-                    return new ValidationResult("Dark Theme Enabled: Invalid");
+                    return new ValidationResult("Invalid theme selection.");
                 }
-                if(!EmailValid(settings.NewEmail))
-                {
-                    return new ValidationResult("Email Address: Invalid");
-                }
+
                 return ValidationResult.Success;
             }
             

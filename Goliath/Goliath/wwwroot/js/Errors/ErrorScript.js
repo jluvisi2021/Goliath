@@ -22,8 +22,6 @@ $(window).ready(() => {
     $("#report-error-btn").click(() => {
         ErrorScript.reportError();
     });
-
-
 });
 // Enable tool tips
 $(document).ready(() => {
@@ -37,7 +35,6 @@ $(document).ready(() => {
  * "Errors" controller.
  */
 const ErrorScript = (() => {
-
     return {
         /**
          * Update the text in the DOM depending on
@@ -57,7 +54,7 @@ const ErrorScript = (() => {
                 });
             }
         },
-        /** 
+        /**
          *  Update the "Show additional information" arrow.
          */
         updateArrow: () => {

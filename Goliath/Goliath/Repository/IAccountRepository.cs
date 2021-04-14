@@ -68,7 +68,9 @@ namespace Goliath.Repository
 
         Task<IdentityResult> UpdateUser(ApplicationUser user);
 
-        bool HasPhoneNumber(ApplicationUser user);
-        bool HasConfirmedPhoneNumber(ApplicationUser user);
+        Task<bool> HasPhoneNumber(ApplicationUser user);
+        Task<bool> HasConfirmedPhoneNumber(ApplicationUser user);
+
+        Task UpdatePhone(ApplicationUser user, string number);
     }
 }

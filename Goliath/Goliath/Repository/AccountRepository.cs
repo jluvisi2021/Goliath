@@ -282,15 +282,20 @@ namespace Goliath.Repository
             return await _userManager.UpdateAsync(user);
         }
 
-        public bool HasPhoneNumber(ApplicationUser user)
+        public async Task<bool> HasPhoneNumber(ApplicationUser user)
         {
-            return user.PhoneNumber == "NULL";
+            return ((await _userManager.GetPhoneNumberAsync(user)) != null);
         }
 
-        public bool HasConfirmedPhoneNumber(ApplicationUser user)
+        public async Task<bool> HasConfirmedPhoneNumber(ApplicationUser user)
         {
-            return user.PhoneNumberConfirmed;
+            return await _userManager.IsPhoneNumberConfirmedAsync(user);
         }
+        public async Task UpdatePhone(ApplicationUser user, string number)
+        {
+            await _userManager.SetPhoneNumberAsync(user, number);
+        }
+
 
         /// <summary>
         /// Creates the user and adds them to the database using Identity core.

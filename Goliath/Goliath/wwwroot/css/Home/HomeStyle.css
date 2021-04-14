@@ -325,7 +325,6 @@ canvas {
 
     .hvr-bounce-to-right:hover, .hvr-bounce-to-right:focus, .hvr-bounce-to-right:active {
         color: white;
-
     }
 
         .hvr-bounce-to-right:hover:before, .hvr-bounce-to-right:focus:before, .hvr-bounce-to-right:active:before {
@@ -335,6 +334,7 @@ canvas {
             transition-timing-function: cubic-bezier(0.52, 1.64, 0.37, 0.66);
             border-radius: 10px;
         }
+
 .hvr-bounce-in {
     display: inline-block;
     vertical-align: middle;

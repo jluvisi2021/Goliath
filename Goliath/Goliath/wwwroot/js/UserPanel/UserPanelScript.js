@@ -1,10 +1,10 @@
 ﻿"use strict";
 
-/** 
+/**
  *
  * Namespace for executing JavaScript methods for
  * the UserPanel controller.
- * 
+ *
  */
 const UserPanelScript = (() => {
     return {

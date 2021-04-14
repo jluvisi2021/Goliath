@@ -1,0 +1,62 @@
+﻿@model Goliath.Models.ProfileSettingsGeneralModel
+@{
+    var user = await _repository.GetUserByName(User.Identity.Name);
+}
+
+<div class="modal fade" id="confirm-settings" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-cogs mr-2"></i>Update Settings</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-left">
+                Are you sure you want to update these settings?
+
+                <div id="settings-updates" class="p"></div>
+            </div>
+            <div class="modal-footer">
+
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    <i class="fas fa-times"></i>
+                </button>
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-check"></i>
+                </button>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $("#confirm-settings").modal("toggle");
+</script>
+@*Get the settings changed.*@
+<script type="text/javascript">
+
+    if (ProfileScript.valueChanged($("#bg-color-setting").val(), "@user.BackgroundColor")) {
+        $("#settings-updates").append("Changed Background.<br />");
+    }
+    if ($("#theme-setting").prop("checked") == true) {
+        if (ProfileScript.valueChanged($("#theme-setting").val(), "@user.DarkTheme")) {
+            $("#settings-updates").append("Changed Theme.<br />");
+        }
+    } else {
+        if (ProfileScript.valueChanged($("#theme-setting-2").val(), "@user.DarkTheme")) {
+            $("#settings-updates").append("Changed Theme.<br />");
+        }
+    }
+
+    if (ProfileScript.valueChanged($("#email-setting").val(), "@user.Email")) {
+        $("#settings-updates").append("Changed Email.<br />");
+    }
+    if (ProfileScript.valueChanged($("#phone-setting").val(), "@user.PhoneNumber")) {
+        $("#settings-updates").append("Changed Phone.<br />");
+    }
+    if ($("#password-setting").val() != null && $("#password-setting").val() != "") {
+        $("#settings-updates").append("Changed Password.<br />");
+    }
+</script>
