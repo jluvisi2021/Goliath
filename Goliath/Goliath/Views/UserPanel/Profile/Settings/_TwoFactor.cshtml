@@ -10,7 +10,8 @@
        data-trigger="focus"
        title="Two-Factor Authentication" data-html="false"
        data-content="Two-Factor authentication provides additional security to your account by requiring additional verification on login or while editing confidential credentials.">
-    </i></p>
+    </i>
+</p>
 @if (user.TwoFactorEnabled)
 {
     <div class="alert alert-success" role="alert">
@@ -24,7 +25,8 @@
         </p>
     </div>
     <button class="btn btn-primary">
-        <i class="fas fa-file mr-2"></i>Recover 2FA Codes</button>
+        <i class="fas fa-file mr-2"></i>Recover 2FA Codes
+    </button>
 }
 else
 {

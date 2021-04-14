@@ -69,10 +69,13 @@ namespace Goliath.Repository
         Task<IdentityResult> UpdateUser(ApplicationUser user);
 
         Task<bool> HasPhoneNumber(ApplicationUser user);
+
         Task<bool> HasConfirmedPhoneNumber(ApplicationUser user);
 
         Task UpdatePhone(ApplicationUser user, string number);
+
         Task<IdentityResult> UpdatePasswordAsync(ApplicationUser user, string currPassword, string newPassword);
+
         Task<bool> IsPasswordValid(ApplicationUser user, string pass);
     }
 }

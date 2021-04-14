@@ -50,7 +50,6 @@ namespace Goliath.Repository
             _roleManager = roleManager;
             _emailService = emailService;
             _config = config;
-
         }
 
         /// <summary>
@@ -305,11 +304,11 @@ namespace Goliath.Repository
         {
             return await _userManager.IsPhoneNumberConfirmedAsync(user);
         }
+
         public async Task UpdatePhone(ApplicationUser user, string number)
         {
             await _userManager.SetPhoneNumberAsync(user, number);
         }
-
 
         /// <summary>
         /// Creates the user and adds them to the database using Identity core.
@@ -319,7 +318,6 @@ namespace Goliath.Repository
         /// <returns> </returns>
         public async Task<IdentityResult> CreateUserAsync(SignUpUserModel userModel, DeviceParser device)
         {
-       
             try
             {
                 // Create a new application user.

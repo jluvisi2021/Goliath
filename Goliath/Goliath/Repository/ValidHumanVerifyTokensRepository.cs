@@ -38,7 +38,7 @@ namespace Goliath.Repository
             await CleanUpUnusedTokens();
 
             List<string> result = _context.ValidTokens.Select(u => u.Token).ToList();
-            
+
             for (int i = 0; i < result.Count; i++)
             {
                 if (GoliathHash.HashStringSHA256(result[i]).Equals(hashCode))

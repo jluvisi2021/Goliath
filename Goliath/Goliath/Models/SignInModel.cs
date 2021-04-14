@@ -7,7 +7,6 @@ namespace Goliath.Models
     /// </summary>
     public class SignInModel
     {
-
         [Required(ErrorMessage = "Please enter a valid username.")]
         [DataType(DataType.Text)]
         [RegularExpression("^[a-zA-Z0-9_]*$", ErrorMessage = "Please enter a valid username.")]

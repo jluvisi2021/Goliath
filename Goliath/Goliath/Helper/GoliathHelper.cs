@@ -50,7 +50,7 @@ namespace Goliath.Helper
         /// <summary>
         /// Generates a secure random number using the RNGCryptoServiceProvider.
         /// </summary>
-        /// <returns></returns>
+        /// <returns> </returns>
         public static string GenerateSecureRandomNumber()
         {
             StringBuilder validCode = new();

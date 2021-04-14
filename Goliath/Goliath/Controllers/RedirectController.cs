@@ -1,11 +1,6 @@
-﻿using Goliath.Helper;
-using Goliath.Models;
+﻿using Goliath.Models;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
 
 namespace Goliath.Controllers
 {
@@ -14,18 +9,17 @@ namespace Goliath.Controllers
         [RequireHttps]
         public IActionResult Index(string redirectUrl, string returnUrl)
         {
-            if(!Url.IsLocalUrl(returnUrl))
+            if (!Url.IsLocalUrl(returnUrl))
             {
                 string link = Url.ActionLink("Index", "Home");
                 return new ContentResult
                 {
                     ContentType = "text/html",
-                    StatusCode = (int) HttpStatusCode.OK,
+                    StatusCode = (int)HttpStatusCode.OK,
                     Content = $"<html><body>" +
                     $"You attempted to redirect from Goliath but your <strong>returnURL</strong> may have been malicious because it is not a valid Goliath URL.<br /><a href={link}>Click to return home.</a>" +
                     $"</body></html>"
                 };
-                
             }
             RedirectUrlModel model = new()
             {

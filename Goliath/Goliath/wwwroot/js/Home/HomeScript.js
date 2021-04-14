@@ -23,8 +23,6 @@
 
 /// Runtime ///
 
-// Click for scroll.
-
 /**
  * Namespace for all JavaScript methods and variables which
  * can be run on Action Methods within the HomeController.

@@ -70,7 +70,7 @@ namespace Goliath.Controllers
             ViewData["ButtonID"] = ButtonID.Login;
 
             // Check if fields are entered and match checks.
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return View(signInModel);
             }
@@ -82,12 +82,10 @@ namespace Goliath.Controllers
                 return View(signInModel);
             }
 
-
-
             // Attempt to sign the user in.
             SignInResult result = await _accountRepository.PasswordSignInAsync(signInModel);
 
-            if(result.Succeeded)
+            if (result.Succeeded)
             {
                 // Store the fact that the CAPTCHA was completed successfully.
                 await _captcha.CacheNewCaptchaValidateAsync();
@@ -95,8 +93,7 @@ namespace Goliath.Controllers
                 // Redirect
                 return RedirectToAction("Index", "UserPanel");
             }
-            // Result failed.
-            // Check for reason why.
+            // Result failed. Check for reason why.
 
             if (result.IsLockedOut)
             {
@@ -114,7 +111,7 @@ namespace Goliath.Controllers
             {
                 ModelState.AddModelError(string.Empty, "Invalid Credentials.");
             }
-            GoliathHelper.PrintDebugger("LOL");
+
             // Invalidate Captcha Cookie.
             _captcha.DeleteCaptchaCookie();
             // Return view with errors.
@@ -135,14 +132,13 @@ namespace Goliath.Controllers
             ViewData["ButtonID"] = ButtonID.Register;
 
             // Check if fields match checks.
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return View();
             }
-            
 
             // Model State Valid; Check Captcha
-            if(!await _captcha.IsCaptchaValidAsync())
+            if (!await _captcha.IsCaptchaValidAsync())
             {
                 ModelState.AddModelError(_captcha.CaptchaValidationError().Key, _captcha.CaptchaValidationError().Value);
                 return View(model);
@@ -152,7 +148,7 @@ namespace Goliath.Controllers
             IdentityResult result = await _accountRepository.CreateUserAsync(model,
                 new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
 
-            if(result.Succeeded)
+            if (result.Succeeded)
             {
                 // Registration is Valid.
                 ModelState.Clear();
@@ -165,8 +161,8 @@ namespace Goliath.Controllers
             // Registration Failed
 
             _captcha.DeleteCaptchaCookie();
-            // For every error that is created during registration we add that to the
-            // eventual bootstrap modal.
+            // For every error that is created during registration we add that to the eventual
+            // bootstrap modal.
             foreach (IdentityError errorMessage in result.Errors)
             {
                 ModelState.AddModelError(string.Empty, errorMessage.Description);
@@ -198,7 +194,7 @@ namespace Goliath.Controllers
             // Verify that the user exists with the specified email.
             ApplicationUser user = await _accountRepository.FindByEmailAsync(model.Email);
 
-            if(user == null)
+            if (user == null)
             {
                 ModelState.AddModelError(string.Empty, $"We could not find user: {model.Email}");
                 return View();
@@ -211,7 +207,7 @@ namespace Goliath.Controllers
             }
 
             // User exists but username does not match email.
-            if(!user.UserName.Equals(model.Username))
+            if (!user.UserName.Equals(model.Username))
             {
                 ModelState.AddModelError(string.Empty, $"Invalid Username \"{model.Username}\" for {model.Email}");
                 return View();
@@ -249,7 +245,7 @@ namespace Goliath.Controllers
             ViewData["ButtonID"] = ButtonID.ForgotUsername;
             ApplicationUser user = await _accountRepository.FindByEmailAsync(model.Email);
 
-            if(user == null)
+            if (user == null)
             {
                 ModelState.AddModelError(string.Empty, $"We could not find user: {model.Email}");
                 return View();
@@ -289,7 +285,7 @@ namespace Goliath.Controllers
             // Verify that the user exists with the specified email.
             ApplicationUser user = await _accountRepository.FindByEmailAsync(model.Email);
 
-            if(user == null)
+            if (user == null)
             {
                 ModelState.AddModelError(string.Empty, $"We could not find user: {model.Email}");
                 return View();
@@ -330,7 +326,7 @@ namespace Goliath.Controllers
         public async Task<IActionResult> VerifyEmail(string uid, string token)
         {
             // Check for blanks in URL query.
-            if(string.IsNullOrWhiteSpace(uid) || string.IsNullOrWhiteSpace(token))
+            if (string.IsNullOrWhiteSpace(uid) || string.IsNullOrWhiteSpace(token))
             {
                 // Alert to the view that the verification failed.
                 TempData["Redirect"] = RedirectPurpose.VerifiedEmailFailure;

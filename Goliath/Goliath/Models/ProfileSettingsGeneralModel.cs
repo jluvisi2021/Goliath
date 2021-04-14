@@ -19,13 +19,11 @@ namespace Goliath.Models
         [EmailAddress(ErrorMessage = "Please enter a valid email.")]
         public string NewEmail { get; set; }
 
-        
         public string CurrentPhoneNumber { get; set; }
 
         [Phone(ErrorMessage = "Please enter a valid phone number.")]
         public string NewPhoneNumber { get; set; }
 
-        
         [DataType(DataType.Password)]
         [StringLength(2048, MinimumLength = 6, ErrorMessage = "Password length must be 6-2048 characters.")]
         [RegularExpression(@"^[^\s]+$", ErrorMessage = "Password cannot contain spaces.")]
@@ -36,7 +34,6 @@ namespace Goliath.Models
         [StringLength(2048, MinimumLength = 6, ErrorMessage = "Password length must be 6-2048 characters.")]
         [RegularExpression(@"^[^\s]+$", ErrorMessage = "Password cannot contain spaces.")]
         public string NewPassword { get; set; }
-
 
         [DataType(DataType.Password)]
         public string ConfirmNewPassword { get; set; }

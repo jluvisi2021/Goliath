@@ -1,35 +1,29 @@
-﻿/** RUNTIME PAGELOAD **/
-
-$(window).ready((e) => {
-    // Fixes a bug with the "Other" radio button where it would be clicked
-    // and selected but the button would not be registered.
-    $("#other-head").click((e) => {
-        if (e.target.id != "other-dropdown") {
-            $("#other-dropdown").trigger("click");
-            e.stopImmediatePropagation();
-        }
-    });
-    $("#toggle-dark").click(() => {
-        AuthScript.toggleDarkTheme();
-    });
-    $("#login-submit-btn").click(() => {
-        GlobalScript.loadCaptcha('login-form');
-    });
-    $("#register-submit-btn").click(() => {
-        GlobalScript.loadCaptcha('register-form');
-    });
-});
-
-/* Page load end */
-
-/**
+﻿/**
  * JavaScript methods and variables that control
  * DOM manipulation for the "Auth" Controller.
  * */
 const AuthScript = (() => {
     /** Background color for buttons. */
     const backgroundColor = "#3e5af1";
-
+    $(window).ready(() => {
+        // Fixes a bug with the "Other" radio button where it would be clicked
+        // and selected but the button would not be registered.
+        $("#other-head").click((e) => {
+            if (e.target.id != "other-dropdown") {
+                $("#other-dropdown").trigger("click");
+                e.stopImmediatePropagation();
+            }
+        });
+        $("#toggle-dark").click(() => {
+            AuthScript.toggleDarkTheme();
+        });
+        $("#login-submit-btn").click(() => {
+            GlobalScript.loadCaptcha('login-form');
+        });
+        $("#register-submit-btn").click(() => {
+            GlobalScript.loadCaptcha('register-form');
+        });
+    });
     return {
         /**
          * Changes the colors of the radio buttons on the
@@ -42,7 +36,6 @@ const AuthScript = (() => {
             if ($("#" + id + "-radio-btn").length === 0) {
                 // The #other-radio-btn element does not change so we can leave it like this.
                 $("#other-radio-btn").prop("checked", true);
-
                 $("#" + id).css({
                     "background-color": backgroundColor,
                     "color": "white"

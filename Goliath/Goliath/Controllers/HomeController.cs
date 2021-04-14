@@ -29,6 +29,5 @@ namespace Goliath.Controllers
         {
             return View();
         }
-
     }
 }

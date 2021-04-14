@@ -3,43 +3,6 @@
  * JavaScript which should be accessed in all browser windows.
  * Hence name: "GlobalScript"
  */
-
-// When the user scrolls to the bottom of a scrollable page remove the footer.
-$(window).scroll(() => {
-    const footerElement = $("#footer");
-
-    if (!($(document).height() > $(window).height())) {
-        footerElement.css({
-            "visibility": "visible"
-        });
-        return;
-    }
-
-    const scrollHeight = $(document).height();
-    const scrollPosition = $(window).height() + $(window).scrollTop();
-
-    if (scrollHeight - scrollPosition <= 1) {
-        footerElement.css({
-            "visibility": "hidden"
-        });
-    } else {
-        footerElement.css({
-            "visibility": "visible"
-        });
-    }
-});
-
-// Run immediately.
-$(document).ready(() => {
-    $('[data-toggle="popover"]').popover();
-    GlobalScript.loadSavedNotifications();
-    // When a notification is closed.
-    $(".close").click((e) => {
-        // Get id of the notification and delete it from localStorage.
-        GlobalScript.deleteNotification($(e.target).closest('div').attr('id'));
-    });
-});
-
 /**
  * Namespace for the GlobalScript.js which contains
  * universal methods and variables that each
@@ -55,13 +18,42 @@ const GlobalScript = (() => {
         "alert-danger": 3,
         "alert-dark": 4
     });
-
+    // When the user scrolls to the bottom of a scrollable page remove the footer.
+    $(window).scroll(() => {
+        const footerElement = $("#footer");
+        if (!($(document).height() > $(window).height())) {
+            footerElement.css({
+                "visibility": "visible"
+            });
+            return;
+        }
+        const scrollHeight = $(document).height();
+        const scrollPosition = $(window).height() + $(window).scrollTop();
+        if (scrollHeight - scrollPosition <= 1) {
+            footerElement.css({
+                "visibility": "hidden"
+            });
+        } else {
+            footerElement.css({
+                "visibility": "visible"
+            });
+        }
+    });
+    // Run immediately.
+    $(document).ready(() => {
+        $('[data-toggle="popover"]').popover();
+        GlobalScript.loadSavedNotifications();
+        // When a notification is closed.
+        $(".close").click((e) => {
+            // Get id of the notification and delete it from localStorage.
+            GlobalScript.deleteNotification($(e.target).closest('div').attr('id'));
+        });
+    });
     return {
         /** Returns the list of avaliable banner types. */
         BannerTypes: () => {
             return _bannerTypes;
         },
-
         /**
          * Takes a notification and makes it into an object and appends
          * it to a JSON which is stored in local storage.
@@ -95,12 +87,15 @@ const GlobalScript = (() => {
             // Parse the current storage value to make a JSON that stores multiple items.
             notifications.push(
                 "[" // Leading Bracket.
-                + storageValue // Current text in local storage.
+                +
+                storageValue // Current text in local storage.
                     .replace("[", "") // Remove previous leading brackets.
-                    .replace("]", "")
-                + "," // Add a comma to separate this new JSON object.
-                + JSON.stringify(notification) // Turn the JSOn into a string.
-                + "]"); // Add ending grouping bracket.
+                    .replace("]", "") +
+                "," // Add a comma to separate this new JSON object.
+                +
+                JSON.stringify(notification) // Turn the JSOn into a string.
+                +
+                "]"); // Add ending grouping bracket.
             localStorage.setItem("Notifications", notifications);
         },
         /**
@@ -120,7 +115,6 @@ const GlobalScript = (() => {
                     }
                 }
             }
-
             localStorage.setItem("Notifications", JSON.stringify(notifications));
         },
         /**
@@ -190,11 +184,9 @@ const GlobalScript = (() => {
                     console.error("Could not find notification type: " + type);
                     break;
             }
-
             if (id === "") {
                 id = GlobalScript.createUUID();
             }
-
             if (save) {
                 GlobalScript.saveNotification(textHeader, text, typeStr, divParentID, id);
             }
@@ -273,10 +265,8 @@ const GlobalScript = (() => {
             if (!action) {
                 return false;
             }
-
             GlobalScript.displayNotification("Warning", "Goliath does not support this browser. Goliath may continue to function but not all features may work.", GlobalScript.BannerTypes()["alert-danger"], "center-banner");
             const footerElementText = $("#footer-text");
-
             footerElementText.addClass("font-weight-bold")
                 .addClass("text-danger")
                 .html(footerElementText.html() + ' [Unsupported]')

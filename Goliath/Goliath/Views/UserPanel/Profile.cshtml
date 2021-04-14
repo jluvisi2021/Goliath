@@ -7,6 +7,11 @@
 <script src="~/js/UserPanel/Profile/ProfileScript.js" asp-append-version="true"></script>
 <link rel="stylesheet" href="~/css/UserPanel/Profile/ProfileStyle.css" asp-append-version="true" />
 <!------------------->
+@*Display a modal if the values were updated.*@
+@if (TempData["ValuesUpdated"] != null && TempData["ValuesUpdated"].Equals(RedirectPurpose.SettingsUpdatedSuccess))
+{
+    <partial name="~/Views/UserPanel/Profile/_SettingsUpdatedModal.cshtml" />
+}
 
 <div class="container pt-5 pb-5">
     <div class="row pt-5 pb-5">

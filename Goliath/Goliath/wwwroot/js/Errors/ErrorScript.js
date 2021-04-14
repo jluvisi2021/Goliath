@@ -1,40 +1,40 @@
 ﻿"use strict";
 
-// Update text.
-$(window).ready(() => {
-    const browserSupportedElement = $("#browser-supported");
-
-    if (GlobalScript.checkBrowser(false)) {
-        browserSupportedElement.html("Yes");
-        browserSupportedElement.css({
-            "color": "green"
-        });
-    } else {
-        browserSupportedElement.html("No");
-        browserSupportedElement.css({
-            "color": "red"
-        });
-    }
-
-    $("#collapse").click(() => {
-        ErrorScript.updateArrow();
-    });
-    $("#report-error-btn").click(() => {
-        ErrorScript.reportError();
-    });
-});
-// Enable tool tips
-$(document).ready(() => {
-    $('[data-toggle="tooltip"]').tooltip({
-        container: 'body'
-    });
-});
-
 /**
  * Represents methods and variables that belong to the
  * "Errors" controller.
  */
 const ErrorScript = (() => {
+    // Update text.
+    $(window).ready(() => {
+        const browserSupportedElement = $("#browser-supported");
+
+        if (GlobalScript.checkBrowser(false)) {
+            browserSupportedElement.html("Yes");
+            browserSupportedElement.css({
+                "color": "green"
+            });
+        } else {
+            browserSupportedElement.html("No");
+            browserSupportedElement.css({
+                "color": "red"
+            });
+        }
+
+        $("#collapse").click(() => {
+            ErrorScript.updateArrow();
+        });
+        $("#report-error-btn").click(() => {
+            ErrorScript.reportError();
+        });
+    });
+    // Enable tool tips
+    $(document).ready(() => {
+        $('[data-toggle="tooltip"]').tooltip({
+            container: 'body'
+        });
+    });
+
     return {
         /**
          * Update the text in the DOM depending on

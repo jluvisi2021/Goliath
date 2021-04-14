@@ -1,5 +1,4 @@
 ﻿using Goliath.Enums;
-using Goliath.Helper;
 using Goliath.Models;
 using Goliath.Repository;
 using Microsoft.AspNetCore.Mvc;
@@ -36,46 +35,46 @@ namespace Goliath.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Profile(ProfileSettingsGeneralModel model)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return View();
             }
 
-            var goliathUser = await _accountRepository.GetUserByName(User.Identity.Name);
+            ApplicationUser goliathUser = await _accountRepository.GetUserByName(User.Identity.Name);
             // track if there has been any updates.
             bool hasChanged = false;
 
-            if(hasValueChanged(model.BackgroundColor, goliathUser.BackgroundColor))
+            if (HasValueChanged(model.BackgroundColor, goliathUser.BackgroundColor))
             {
                 hasChanged = true;
                 goliathUser.BackgroundColor = model.BackgroundColor;
             }
-            if(hasValueChanged(model.DarkThemeEnabled, goliathUser.DarkTheme))
+            if (HasValueChanged(model.DarkThemeEnabled, goliathUser.DarkTheme))
             {
                 hasChanged = true;
                 goliathUser.DarkTheme = model.DarkThemeEnabled;
             }
-            if(hasValueChanged(model.NewEmail, goliathUser.Email))
+            if (HasValueChanged(model.NewEmail, goliathUser.Email))
             {
                 hasChanged = true;
                 goliathUser.Email = model.NewEmail;
             }
-            if(hasValueChanged(model.NewPhoneNumber, goliathUser.PhoneNumber))
+            if (HasValueChanged(model.NewPhoneNumber, goliathUser.PhoneNumber))
             {
                 hasChanged = true;
                 goliathUser.PhoneNumber = model.NewPhoneNumber;
             }
             // If the new password entered does not match the users current password.
-            
-            if(!string.IsNullOrWhiteSpace(model.NewPassword)) 
+
+            if (!string.IsNullOrWhiteSpace(model.NewPassword))
             {
                 if (await _accountRepository.IsPasswordValid(goliathUser, model.NewPassword))
                 {
                     ModelState.AddModelError(string.Empty, "Your new password matches your old password.");
                     return View(model);
                 }
-                var result = await _accountRepository.UpdatePasswordAsync(goliathUser, model.CurrentPassword, model.NewPassword);
-                if(result.Succeeded)
+                Microsoft.AspNetCore.Identity.IdentityResult result = await _accountRepository.UpdatePasswordAsync(goliathUser, model.CurrentPassword, model.NewPassword);
+                if (result.Succeeded)
                 {
                     hasChanged = true;
                 }
@@ -86,23 +85,23 @@ namespace Goliath.Controllers
                 }
             }
 
-
             if (hasChanged)
             {
                 await _accountRepository.UpdateUser(goliathUser);
             }
 
-            return View(model);
+            ModelState.Clear();
+            TempData["ValuesUpdated"] = RedirectPurpose.SettingsUpdatedSuccess;
+            return View();
         }
 
-        private bool hasValueChanged(string model, string user)
+        private static bool HasValueChanged(string model, string user)
         {
-            if(string.IsNullOrWhiteSpace(model))
+            if (string.IsNullOrWhiteSpace(model))
             {
-                GoliathHelper.PrintDebugger("No Changes detected");
                 return false;
             }
-            if(string.IsNullOrWhiteSpace(user) || user == "NULL")
+            if (string.IsNullOrWhiteSpace(user) || user == "NULL")
             {
                 return true;
             }
@@ -110,7 +109,6 @@ namespace Goliath.Controllers
             {
                 return true;
             }
-            GoliathHelper.PrintDebugger("No Changes detected");
             return false;
         }
 

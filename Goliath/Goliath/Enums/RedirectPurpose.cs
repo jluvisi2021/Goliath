@@ -6,13 +6,18 @@
     /// </summary>
     public enum RedirectPurpose
     {
+        // Authentication Panel
         RegisterSuccess,
+
         LogoutSuccess,
         VerifiedEmailSuccess,
         VerifiedEmailFailure,
         ResetPasswordSuccess,
         ResetPasswordFailure,
         ResetPasswordModal,
-        Exception
+        Exception,
+
+        // User Panel
+        SettingsUpdatedSuccess
     }
 }

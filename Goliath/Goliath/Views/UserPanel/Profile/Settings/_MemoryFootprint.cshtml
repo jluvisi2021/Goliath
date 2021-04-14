@@ -2,29 +2,30 @@
 @{
     var user = await _repository.GetUserByName(User.Identity.Name);
     var footprint = 0.00f;
-    if(user.UserData != null)
+    if (user.UserData != null)
     {
         footprint = System.Text.ASCIIEncoding.ASCII.GetByteCount(user.UserData) / 1024F;
-            }
+    }
 }
 
-<p id="option-text">MEMORY FOOTPRINT
+<p id="option-text">
+    MEMORY FOOTPRINT
     <i class="fas fa-question-circle item-info hvr-grow"
        tabindex="0" role="button" data-toggle="popover"
        data-trigger="focus"
        title="Memory Footprint" data-html="true"
        data-content="Your memory footprint is the total size your information takes up on Goliath's databases. Each user is limited to <strong>100KB<strong> of data maximum.">
     </i>
-    </p>
+</p>
 
-    <div class="ht-tm-element input-group mb-3">
-        <div class="input-group-prepend ">
-            <button class="btn btn-outline-primary" type="button">
-                <i class="fas fa-sd-card"></i>
-            </button>
-        </div>
-        <input value="@footprint KB" placeholder="Enter HEX Value" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" readonly />
+<div class="ht-tm-element input-group mb-3">
+    <div class="input-group-prepend ">
+        <button class="btn btn-outline-primary" type="button">
+            <i class="fas fa-sd-card"></i>
+        </button>
     </div>
+    <input value="@footprint KB" placeholder="Enter HEX Value" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" readonly />
+</div>
 
 <p class="text-muted font-italic">Footprint: @Math.Round(footprint, 2) KB / 100 KB </p>
 <div class="progress">
