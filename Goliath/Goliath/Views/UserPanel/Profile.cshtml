@@ -1,4 +1,6 @@
-﻿@{
+﻿@using Goliath.Models
+@inject Microsoft.AspNetCore.Identity.SignInManager<ApplicationUser> _signInManager
+@{
     ViewData["Title"] = "Profile";
     Layout = "_LoginRequired";
 }
@@ -12,7 +14,8 @@
 {
     <partial name="~/Views/UserPanel/Profile/_SettingsUpdatedModal.cshtml" />
 }
-
+@if(_signInManager.IsSignedIn(User))
+            {
 <div class="container pt-5 pb-5">
     <div class="row pt-5 pb-5">
         <div id="profile-nav" class="col-3">
@@ -57,3 +60,4 @@
         </div>
     </div>
 </div>
+            }

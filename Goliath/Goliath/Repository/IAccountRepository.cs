@@ -77,5 +77,6 @@ namespace Goliath.Repository
         Task<IdentityResult> UpdatePasswordAsync(ApplicationUser user, string currPassword, string newPassword);
 
         Task<bool> IsPasswordValid(ApplicationUser user, string pass);
+        Task<ApplicationUser> GetUserFromContext(ClaimsPrincipal claims);
     }
 }

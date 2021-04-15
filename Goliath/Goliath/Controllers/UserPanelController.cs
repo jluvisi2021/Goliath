@@ -40,7 +40,7 @@ namespace Goliath.Controllers
                 return View();
             }
 
-            ApplicationUser goliathUser = await _accountRepository.GetUserByName(User.Identity.Name);
+            ApplicationUser goliathUser = await _accountRepository.GetUserFromContext(User);
             // track if there has been any updates.
             bool hasChanged = false;
 

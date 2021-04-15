@@ -54,6 +54,7 @@ namespace Goliath.Repository
 
         /// <summary>
         /// Creates a "Super User" which can manage all roles in the panel for all users.
+        /// Also creates the default roles.
         /// </summary>
         /// <returns> </returns>
         public async Task LoadDefaults()
@@ -277,8 +278,20 @@ namespace Goliath.Repository
         /// <returns> </returns>
         public async Task<ApplicationUser> GetFromUserClaim(ClaimsPrincipal claimsPrincipal)
         {
+            
             return await _userManager.FindByNameAsync(claimsPrincipal.Identity.Name);
         }
+
+        /// <summary>
+        /// The correct way to get a user from a view.
+        /// </summary>
+        /// <param name="claims">@User.<></param>
+        /// <returns>Get a user from a view.</returns>
+        public async Task<ApplicationUser> GetUserFromContext(ClaimsPrincipal claims)
+        {
+            return await _userManager.GetUserAsync(claims);
+        }
+        
 
         public async Task<IdentityResult> UpdateUser(ApplicationUser user)
         {

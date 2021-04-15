@@ -51,7 +51,7 @@ namespace Goliath.Controllers
             {
                 return RedirectToAction("Index", "UserPanel");
             }
-
+            
             return RedirectToAction("Login");
         }
 

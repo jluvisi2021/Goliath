@@ -13,8 +13,8 @@
         @Html.Raw(System.Web.HttpUtility.HtmlDecode(
      await _accoutRepository.GetRoleIcon(
        await _accoutRepository.GetPrimaryRole(
-           await _accoutRepository.GetUserByName(
-               User.Identity.Name)))))
+           await _accoutRepository.GetUserFromContext(
+               User)))))
 
         <span class="pl-1" style="color: white; opacity: 0.5;">|</span>
         <a asp-controller="UserPanel" asp-action="Logout" class="btn btn-secondary ml-2 px-3">Logout</a>

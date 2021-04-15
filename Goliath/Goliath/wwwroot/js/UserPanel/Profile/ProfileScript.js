@@ -56,9 +56,11 @@ const ProfileScript = (() => {
             const settingUpdates = $("#settings-updates");
             const backgroundColor = $("#bg-color-setting").val();
             if (ProfileScript.valueChanged(backgroundColor, dbValue)) {
-                settingUpdates.append(`
-            <li class='list-group-item'>
-                - Change Background Color from ` + dbValue + ` to ` + backgroundColor + `</li>`);
+                const id = GlobalScript.createUUID();
+                // Add a list element to the list.
+                settingUpdates.append("<li id=" + id + " class='list-group-item'></li>");
+                // Get decoded HTML (Anti-XSS)
+                $("#" + id).text("- Change Background Color from" + dbValue + " to " + backgroundColor);
             }
         },
         /**
@@ -73,6 +75,7 @@ const ProfileScript = (() => {
             const darkTheme = $("#theme-setting-2");
             if (lightTheme.prop("checked") === true) {
                 if (ProfileScript.valueChanged(lightTheme.val(), dbValue)) {
+                    // Not vulnerable to XSS because no JS elements are being appended.
                     settingUpdates.append(`
         <li class='list-group-item'>
             - Change Dark Theme to Disabled.` + `</li>`);
@@ -85,21 +88,28 @@ const ProfileScript = (() => {
                 }
             }
         },
-        /**
-         * Checks the email value in the settings form and
-         * compares it with the database. If they are different then it adds
-         * an item to the settings confirm modal.
-         * @param {string} dbValue
-         */
+        
+    /**
+     * Checks the email value in the settings form and
+     * compares it with the database. If they are different then it adds
+     * an item to the settings confirm modal.
+     * @param {string} dbValue
+     */
         emailUpdated: (dbValue) => {
             const settingUpdates = $("#settings-updates");
             const email = $("#email-setting").val();
+            
             if (ProfileScript.valueChanged(email, dbValue)) {
-                settingUpdates.append(`
-        <li class='list-group-item'>
-            - Change Email from ` + dbValue + ` to ` + email + `</li>`);
+                // Create a UUID to append the list element.
+                const id = GlobalScript.createUUID();
+                // Add a list element to the list.
+                settingUpdates.append("<li id="+id+" class='list-group-item'></li>");
+                // Get decoded HTML (Anti-XSS)
+                $("#" + id).text("- Change Email from" + dbValue + " to " + email);
             }
         },
+        
+
         /**
          * Checks the phone number value in the settings form and
          * compares it with the database. If they are different then it adds
@@ -110,9 +120,11 @@ const ProfileScript = (() => {
             const settingUpdates = $("#settings-updates");
             const phone = $("#phone-setting").val();
             if (ProfileScript.valueChanged(phone, dbValue)) {
-                settingUpdates.append(`
-        <li class='list-group-item'>
-            - Change Phone Number to ` + phone + `</li>`);
+                const id = GlobalScript.createUUID();
+                // Add a list element to the list.
+                settingUpdates.append("<li id=" + id + " class='list-group-item'></li>");
+                // Get decoded HTML (Anti-XSS)
+                $("#" + id).text("- Change Phone number to " + phone);
             }
         },
         /**
@@ -123,6 +135,7 @@ const ProfileScript = (() => {
             const settingUpdates = $("#settings-updates");
             const password = $("#password-setting").val();
             if (password != null && password != "") {
+                // Not vulnerable to XSS because no JS elements are appended.
                 settingUpdates.append(`
         <li class='list-group-item'>
             - Change Account Password.` + `</li>`);

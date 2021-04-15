@@ -1,4 +1,5 @@
 ﻿using Goliath.Enums;
+using Goliath.Helper;
 using Goliath.Models;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
@@ -46,7 +47,7 @@ namespace Goliath.Controllers
 
                 StatusCode = HttpContext.Response.StatusCode.ToString() ?? "Unknown"
             };
-
+            GoliathHelper.PrintDebugger(GoliathHelper.PrintType.Error, feature.Error.StackTrace);
             TempData["Redirect"] = RedirectPurpose.Exception;
             TempData["ErrorInformation"] = JsonConvert.SerializeObject(model);
             return RedirectToActionPermanent("Index", "Auth");

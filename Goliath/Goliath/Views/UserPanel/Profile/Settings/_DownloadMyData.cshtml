@@ -1,6 +1,6 @@
 ﻿@model Goliath.Models.ProfileSettingsGeneralModel
 @{
-    var user = await _repository.GetUserByName(User.Identity.Name);
+    var user = await _repository.GetUserFromContext(User);
 }
 <p id="option-text">
     DOWNLOAD DATA

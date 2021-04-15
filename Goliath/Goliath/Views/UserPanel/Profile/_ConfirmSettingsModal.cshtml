@@ -1,6 +1,6 @@
 ﻿@model Goliath.Models.ProfileSettingsGeneralModel
 @{
-    var user = await _repository.GetUserByName(User.Identity.Name);
+        var user = await _repository.GetUserFromContext(User);
 }
 
 <div class="modal fade" id="confirm-settings" tabindex="-1" role="dialog" aria-hidden="true">
@@ -15,7 +15,8 @@
             <div class="modal-body text-left">
                 <span class="h5 font-weight-light">Are you sure you want to update these settings?</span>
                 <!-- Changed Settings -->
-                <ul id="settings-updates" class="list-group list-group-flush"></ul>
+                <ul id='settings-updates' class='list-group list-group-flush'></ul>
+
                 <!-- Changed Settings End -->
             </div>
             <div class="modal-footer">
@@ -35,6 +36,9 @@
 </script>
 @*Get the settings changed.*@
 <script type="text/javascript">
+
+    
+
     // Update the list in the modal with all of the changed settings.
     ProfileScript.backgroundUpdated('@user.BackgroundColor');
     ProfileScript.themeUpdated('@user.DarkTheme');
