@@ -1,0 +1,51 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    {{$styles}}
+</head>
+<body>
+    <h3>Hello, {{Username}}!</h3>
+    <h4>Your email has been updated.</h4>
+    <p>
+        Your email has been updated for your Goliath account.
+        <br />
+        The new email address is: <strong>{{Email}}</strong>
+        <br />
+        Once the new email address is verified this email will be removed from Goliath services
+        and will no longer be used for <em>{{Username}}</em>.
+        <br />
+        If you did not request this then please <strong><a href="#!">view this information</a></strong>.
+    </p>
+
+    <hr />
+    <em>Account Information:</em>
+    <span style="color: dimgray">
+        <code>
+            <br />
+            - Username: {{Username}}
+            <br />
+            - Email: {{Email}}
+            <br />
+            - Phone Number: {{PhoneNumber}}
+            <br />
+            - Account Creation Date: {{AccountCreationDate}}
+            <br />
+            - Last Login: {{LastLogin}}
+        </code>
+    </span>
+    <hr />
+    <em>Sender Information:</em>
+    <span style="color: dimgray">
+        <code>
+            <br />
+            - IP Address: {{IPAddress}}
+            <br />
+            <u>Computer/Browser Info:</u> {{ComputerInfo}}
+            <br />
+        </code>
+    </span>
+    {{$footer}}
+</body>
+</html>

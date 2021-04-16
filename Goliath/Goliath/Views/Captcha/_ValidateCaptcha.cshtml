@@ -6,13 +6,13 @@
 }
 
 @{
-@*If the user completed a captcha recently (they have the cookie) then submit them. *@
-    if(_cookieManager.HasCookie(CookieKeys.ValidateCaptchaCookie))
-            {
-    <script>
+    @*If the user completed a captcha recently (they have the cookie) then submit them. *@
+    if (_cookieManager.HasCookie(CookieKeys.ValidateCaptchaCookie))
+    {
+        <script>
                     $('#@ViewData["FormID"]').submit();
-    </script>
-            }
+        </script>
+    }
 }
 
 <div class="modal fade" id="captchaModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="captchaModalLabel" aria-hidden="true">
@@ -47,7 +47,7 @@
     </div>
 </div>
 
-    @if (!_cookieManager.HasCookie(CookieKeys.ValidateCaptchaCookie))
-            {
+@if (!_cookieManager.HasCookie(CookieKeys.ValidateCaptchaCookie))
+{
     <script type="text/javascript">$('#captchaModal').modal('show');</script>
-            }
+}

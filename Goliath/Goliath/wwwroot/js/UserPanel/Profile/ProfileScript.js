@@ -60,7 +60,7 @@ const ProfileScript = (() => {
                 // Add a list element to the list.
                 settingUpdates.append("<li id=" + id + " class='list-group-item'></li>");
                 // Get decoded HTML (Anti-XSS)
-                $("#" + id).text("- Change Background Color from" + dbValue + " to " + backgroundColor);
+                $("#" + id).text("- Change Background Color from " + dbValue + " to " + backgroundColor);
             }
         },
         /**
@@ -88,27 +88,26 @@ const ProfileScript = (() => {
                 }
             }
         },
-        
-    /**
-     * Checks the email value in the settings form and
-     * compares it with the database. If they are different then it adds
-     * an item to the settings confirm modal.
-     * @param {string} dbValue
-     */
+
+        /**
+         * Checks the email value in the settings form and
+         * compares it with the database. If they are different then it adds
+         * an item to the settings confirm modal.
+         * @param {string} dbValue
+         */
         emailUpdated: (dbValue) => {
             const settingUpdates = $("#settings-updates");
             const email = $("#email-setting").val();
-            
+
             if (ProfileScript.valueChanged(email, dbValue)) {
                 // Create a UUID to append the list element.
                 const id = GlobalScript.createUUID();
                 // Add a list element to the list.
-                settingUpdates.append("<li id="+id+" class='list-group-item'></li>");
+                settingUpdates.append("<li id=" + id + " class='list-group-item'></li>");
                 // Get decoded HTML (Anti-XSS)
-                $("#" + id).text("- Change Email from" + dbValue + " to " + email);
+                $("#" + id).text("- Change Email from " + dbValue + " to " + email);
             }
         },
-        
 
         /**
          * Checks the phone number value in the settings form and
@@ -141,5 +140,5 @@ const ProfileScript = (() => {
             - Change Account Password.` + `</li>`);
             }
         }
-    }
+    };
 })();

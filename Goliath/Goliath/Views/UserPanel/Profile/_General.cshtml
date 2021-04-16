@@ -4,9 +4,12 @@
 }
 
 <h3>All Available Settings</h3>
+<div class="text-danger text-left" asp-validation-summary="All">
+
+</div>
+
 <hr />
-<div class="text-danger" asp-validation-summary="All"></div>
-<hr />
+
 <form id="settings" asp-action="Profile" asp-antiforgery="true" novalidate>
     <div id="confirm-modal"></div>
     <div class="container">
@@ -27,7 +30,7 @@
                 <partial name="~/Views/UserPanel/Profile/Settings/_ChangeEmail.cshtml" />
             </div>
             <hr />
-            <div class="row col-8">
+            <div class="row col-12 p-0">
                 <partial name="~/Views/UserPanel/Profile/Settings/_ChangePassword.cshtml" />
             </div>
 

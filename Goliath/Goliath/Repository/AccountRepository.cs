@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Goliath.Repository
 {
@@ -53,8 +54,8 @@ namespace Goliath.Repository
         }
 
         /// <summary>
-        /// Creates a "Super User" which can manage all roles in the panel for all users.
-        /// Also creates the default roles.
+        /// Creates a "Super User" which can manage all roles in the panel for all users. Also
+        /// creates the default roles.
         /// </summary>
         /// <returns> </returns>
         public async Task LoadDefaults()
@@ -64,7 +65,7 @@ namespace Goliath.Repository
                 await _roleManager.CreateAsync(new ApplicationRole()
                 {
                     Name = GoliathRoles.Administrator,
-                    Icon = "<span class='badge badge-pill badge-danger ml-1'>ADMIN</span>",
+                    Icon = HttpUtility.HtmlEncode("<span class='badge badge-pill badge-danger ml-1'>ADMIN</span>"),
                     IsAdministrator = true
                 });
                 await _roleManager.CreateAsync(new ApplicationRole()
@@ -80,7 +81,9 @@ namespace Goliath.Repository
                     BackgroundColor = "#FFFFFF",
                     DarkTheme = "false",
                     UserData = "",
-                    PendingNotifications = ""
+                    PendingNotifications = "",
+                    AccountCreationDate = DateTime.UtcNow.ToString(),
+                    LastPasswordUpdate = DateTime.UtcNow.ToString()
                 },
                 password: _config["SuperUser:Password"]
                 );
@@ -226,6 +229,16 @@ namespace Goliath.Repository
             return "Error";
         }
 
+        /// <summary>
+        /// Get the icon for a specific role using a user claim.
+        /// </summary>
+        /// <param name="claims"></param>
+        /// <returns></returns>
+        public async Task<string> GetRoleIcon(ClaimsPrincipal claims)
+        {
+            return (await _roleManager.FindByNameAsync(await GetPrimaryRole(await GetUserFromContext(claims)))).Icon;
+        }
+
         public async Task<string> GetRoleExcludedURLComponents(string name)
         {
             if (await _roleManager.RoleExistsAsync(name))
@@ -278,20 +291,15 @@ namespace Goliath.Repository
         /// <returns> </returns>
         public async Task<ApplicationUser> GetFromUserClaim(ClaimsPrincipal claimsPrincipal)
         {
-            
             return await _userManager.FindByNameAsync(claimsPrincipal.Identity.Name);
         }
 
-        /// <summary>
-        /// The correct way to get a user from a view.
-        /// </summary>
-        /// <param name="claims">@User.<></param>
-        /// <returns>Get a user from a view.</returns>
+        /// <summary> The correct way to get a user from a view. </summary> <param
+        /// name="claims">@User.<></param> <returns>Get a user from a view.</returns>
         public async Task<ApplicationUser> GetUserFromContext(ClaimsPrincipal claims)
         {
             return await _userManager.GetUserAsync(claims);
         }
-        
 
         public async Task<IdentityResult> UpdateUser(ApplicationUser user)
         {
@@ -342,6 +350,8 @@ namespace Goliath.Repository
                     PendingNotifications = "",
                     UserName = userModel.Username,
                     Email = userModel.Email,
+                    AccountCreationDate = DateTime.UtcNow.ToString(),
+                    LastPasswordUpdate = DateTime.UtcNow.ToString()
                 };
 
                 // Use Identity Core to create the user.
@@ -366,6 +376,27 @@ namespace Goliath.Repository
                         Description = "Could not create account."
                     });
             }
+        }
+
+        /// <summary>
+        /// Updates the "LastUserLogin" with DateTime.UtcNow.ToString()
+        /// </summary>
+        /// <returns></returns>
+        public async Task UpdateLastLogin(ApplicationUser user)
+        {
+            user.LastUserLogin = DateTime.UtcNow.ToString();
+            await UpdateUser(user);
+        }
+
+        /// <summary>
+        /// Updates the "LastUserLogin" with DateTime.UtcNow.ToString()
+        /// </summary>
+        /// <returns></returns>
+        public async Task UpdateLastLogin(string userName)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+            user.LastUserLogin = DateTime.UtcNow.ToString();
+            await UpdateUser(user);
         }
 
         /// <summary>
@@ -402,6 +433,27 @@ namespace Goliath.Repository
                 await ResendEmailConfirmationToken(userModel, device, token);
             }
         }
+
+        /// <summary>
+        /// Sends an email to a user notifying them to verify their new email.
+        /// Also sends an email to the user's old email notifying them of the change.
+        /// </summary>
+        /// <param name="userModel"></param>
+        /// <param name="device"></param>
+        /// <returns></returns>
+        public async Task GenerateNewEmailConfirmationToken(ApplicationUser userModel, DeviceParser device)
+        {
+            // Generate a token using Identity Core.
+            string token = await _userManager.GenerateEmailConfirmationTokenAsync(userModel);
+            // If the token is valid.
+            if (!string.IsNullOrWhiteSpace(token))
+            {
+                await SendNewEmailConfirmationToken(userModel, device, token);
+                await SendNotifyOldEmail(userModel, device);
+            }
+        }
+
+        
 
         /// <summary>
         /// Sends an email to a client with their username.
@@ -516,7 +568,7 @@ namespace Goliath.Repository
                         "{{Link}}", string.Format(appDomain + verifyLink, user.Id, token)
                     },
                     {
-                        "{{DateTime}}", DateTime.Now.ToString()
+                        "{{DateTime}}", DateTime.UtcNow.ToString()
                     }
                         }
             });
@@ -556,7 +608,7 @@ namespace Goliath.Repository
                         "{{Link}}", string.Format(appDomain + verifyLink, user.Id, token)
                     },
                     {
-                        "{{DateTime}}", DateTime.Now.ToString()
+                        "{{DateTime}}", DateTime.UtcNow.ToString()
                     }
                         }
             });
@@ -601,8 +653,123 @@ namespace Goliath.Repository
                         "{{Link}}", string.Format(appDomain + verifyLink, user.Id, token)
                     },
                     {
-                        "{{DateTime}}", DateTime.Now.ToString()
+                        "{{DateTime}}", DateTime.UtcNow.ToString()
                     }
+                        }
+            });
+        }
+
+        /// <summary>
+        /// Sends an email to a user's new email address when they update
+        /// their email address asking them to verify.
+        /// </summary>
+        /// <param name="signUpModel"></param>
+        /// <param name="user"></param>
+        /// <param name="device"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        private async Task SendNewEmailConfirmationToken(ApplicationUser user, DeviceParser device, string token)
+        {
+            // Get values from appsettings.json
+            string appDomain = _config["Application:AppDomain"];
+            string verifyLink = _config["Application:EmailConfirmation"];
+
+            string phone;
+            if (string.IsNullOrWhiteSpace(user.PhoneNumber))
+            {
+                phone = "Not Specified.";
+            }
+            else
+            {
+                phone = user.PhoneNumber;
+            }
+
+
+            // Generate email with placeholders.
+            await _emailService.SendConfirmNewEmail(new()
+            {
+                // send the token to the user's new unverified email.
+                ToEmails = new List<string>() { user.UnverifiedNewEmail },
+                Placeholders = new Dictionary<string, string> {
+                    {
+                        "{{Username}}", user.UserName
+                    },
+                    {
+                        "{{Email}}", user.Email
+                    },
+                    {
+                        "{{IPAddress}}", device.IPv4
+                    },
+                    {
+                        "{{ComputerInfo}}", device.ToSimpleString()
+                    },
+                    {
+                        "{{Link}}", string.Format(appDomain + verifyLink, user.Id, token)
+                    },
+                    {
+                        "{{DateTime}}", DateTime.UtcNow.ToString()
+                    },
+                    {
+                        "{{PhoneNumber}}", phone
+                    },
+                    {
+                        "{{AccountCreationDate}}", user.AccountCreationDate
+                    },
+                    {
+                        "{{LastLogin}}", user.LastUserLogin
+                    },
+                        }
+            });
+        }
+
+        /// <summary>
+        /// Send an email to a user's old email account when they change their email.
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="device"></param>
+        /// <returns></returns>
+        private async Task SendNotifyOldEmail(ApplicationUser user, DeviceParser device)
+        {
+            // Check if the phone number is null.
+            string phone;
+            if (string.IsNullOrWhiteSpace(user.PhoneNumber))
+            {
+                phone = "Not Specified.";
+            }
+            else
+            {
+                phone = user.PhoneNumber;
+            }
+
+            // Generate email with placeholders.
+            await _emailService.SendNotifyOldEmail(new()
+            {
+                ToEmails = new List<string>() { user.Email },
+                Placeholders = new Dictionary<string, string> {
+                    {
+                        "{{Username}}", user.UserName
+                    },
+                    {
+                        "{{Email}}", user.Email
+                    },
+                    {
+                        "{{IPAddress}}", device.IPv4
+                    },
+                    {
+                        "{{ComputerInfo}}", device.ToSimpleString()
+                    },
+                    {
+                        "{{DateTime}}", DateTime.UtcNow.ToString()
+                    },
+                    {
+                        "{{PhoneNumber}}", phone
+                    },
+                    {
+                        "{{AccountCreationDate}}", user.AccountCreationDate
+                    },
+                    {
+                        "{{LastLogin}}", user.LastUserLogin
+                    },
                         }
             });
         }
@@ -627,7 +794,7 @@ namespace Goliath.Repository
                         "{{ComputerInfo}}", device.ToSimpleString()
                     },
                     {
-                        "{{DateTime}}", DateTime.Now.ToString()
+                        "{{DateTime}}", DateTime.UtcNow.ToString()
                     }
                         }
             });
@@ -653,7 +820,7 @@ namespace Goliath.Repository
                         "{{CurrentRole}}", currentRole
                     },
                     {
-                        "{{DateTime}}", DateTime.Now.ToString()
+                        "{{DateTime}}", DateTime.UtcNow.ToString()
                     }
                         }
             });
@@ -670,7 +837,27 @@ namespace Goliath.Repository
             // If the email cannot be confirmed then return a failed attempt.
             try
             {
-                return await _userManager.ConfirmEmailAsync(await _userManager.FindByIdAsync(uid), token);
+                // Get the user from the URL
+                var user = await _userManager.FindByIdAsync(uid);
+                // Check if the user is attempting to change their email.
+                if(!string.IsNullOrWhiteSpace(user.UnverifiedNewEmail))
+                {
+                    user.Email = user.UnverifiedNewEmail;
+                    user.EmailConfirmed = false;
+                }
+                var result = await _userManager.ConfirmEmailAsync(user, token);
+                if(result.Succeeded)
+                {
+                    // Set the unverified email of the user to nothing.
+                    user.UnverifiedNewEmail = string.Empty;
+                    await UpdateUser(user); // Update the user in database.
+                    return IdentityResult.Success;
+                }
+                else
+                {
+                    // If the result failed then do not update any of the user data.
+                    return IdentityResult.Failed();
+                }
             }
             catch (Exception)
             {

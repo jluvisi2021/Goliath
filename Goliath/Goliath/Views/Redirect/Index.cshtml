@@ -1,6 +1,7 @@
 ﻿@model Goliath.Models.RedirectUrlModel
 @{
     ViewData["Title"] = "Redirect";
+    ViewData["IgnoreJS"] = true;
 }
 <main id="outer" class="bg-dark">
     <section id="inner">
@@ -48,13 +49,13 @@
                             </div>
                         </p>
 
-                            <a href="@Model.Url" class="btn btn-primary mb-1 mr-1">
-                                <i class="fas fa-link mr-1"></i>Go to external link
-                            </a>
+                        <a href="@Model.Url" class="btn btn-primary mb-1 mr-1">
+                            <i class="fas fa-link mr-1"></i>Go to external link
+                        </a>
 
-                            <a href="@Model.ReturnUrl" class="btn btn-primary mb-1 mr-1">
-                                <i class="fas fa-shield-alt mr-1"></i>Return to Goliath
-                            </a>
+                        <a href="@Model.ReturnUrl" class="btn btn-primary mb-1 mr-1">
+                            <i class="fas fa-shield-alt mr-1"></i>Return to Goliath
+                        </a>
                     </div>
                 </div>
             </div>

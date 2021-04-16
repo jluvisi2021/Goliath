@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace Goliath.Models
 {
@@ -7,6 +8,7 @@ namespace Goliath.Models
         /// <summary>
         /// Repersents the BootStrap badge that appears on the userpanel.
         /// </summary>
+        [Required]
         public string Icon { get; set; }
 
         /// <summary>

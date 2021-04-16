@@ -36,6 +36,7 @@
             #collapse {
                 display: none;
             }
+
             #collapse-no-js {
                 display: unset;
             }
@@ -129,7 +130,7 @@
                         <i class="fas fa-bug mr-2 hvr-icon"></i>Report as Issue
                     </a>
                     <br />
-                    @DateTime.Now
+                    @DateTime.UtcNow (UTC)
                 </p>
             </div>
         </section>

@@ -103,6 +103,22 @@ namespace Goliath.Services
             return await SendEmail(options);
         }
 
+        public async Task<bool> SendConfirmNewEmail(UserEmailOptions options)
+        {
+            options.Subject = "Email Notice";
+            options.Body = GetTemplate("ConfirmNewEmail", options);
+
+            return await SendEmail(options);
+        }
+
+        public async Task<bool> SendNotifyOldEmail(UserEmailOptions options)
+        {
+            options.Subject = "Email Notice";
+            options.Body = GetTemplate("NotifyOldEmail", options);
+
+            return await SendEmail(options);
+        }
+
         /// <summary>
         /// Send an email to a user while using a template from UserEmailOptions. <br /> This method
         /// is not directly called to send an email rather it is passed through one of the public

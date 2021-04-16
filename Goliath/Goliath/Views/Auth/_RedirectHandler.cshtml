@@ -12,7 +12,7 @@ else if (TempData["Redirect"].Equals((int)RedirectPurpose.LogoutSuccess))
 {
     @*User has been redirected; They just logged out.*@
     <script>
-            GlobalScript.displayNotification("Success", "You have been logged out at " + "@DateTime.Now", GlobalScript.BannerTypes()["alert-success"], "center-banner");
+            GlobalScript.displayNotification("Success", "You have been logged out at @DateTime.UtcNow (UTC)", GlobalScript.BannerTypes()["alert-success"], "center-banner");
     </script>
 }
 else if (TempData["Redirect"].Equals((int)RedirectPurpose.VerifiedEmailSuccess))
@@ -81,7 +81,7 @@ else if (TempData["Redirect"].Equals((int)RedirectPurpose.Exception))
             + "<br />"
             + "<strong>Target Site:</strong> " + "<a href='@(exceptionModel.ExceptionTargetHelpLink)'>@(exceptionModel.ExceptionTargetSite)</a>"
             + "<br />"
-            + "<strong>Source:</strong> " + "@(exceptionModel.ExceptionSource)"
+            + "<strong>Source:</strong> "★ UtcNow+ "@(exceptionModel.ExceptionSource)"
             + "<br />"
             + "<strong>Status Code:</strong> " + "@(exceptionModel.StatusCode)"
             + "<br />"

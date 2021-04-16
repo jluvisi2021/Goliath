@@ -43,7 +43,6 @@ namespace Goliath
             services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<GoliathContext>().AddDefaultTokenProviders();
 
-
             // Setup the SMTPConfig model to use values directly from the appsettings.
             services.Configure<SMTPConfigModel>(_config.GetSection("SMTPConfig"));
             // General Identity Core settings.
@@ -125,12 +124,12 @@ namespace Goliath
                 options.SuppressXFrameOptionsHeader = true;
             });
 
-
             // Change password hash iteration count.
             services.Configure<PasswordHasherOptions>(option =>
             {
                 option.IterationCount = int.Parse(_config["Application:PasswordHashIterations"]);
             });
+            services.AddSession();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -188,6 +187,8 @@ namespace Goliath
             app.UseAuthorization();
 
             app.UseResponseCaching();
+
+            app.UseSession();
 
             /* Starts at ~/Views/Auth/Login.cshtml */
             app.UseEndpoints(endpoints =>

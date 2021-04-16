@@ -14,50 +14,50 @@
 {
     <partial name="~/Views/UserPanel/Profile/_SettingsUpdatedModal.cshtml" />
 }
-@if(_signInManager.IsSignedIn(User))
-            {
-<div class="container pt-5 pb-5">
-    <div class="row pt-5 pb-5">
-        <div id="profile-nav" class="col-3">
-            <div class="row justify-content-center">
-                <h4>Profile Settings</h4>
-                <i id="settings-gear" class="fas fa-cog ml-2 fa-2x"></i>
-            </div>
-
-            <div id="nav-buttons" class="list-group text-left">
-                @*Each of the following <div> are handled by jQuery and render different partial views.*@
-                <div id="profile-nav-general" class="list-group-item active font-weight-bold">
-                    General
-                    <i class="fas fa-sliders-h block-pointer"></i>
+@if (_signInManager.IsSignedIn(User))
+{
+    <div class="container pt-5 pb-5">
+        <div class="row pt-5 pb-5">
+            <div id="profile-nav" class="col-3">
+                <div class="row justify-content-center">
+                    <h4>Profile Settings</h4>
+                    <i id="settings-gear" class="fas fa-cog ml-2 fa-2x"></i>
                 </div>
 
-                <div id="profile-nav-colors" class="list-group-item list-group-item-action">
-                    Colors
-                    <i class="fas fa-palette block-pointer"></i>
-                </div>
-                <div id="profile-nav-security" class="list-group-item list-group-item-action">
-                    Security
-                    <i class="fas fa-shield-alt block-pointer"></i>
-                </div>
-                <div id="profile-nav-manage-data" class="list-group-item list-group-item-action">
-                    Manage Data
-                    <i class="fas fa-server block-pointer"></i>
-                </div>
-                <div id="profile-nav-other" class="list-group-item list-group-item-action">
-                    Other
-                    <i class="fas fa-wrench block-pointer"></i>
+                <div id="nav-buttons" class="list-group text-left">
+                    @*Each of the following <div> are handled by jQuery and render different partial views.*@
+                    <div id="profile-nav-general" class="list-group-item active font-weight-bold">
+                        General
+                        <i class="fas fa-sliders-h block-pointer"></i>
+                    </div>
+
+                    <div id="profile-nav-colors" class="list-group-item list-group-item-action">
+                        Colors
+                        <i class="fas fa-palette block-pointer"></i>
+                    </div>
+                    <div id="profile-nav-security" class="list-group-item list-group-item-action">
+                        Security
+                        <i class="fas fa-shield-alt block-pointer"></i>
+                    </div>
+                    <div id="profile-nav-manage-data" class="list-group-item list-group-item-action">
+                        Manage Data
+                        <i class="fas fa-server block-pointer"></i>
+                    </div>
+                    <div id="profile-nav-other" class="list-group-item list-group-item-action">
+                        Other
+                        <i class="fas fa-wrench block-pointer"></i>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-3">
-            <div id="primary-container" class="container rounded">
-                <div id="view">
-                    <!-- Profile Child Start-->
-                    <partial name="~/Views/UserPanel/Profile/_General.cshtml" />
-                    <!-- Profile Child End -->
+            <div class="col-3">
+                <div id="primary-container" class="container rounded">
+                    <div id="view">
+                        <!-- Profile Child Start-->
+                        <partial name="~/Views/UserPanel/Profile/_General.cshtml" />
+                        <!-- Profile Child End -->
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-            }
+}

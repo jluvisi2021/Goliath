@@ -1,7 +1,9 @@
 ﻿using Goliath.Enums;
+using Goliath.Helper;
 using Goliath.Models;
 using Goliath.Repository;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
 
 namespace Goliath.Controllers
@@ -57,7 +59,9 @@ namespace Goliath.Controllers
             if (HasValueChanged(model.NewEmail, goliathUser.Email))
             {
                 hasChanged = true;
-                goliathUser.Email = model.NewEmail;
+                goliathUser.UnverifiedNewEmail = model.NewEmail;
+                // Send a new verification email.
+                await _accountRepository.GenerateNewEmailConfirmationToken(goliathUser, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
             }
             if (HasValueChanged(model.NewPhoneNumber, goliathUser.PhoneNumber))
             {
@@ -77,6 +81,7 @@ namespace Goliath.Controllers
                 if (result.Succeeded)
                 {
                     hasChanged = true;
+                    goliathUser.LastPasswordUpdate = DateTime.UtcNow.ToString();
                 }
                 else
                 {
@@ -145,5 +150,9 @@ namespace Goliath.Controllers
         public IActionResult BuildInfo() => View();
 
         public IActionResult AdminPanel() => View();
+
+        private string GetClientUserAgent() => Request.Headers["User-Agent"].ToString();
+
+        private string GetRemoteClientIPv4() => HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
     }
 }

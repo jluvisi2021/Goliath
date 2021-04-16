@@ -182,24 +182,32 @@ const GlobalScript = (() => {
                     typeStr = "alert-primary";
                     text = "[CRITICAL] Error. Could not find type: " + type;
                     console.error("Could not find notification type: " + type);
-                    break;
+                    return;
             }
             if (id === "") {
                 id = GlobalScript.createUUID();
+            }
+            if (id.length != 36) {
+                console.error("UUID Security: Invalid UUID.");
+                return;
             }
             if (save) {
                 GlobalScript.saveNotification(textHeader, text, typeStr, divParentID, id);
             }
             // Notification will not be saved to localStorage so we display it now with DOM Injection.
             if (!save) {
-                $("#" + divParentID).prepend(
+                $("#" + divParentID).prepend().html(
                     '<div id=' + id + ' class="alert ' + typeStr + ' alert-dismissible fade show" role="alert">' +
                     '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
                     '<span aria-hidden="true">×</span>' +
                     '</button>' +
-                    '<strong>' + textHeader + '</strong> ' + text +
+                    '<strong id='+id+'-strong></strong> ' +
+                    '<span id='+id+'-body></span>' +
                     '</div>'
                 );
+                // Encode Potential HTML Tags
+                $("#" + id + "-strong").text(textHeader);
+                $("#" + id + "-body").text(text);
             }
         },
         /**

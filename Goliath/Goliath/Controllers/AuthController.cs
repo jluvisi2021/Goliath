@@ -51,7 +51,7 @@ namespace Goliath.Controllers
             {
                 return RedirectToAction("Index", "UserPanel");
             }
-            
+
             return RedirectToAction("Login");
         }
 
@@ -89,7 +89,8 @@ namespace Goliath.Controllers
             {
                 // Store the fact that the CAPTCHA was completed successfully.
                 await _captcha.CacheNewCaptchaValidateAsync();
-
+                // Change the time of last login.
+                await _accountRepository.UpdateLastLogin(signInModel.Username);
                 // Redirect
                 return RedirectToAction("Index", "UserPanel");
             }
@@ -287,11 +288,15 @@ namespace Goliath.Controllers
 
             if (user == null)
             {
-                ModelState.AddModelError(string.Empty, $"We could not find user: {model.Email}");
+                ModelState.AddModelError(string.Empty, $"We could not find user: {model.Email}.");
+                ModelState.AddModelError(string.Empty, "If you are verifying a new email then put your older one instead.");
+                
                 return View();
             }
 
-            if (user.EmailConfirmed)
+            bool newEmail = !string.IsNullOrWhiteSpace(user.UnverifiedNewEmail);
+
+            if (user.EmailConfirmed && !newEmail)
             {
                 model.IsConfirmed = true;
                 ModelState.AddModelError(string.Empty, "Account already verified.");
@@ -304,8 +309,16 @@ namespace Goliath.Controllers
                 return View();
             }
 
-            // Generate a token as well as a user agent.
-            await _accountRepository.GenerateEmailConfirmationToken(user, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
+            if(newEmail)
+            {
+                await _accountRepository.GenerateNewEmailConfirmationToken(user, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
+            }
+            else
+            {
+                // Generate a token as well as a user agent.
+                await _accountRepository.GenerateEmailConfirmationToken(user, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
+            }
+            
 
             // Indicate to the View that the email was sent.
             model.IsEmailSent = true;
@@ -334,6 +347,7 @@ namespace Goliath.Controllers
             }
 
             token = token.Replace(' ', '+');
+
             // Check to make sure the token has not expired or is invalid.
             IdentityResult result = await _accountRepository.ConfirmEmailAsync(uid, token);
             if (result.Succeeded)

@@ -36,10 +36,13 @@
 
 <body class="gradient-light">
 
-    <noscript>
-        @*If javascript is not enabled then redirect them to the NoJS error page.*@
-        <meta HTTP-EQUIV="REFRESH" content="0; url=@Url.ActionLink("NoJS", "Errors")">
-    </noscript>
+    @if (ViewData["IgnoreJS"] == null)
+    {
+        <noscript>
+            @*If javascript is not enabled then redirect them to the NoJS error page.*@
+            <meta HTTP-EQUIV="REFRESH" content="0; url=@Url.ActionLink("NoJS", "Errors")">
+        </noscript>
+    }
 
     <!-- Primary Layout Child HTML -->
     @RenderBody()
@@ -48,7 +51,7 @@
         <div class="container text-center">
             <p id="footer-padding" class="p-3">
                 <a id="footer-text" data-toggle="tooltip" data-placement="top" data-html="true" title="Web Version: @ViewData["Version"]<br>Latest Update: 3/17/2021">
-                    [Goliath @ViewData["Version"]] Last Updated: @DateTime.Now
+                    [Goliath @ViewData["Version"]] Last Updated: @DateTime.UtcNow
                 </a>
             </p>
         </div>

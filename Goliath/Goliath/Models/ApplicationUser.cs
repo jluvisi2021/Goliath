@@ -17,6 +17,30 @@ namespace Goliath.Models
         [MaxLength(5)]
         public string DarkTheme { get; set; }
 
+        [Required]
+        [MaxLength(22)] // "12/31/9999 12:59:59 PM"
+        public string AccountCreationDate { get; set; }
+
+        [MaxLength(22)] // "12/31/9999 12:59:59 PM"
+        public string LastUserLogin { get; set; }
+
+        /// <summary>
+        /// Represents a value when the user changes their
+        /// email on their account but has not verified their new email yet.
+        /// </summary>
+        public string UnverifiedNewEmail { get; set; }
+
+        [Required]
+        [MaxLength(22)] // "12/31/9999 12:59:59 PM"
+        public string LastPasswordUpdate { get; set; }
+        /// <summary>
+        /// Stores a JSON that can be compiled into a list.
+        /// <br />
+        /// The last 10 logins on the account, their IPs, and
+        /// the time of occurrence.
+        /// </summary>
+        public string AccountLoginHistory { get; set; }
+
         /// <summary>
         /// Stored in JSON. Notifications that get displayed to the user when they login.
         /// </summary>

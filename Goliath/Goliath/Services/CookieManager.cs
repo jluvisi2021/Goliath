@@ -18,9 +18,9 @@ namespace Goliath.Services
         /// <summary>
         /// Adds a secure cookie to the browser. All cookies should be UTC Expire Time.
         /// </summary>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
-        /// <param name="expireTime"></param>
+        /// <param name="key"> </param>
+        /// <param name="value"> </param>
+        /// <param name="expireTime"> </param>
         public void AddCookie(string key, string value, DateTime expireTime)
         {
             CookieOptions cookieOptions = new();
@@ -47,7 +47,6 @@ namespace Goliath.Services
             {
                 _context.HttpContext.Response.Cookies.Delete(key);
             }
-
         }
     }
 }

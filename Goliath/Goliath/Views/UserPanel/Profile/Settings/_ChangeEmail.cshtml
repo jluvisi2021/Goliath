@@ -14,7 +14,7 @@
 <div class="ht-tm-element input-group mb-3">
     <div class="input-group-prepend ">
         <button class="btn btn-outline-primary" type="button">
-            <i class="fas fa-envelope"></i>
+            <i class="fas fa-envelope fa-fw"></i>
         </button>
     </div>
     <input asp-for="CurrentEmail" value="@user.Email" placeholder="" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" readonly />
@@ -22,13 +22,13 @@
 <div class="ht-tm-element input-group mb-3">
     <div class="input-group-prepend ">
         <button class="btn btn-outline-primary" type="button">
-            <i class="fas fa-envelope"></i>
+            <i class="fas fa-envelope fa-fw"></i>
         </button>
     </div>
 
     <input id="email-setting" asp-for="NewEmail" placeholder="Enter New Email." required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
 </div>
-@if (user.EmailConfirmed)
+@if (user.EmailConfirmed && string.IsNullOrWhiteSpace(user.UnverifiedNewEmail))
 {
     <span class="badge badge-success">
         <i class="fas fa-check-circle mr-1"></i>
@@ -42,3 +42,12 @@ else
         Not Confirmed
     </span>
 }
+@if(!string.IsNullOrWhiteSpace(user.UnverifiedNewEmail))
+            {
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    <strong>Notice!</strong> Your email was changed to @user.UnverifiedNewEmail but it will not be valid until the new email is confirmed.
+</div>
+            }

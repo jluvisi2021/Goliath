@@ -38,7 +38,7 @@ namespace Goliath.Controllers
               .Get<IExceptionHandlerPathFeature>();
             ExceptionHandlerModel model = new()
             {
-                DateTime = DateTime.Now.ToString(),
+                DateTime = DateTime.UtcNow.ToString() + " (UTC)",
                 OriginalPath = feature?.Path ?? "Unknown",
                 ExceptionSource = feature?.Error.Source ?? "Unknown",
                 ExceptionTargetSite = feature?.Error.TargetSite.Name ?? "Unknown",
