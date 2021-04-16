@@ -1,0 +1,123 @@
+﻿@inject Goliath.Repository.IAccountRepository _accoutRepository
+@{
+    var user = await _repository.GetUserFromContext(User);
+    var isAdmin = await _repository.IsAdmin(user);
+    var role = await _repository.GetPrimaryRole(user);
+}
+<p id="option-text">
+    GENERAL INFO
+    <i class="fas fa-question-circle item-info hvr-grow"
+       tabindex="0" role="button" data-toggle="popover"
+       data-trigger="focus"
+       title="General Info"
+       data-content="Some general information about your account that Goliath knows.">
+    </i>
+</p>
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <strong>Account Creation Date:</strong>  <span class="font-italic">@user.AccountCreationDate</span>
+        </div>
+        <div class="col-8">
+            <hr />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <strong>Browser Time:</strong>  <span id="profile-timezone" class="font-italic"></span>
+        </div>
+        <div class="col-8">
+            <hr />
+        </div>
+    </div>
+    @if (isAdmin)
+    {
+        <div class="row">
+            <div class="col-12">
+                <strong>User Role:</strong>  <span class="font-italic">@(await _repository.GetPrimaryRole(user))</span>
+            </div>
+            <div class="col-8">
+                <hr />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <strong>Administrator:</strong>  <span class="text-success font-italic">Yes</span>
+            </div>
+            <div class="col-8">
+                <hr />
+            </div>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-12">
+            <strong>Account Security</strong> <button id="show-account-security" type="button" class="btn btn-danger p-1 ml-1"><i id="show-account-security-icon" class="fas fa-chevron-circle-down"></i></button>
+            <div id="account-security" class="pl-1" style="font-family: 'Trebuchet MS';">
+                <table class="table mt-3">
+                    <tr>
+                        <td>Email Verified</td>
+                        @if (user.EmailConfirmed && string.IsNullOrWhiteSpace(user.UnverifiedNewEmail))
+                        {
+
+                            <td class="font-weight-bold text-success">Yes</td>
+                        }
+                        else
+                        {
+                            <td class="font-weight-bold text-danger">No</td>
+                        }
+                    </tr>
+                    <tr>
+                        <td>Phone Verified</td>
+                        @if (user.PhoneNumberConfirmed)
+                        {
+                            <td class="font-weight-bold text-success">Yes</td>
+                        }
+                        else
+                        {
+                            <td class="font-weight-bold text-danger">No</td>
+                        }
+                    </tr>
+                    <tr>
+                        <td>Two-Factor</td>
+                        @if (user.TwoFactorEnabled)
+                        {
+                            <td class="font-weight-bold text-success">Yes</td>
+                        }
+                        else
+                        {
+                            <td class="font-weight-bold text-danger">No</td>
+                        }
+                    </tr>
+                    <tr>
+                        <td>Password Updated</td>
+                        @if (DateTime.Parse(user.LastPasswordUpdate) > DateTime.UtcNow.Subtract(new TimeSpan(30, 0, 0, 0)))
+                        {
+                            <td class="font-weight-bold text-success">Yes</td>
+                        }
+                        else
+                        {
+                            <td class="font-weight-bold text-danger">Not updated in 30 days or more.</td>
+                        }
+                    </tr>
+                    <tr>
+                        <td>Secure Connection</td>
+                        @if (Context.Request.IsHttps)
+                        {
+                            <td class="font-weight-bold text-success">Secured | @Context.Request.Protocol</td>
+                        }
+                        else
+                        {
+                            <td class="font-weight-bold text-danger">Not Secure | @Context.Request.Protocol</td>
+                        }
+                    </tr>
+                    <tr>
+                        <td>Supported Browser</td>
+                        <td><span id="browser-supported"></span></td>
+                    </tr>
+                    <tr class="m-0 p-0"><td></td><td></td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

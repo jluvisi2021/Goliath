@@ -1,0 +1,21 @@
+﻿@model Goliath.Models.ProfileSettingsGeneralModel
+@{
+    var user = await _repository.GetUserFromContext(User);
+}
+<p id="option-text">
+    LOGOUT THRESHOLD
+    <i class="fas fa-question-circle item-info hvr-grow"
+       tabindex="0" role="button" data-toggle="popover"
+       data-trigger="focus"
+       title="Logout Threshold"
+       data-content="The amount of time that passes before Goliath logs you out for being inactive (In Minutes). Set it to 0 for unset.">
+    </i>
+</p>
+<div class="ht-tm-element input-group mb-3">
+    <div class="input-group-prepend ">
+        <button class="btn btn-outline-primary" type="button">
+            <i class="fas fa-clock"></i>
+        </button>
+    </div>
+    <input id="logout-threshold-setting" asp-for="LogoutThreshold" value="@user.LogoutThreshold" placeholder="Enter Time (Minutes)" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
+</div>

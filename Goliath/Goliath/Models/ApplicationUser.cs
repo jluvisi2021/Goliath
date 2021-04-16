@@ -24,20 +24,26 @@ namespace Goliath.Models
         [MaxLength(22)] // "12/31/9999 12:59:59 PM"
         public string LastUserLogin { get; set; }
 
+        /// <summary> The threshold of time until the user gets logged out.
+
+        /// </summary>
+        [Required]
+        [MaxLength(2)]
+        public int LogoutThreshold { get; set; }
+
         /// <summary>
-        /// Represents a value when the user changes their
-        /// email on their account but has not verified their new email yet.
+        /// Represents a value when the user changes their email on their account but has not
+        /// verified their new email yet.
         /// </summary>
         public string UnverifiedNewEmail { get; set; }
 
         [Required]
         [MaxLength(22)] // "12/31/9999 12:59:59 PM"
         public string LastPasswordUpdate { get; set; }
+
         /// <summary>
-        /// Stores a JSON that can be compiled into a list.
-        /// <br />
-        /// The last 10 logins on the account, their IPs, and
-        /// the time of occurrence.
+        /// Stores a JSON that can be compiled into a list. <br /> The last 10 logins on the
+        /// account, their IPs, and the time of occurrence.
         /// </summary>
         public string AccountLoginHistory { get; set; }
 

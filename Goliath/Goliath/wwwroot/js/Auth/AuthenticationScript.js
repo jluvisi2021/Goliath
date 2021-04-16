@@ -23,6 +23,9 @@ const AuthScript = (() => {
         $("#register-submit-btn").click(() => {
             GlobalScript.loadCaptcha('register-form');
         });
+        if (!navigator.cookieEnabled) {
+            GlobalScript.displayNotification("Warning", "Some Goliath functions may not work without Cookies enabled.", GlobalScript.BannerTypes()["alert-danger"], "center-banner", false);
+        }
     });
     return {
         /**

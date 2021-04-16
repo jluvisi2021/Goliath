@@ -290,7 +290,7 @@ namespace Goliath.Controllers
             {
                 ModelState.AddModelError(string.Empty, $"We could not find user: {model.Email}.");
                 ModelState.AddModelError(string.Empty, "If you are verifying a new email then put your older one instead.");
-                
+
                 return View();
             }
 
@@ -309,7 +309,7 @@ namespace Goliath.Controllers
                 return View();
             }
 
-            if(newEmail)
+            if (newEmail)
             {
                 await _accountRepository.GenerateNewEmailConfirmationToken(user, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
             }
@@ -318,7 +318,6 @@ namespace Goliath.Controllers
                 // Generate a token as well as a user agent.
                 await _accountRepository.GenerateEmailConfirmationToken(user, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
             }
-            
 
             // Indicate to the View that the email was sent.
             model.IsEmailSent = true;

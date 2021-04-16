@@ -31,12 +31,11 @@ namespace Goliath.Repository
 
         public async Task<bool> DoesTokenExistAsync(string hashCode)
         {
-
             if (!GoliathHash.ValidateStringSHA256(hashCode))
             {
                 return false;
             }
-            
+
             // Remove old tokens before searching database.
             await CleanUpUnusedTokens();
 

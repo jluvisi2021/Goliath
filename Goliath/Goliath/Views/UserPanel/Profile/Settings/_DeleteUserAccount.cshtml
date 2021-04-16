@@ -1,0 +1,16 @@
+﻿@{
+    var user = await _repository.GetUserFromContext(User);
+}
+<p id="option-text">
+    DELETE ACCOUNT
+    <i class="fas fa-question-circle item-info hvr-grow"
+       tabindex="0" role="button" data-toggle="popover"
+       data-trigger="focus"
+       title="Delete Account"
+       data-content="Delete your account from Goliath databases. This cannot be undone.">
+    </i>
+</p>
+<p class="text-muted font-italic">Remove your data from Goliath databases.</p>
+<button type="button" class="btn btn-danger">
+    <i class="fas fa-trash mr-2"></i>Delete Account
+</button>

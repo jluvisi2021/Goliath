@@ -16,11 +16,19 @@
     }
 }
 
+/*Make the default cursor be everywhere except specific elements.*/
+*:not(input):not(.list-group-item):not(label):not(a):not(i) {
+    cursor: default;
+}
+
 .item-info:hover {
     color: #005eff;
     cursor: pointer;
 }
 
+#account-security {
+    display: none;
+}
 /* Grow */
 .hvr-grow {
     display: inline-block;

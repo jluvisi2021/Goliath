@@ -18,7 +18,12 @@
                 <ul id='settings-updates' style="font-family: 'Trebuchet MS';" class='list-group list-group-flush pt-2 pb-1 mb-0'></ul>
 
                 <!-- Changed Settings End -->
+
+                <div class="w-75 pt-2">
+                    <partial name="~/Views/Captcha/_ValidateCaptchaEmbedded.cshtml" />
+                </div>
             </div>
+
             <div class="modal-footer">
 
                 <button type="button" class="btn btn-danger" data-dismiss="modal">
@@ -42,5 +47,6 @@
     ProfileScript.themeUpdated('@user.DarkTheme');
     ProfileScript.emailUpdated('@user.Email');
     ProfileScript.phoneUpdated('@user.PhoneNumber');
+    ProfileScript.logoutThresholdUpdated('@user.LogoutThreshold');
     ProfileScript.passwordUpdated();
 </script>

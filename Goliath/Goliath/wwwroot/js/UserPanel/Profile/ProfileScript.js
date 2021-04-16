@@ -8,6 +8,7 @@ const ProfileScript = (() => {
     $(document).ready(() => {
         const listItems = $(".list-group .list-group-item");
         const viewDiv = $("#view");
+        let showSecurity = false;
         listItems.click((e) => {
             listItems.removeClass("active").removeClass("font-weight-bold");
             $(e.target).addClass("active").addClass("font-weight-bold");
@@ -29,6 +30,28 @@ const ProfileScript = (() => {
         });
         $("#submit-settings").click(() => {
             $("#confirm-modal").load("/UserPanel/GetModule?partialName=Profile/_ConfirmSettingsModal");
+        });
+        if (GlobalScript.checkBrowser(false)) {
+            $("#browser-supported").addClass("font-weight-bold").addClass("text-success").text("Yes");
+        } else {
+            $("#browser-supported").addClass("font-weight-bold").addClass("text-danger").text("No");
+        }
+        $("#profile-timezone").text(GlobalScript.getTimeZone());
+        $("#show-account-security").click(() => {
+            if (showSecurity) {
+                $("#account-security").css({ "display": "none" });
+                $("#show-account-security-icon")
+                    .removeClass("fa-chevron-circle-up")
+                    .addClass("fa-chevron-circle-down");
+
+                showSecurity = false;
+            } else {
+                $("#account-security").css({ "display": "unset" });
+                $("#show-account-security-icon")
+                    .removeClass("fa-chevron-circle-down")
+                    .addClass("fa-chevron-circle-up");
+                showSecurity = true;
+            }
         });
     });
     return {
@@ -108,7 +131,25 @@ const ProfileScript = (() => {
                 $("#" + id).text("- Change Email from " + dbValue + " to " + email);
             }
         },
-
+        /**
+         * Gets if the logout threshold was updated.
+         * @param {any} dbValue
+         */
+        logoutThresholdUpdated: (dbValue) => {
+            const settingUpdates = $("#settings-updates");
+            const threshold = $("#logout-threshold-setting").val();
+            if (threshold === "") {
+                return;
+            }
+            if (ProfileScript.valueChanged(threshold, dbValue)) {
+                // Create a UUID to append the list element.
+                const id = GlobalScript.createUUID();
+                // Add a list element to the list.
+                settingUpdates.append("<li id=" + id + " class='list-group-item'></li>");
+                // Get decoded HTML (Anti-XSS)
+                $("#" + id).text("- Change Logout Threshold from " + dbValue + " to " + threshold);
+            }
+        },
         /**
          * Checks the phone number value in the settings form and
          * compares it with the database. If they are different then it adds

@@ -82,6 +82,7 @@ namespace Goliath.Repository
                     DarkTheme = "false",
                     UserData = "",
                     PendingNotifications = "",
+                    LogoutThreshold = 0,
                     AccountCreationDate = DateTime.UtcNow.ToString(),
                     LastPasswordUpdate = DateTime.UtcNow.ToString()
                 },
@@ -232,8 +233,8 @@ namespace Goliath.Repository
         /// <summary>
         /// Get the icon for a specific role using a user claim.
         /// </summary>
-        /// <param name="claims"></param>
-        /// <returns></returns>
+        /// <param name="claims"> </param>
+        /// <returns> </returns>
         public async Task<string> GetRoleIcon(ClaimsPrincipal claims)
         {
             return (await _roleManager.FindByNameAsync(await GetPrimaryRole(await GetUserFromContext(claims)))).Icon;
@@ -350,6 +351,7 @@ namespace Goliath.Repository
                     PendingNotifications = "",
                     UserName = userModel.Username,
                     Email = userModel.Email,
+                    LogoutThreshold = 0,
                     AccountCreationDate = DateTime.UtcNow.ToString(),
                     LastPasswordUpdate = DateTime.UtcNow.ToString()
                 };
@@ -381,7 +383,7 @@ namespace Goliath.Repository
         /// <summary>
         /// Updates the "LastUserLogin" with DateTime.UtcNow.ToString()
         /// </summary>
-        /// <returns></returns>
+        /// <returns> </returns>
         public async Task UpdateLastLogin(ApplicationUser user)
         {
             user.LastUserLogin = DateTime.UtcNow.ToString();
@@ -391,7 +393,7 @@ namespace Goliath.Repository
         /// <summary>
         /// Updates the "LastUserLogin" with DateTime.UtcNow.ToString()
         /// </summary>
-        /// <returns></returns>
+        /// <returns> </returns>
         public async Task UpdateLastLogin(string userName)
         {
             var user = await _userManager.FindByNameAsync(userName);
@@ -435,12 +437,12 @@ namespace Goliath.Repository
         }
 
         /// <summary>
-        /// Sends an email to a user notifying them to verify their new email.
-        /// Also sends an email to the user's old email notifying them of the change.
+        /// Sends an email to a user notifying them to verify their new email. Also sends an email
+        /// to the user's old email notifying them of the change.
         /// </summary>
-        /// <param name="userModel"></param>
-        /// <param name="device"></param>
-        /// <returns></returns>
+        /// <param name="userModel"> </param>
+        /// <param name="device"> </param>
+        /// <returns> </returns>
         public async Task GenerateNewEmailConfirmationToken(ApplicationUser userModel, DeviceParser device)
         {
             // Generate a token using Identity Core.
@@ -452,8 +454,6 @@ namespace Goliath.Repository
                 await SendNotifyOldEmail(userModel, device);
             }
         }
-
-        
 
         /// <summary>
         /// Sends an email to a client with their username.
@@ -660,14 +660,14 @@ namespace Goliath.Repository
         }
 
         /// <summary>
-        /// Sends an email to a user's new email address when they update
-        /// their email address asking them to verify.
+        /// Sends an email to a user's new email address when they update their email address asking
+        /// them to verify.
         /// </summary>
-        /// <param name="signUpModel"></param>
-        /// <param name="user"></param>
-        /// <param name="device"></param>
-        /// <param name="token"></param>
-        /// <returns></returns>
+        /// <param name="signUpModel"> </param>
+        /// <param name="user"> </param>
+        /// <param name="device"> </param>
+        /// <param name="token"> </param>
+        /// <returns> </returns>
         private async Task SendNewEmailConfirmationToken(ApplicationUser user, DeviceParser device, string token)
         {
             // Get values from appsettings.json
@@ -683,7 +683,6 @@ namespace Goliath.Repository
             {
                 phone = user.PhoneNumber;
             }
-
 
             // Generate email with placeholders.
             await _emailService.SendConfirmNewEmail(new()
@@ -725,9 +724,9 @@ namespace Goliath.Repository
         /// <summary>
         /// Send an email to a user's old email account when they change their email.
         /// </summary>
-        /// <param name="user"></param>
-        /// <param name="device"></param>
-        /// <returns></returns>
+        /// <param name="user"> </param>
+        /// <param name="device"> </param>
+        /// <returns> </returns>
         private async Task SendNotifyOldEmail(ApplicationUser user, DeviceParser device)
         {
             // Check if the phone number is null.
@@ -840,13 +839,13 @@ namespace Goliath.Repository
                 // Get the user from the URL
                 var user = await _userManager.FindByIdAsync(uid);
                 // Check if the user is attempting to change their email.
-                if(!string.IsNullOrWhiteSpace(user.UnverifiedNewEmail))
+                if (!string.IsNullOrWhiteSpace(user.UnverifiedNewEmail))
                 {
                     user.Email = user.UnverifiedNewEmail;
                     user.EmailConfirmed = false;
                 }
                 var result = await _userManager.ConfirmEmailAsync(user, token);
-                if(result.Succeeded)
+                if (result.Succeeded)
                 {
                     // Set the unverified email of the user to nothing.
                     user.UnverifiedNewEmail = string.Empty;

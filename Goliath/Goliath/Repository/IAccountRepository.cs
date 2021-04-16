@@ -27,7 +27,9 @@ namespace Goliath.Repository
         Task GenerateEmailConfirmationToken(ApplicationUser userModel, DeviceParser device);
 
         Task GenerateForgotPasswordToken(ApplicationUser userModel, DeviceParser device);
+
         Task GenerateNewEmailConfirmationToken(ApplicationUser userModel, DeviceParser device);
+
         Task<IdentityResult> ResetPasswordAsync(ResetPasswordModel model);
 
         Task GenerateUsername(ApplicationUser user, DeviceParser device);
@@ -79,9 +81,11 @@ namespace Goliath.Repository
         Task<bool> IsPasswordValid(ApplicationUser user, string pass);
 
         Task<ApplicationUser> GetUserFromContext(ClaimsPrincipal claims);
+
         Task<string> GetRoleIcon(ClaimsPrincipal claims);
+
         Task UpdateLastLogin(ApplicationUser user);
+
         Task UpdateLastLogin(string userName);
-        
     }
 }

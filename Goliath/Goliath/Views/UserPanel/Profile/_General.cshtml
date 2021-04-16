@@ -1,30 +1,38 @@
 ﻿@using Goliath.Helper
+
 @{
     // Check if settings have been changed.
 }
 
 <h3>All Available Settings</h3>
-<div class="text-danger text-left" asp-validation-summary="All">
 
-</div>
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger pb-0 pt-3" role="alert">
+        <p>We encountered errors trying to update your profile</p>
+            <div class="text-danger font-weight-bold text-left" asp-validation-summary="All"> </div>
+    </div>
+}
 
 <hr />
 
 <form id="settings" asp-action="Profile" asp-antiforgery="true" novalidate>
+
     <div id="confirm-modal"></div>
     <div class="container">
         <div class="text-left">
 
-            <!-- Background Color Option -->
+            <partial name="~/Views/UserPanel/Profile/Settings/_GeneralInformation.cshtml" />
+            <hr />
+
             <div class="row col-8">
                 <partial name="~/Views/UserPanel/Profile/Settings/_ChangeBackgroundColor.cshtml" />
             </div>
 
-            <!-- Background Color Option End -->
             <hr />
-            <!-- Enable Dark Theme Option -->
+
             <partial name="~/Views/UserPanel/Profile/Settings/_ToggleDarkTheme.cshtml" />
-            <!-- Enable Dark Theme Option End-->
+
             <hr />
             <div class="row col-8">
                 <partial name="~/Views/UserPanel/Profile/Settings/_ChangeEmail.cshtml" />
@@ -41,15 +49,23 @@
             <hr />
             <partial name="~/Views/UserPanel/Profile/Settings/_TwoFactor.cshtml" />
             <hr />
+            <div class="row col-8">
+                <partial name="~/Views/UserPanel/Profile/Settings/_LogoutThreshold.cshtml" />
+            </div>
+            <hr />
             <partial name="~/Views/UserPanel/Profile/Settings/_LoggedInTrace.cshtml" />
             <hr />
             <partial name="~/Views/UserPanel/Profile/Settings/_DownloadMyData.cshtml" />
             <hr />
             <partial name="~/Views/UserPanel/Profile/Settings/_MemoryFootprint.cshtml" />
+            <hr />
+            <partial name="~/Views/UserPanel/Profile/Settings/_DeleteUserAccount.cshtml" />
+            <hr />
+            <partial name="~/Views/UserPanel/Profile/Settings/_GetHelp.cshtml" />
         </div>
     </div>
-
-    <button id="submit-settings" type="button" class="btn btn-secondary mt-4">
+    <hr />
+    <button id="submit-settings" type="button" class="btn btn-secondary mt-1">
         <i class="fas fa-cloud-upload-alt mr-2"></i>
         Save Changes
     </button>

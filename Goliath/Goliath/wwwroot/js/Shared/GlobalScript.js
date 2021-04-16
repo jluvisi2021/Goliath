@@ -48,6 +48,9 @@ const GlobalScript = (() => {
             // Get id of the notification and delete it from localStorage.
             GlobalScript.deleteNotification($(e.target).closest('div').attr('id'));
         });
+        $("form").submit(() => {
+            GlobalScript.renderLoading();
+        });
     });
     return {
         /** Returns the list of avaliable banner types. */
@@ -201,8 +204,8 @@ const GlobalScript = (() => {
                     '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
                     '<span aria-hidden="true">×</span>' +
                     '</button>' +
-                    '<strong id='+id+'-strong></strong> ' +
-                    '<span id='+id+'-body></span>' +
+                    '<strong id=' + id + '-strong></strong> ' +
+                    '<span id=' + id + '-body></span>' +
                     '</div>'
                 );
                 // Encode Potential HTML Tags
@@ -290,6 +293,20 @@ const GlobalScript = (() => {
          */
         loadCaptcha: (formID) => {
             $("#captcha-view").load("/Captcha/LoadCaptcha?formID=" + formID);
+        },
+        /**
+         * Renders the loading screen.
+         */
+        renderLoading: () => {
+            // Some info
+            console.log("Submit!");
+        },
+        /**
+         * Returns the time zone of the user.
+         */
+        getTimeZone: () => {
+            const date = new Date();
+            return date.toLocaleTimeString();
         }
     };
 })();

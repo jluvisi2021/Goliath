@@ -2,6 +2,7 @@
 using Goliath.Helper;
 using Goliath.Models;
 using Goliath.Repository;
+using Goliath.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
@@ -19,9 +20,12 @@ namespace Goliath.Controllers
         /// </summary>
         private readonly IAccountRepository _accountRepository;
 
-        public UserPanelController(IAccountRepository accountRepository)
+        private readonly IGoliathCaptchaService _captcha;
+
+        public UserPanelController(IAccountRepository accountRepository, IGoliathCaptchaService captcha)
         {
             _accountRepository = accountRepository;
+            _captcha = captcha;
         }
 
         public IActionResult Index()
@@ -39,6 +43,12 @@ namespace Goliath.Controllers
         {
             if (!ModelState.IsValid)
             {
+                return View();
+            }
+
+            if (!await _captcha.IsCaptchaValidAsync())
+            {
+                ModelState.AddModelError(_captcha.CaptchaValidationError().Key, _captcha.CaptchaValidationError().Value);
                 return View();
             }
 
@@ -68,6 +78,22 @@ namespace Goliath.Controllers
                 hasChanged = true;
                 goliathUser.PhoneNumber = model.NewPhoneNumber;
             }
+
+            if (model.LogoutThreshold != null)
+            {
+                if (int.TryParse(model.LogoutThreshold, out int num))
+                {
+                    hasChanged = true;
+                    goliathUser.LogoutThreshold = num;
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Logout threshold must be a number.");
+                    _captcha.DeleteCaptchaCookie();
+                    return View(model);
+                }
+            }
+
             // If the new password entered does not match the users current password.
 
             if (!string.IsNullOrWhiteSpace(model.NewPassword))
@@ -75,6 +101,7 @@ namespace Goliath.Controllers
                 if (await _accountRepository.IsPasswordValid(goliathUser, model.NewPassword))
                 {
                     ModelState.AddModelError(string.Empty, "Your new password matches your old password.");
+                    _captcha.DeleteCaptchaCookie();
                     return View(model);
                 }
                 Microsoft.AspNetCore.Identity.IdentityResult result = await _accountRepository.UpdatePasswordAsync(goliathUser, model.CurrentPassword, model.NewPassword);
@@ -86,6 +113,7 @@ namespace Goliath.Controllers
                 else
                 {
                     ModelState.AddModelError(string.Empty, "Your entry in \"Current Password\" field does not match your account password.");
+                    _captcha.DeleteCaptchaCookie();
                     return View(model);
                 }
             }
@@ -93,6 +121,7 @@ namespace Goliath.Controllers
             if (hasChanged)
             {
                 await _accountRepository.UpdateUser(goliathUser);
+                await _captcha.CacheNewCaptchaValidateAsync();
             }
 
             ModelState.Clear();

@@ -37,5 +37,8 @@ namespace Goliath.Models
 
         [DataType(DataType.Password)]
         public string ConfirmNewPassword { get; set; }
+
+        [StringLength(2, MinimumLength = 1, ErrorMessage = "The logout threshold must be between 0 and 99 minutes.")]
+        public string LogoutThreshold { get; set; }
     }
 }
