@@ -22,6 +22,8 @@ namespace Goliath.Repository
 
         Task<ApplicationUser> FindByEmailAsync(string email);
 
+        Task<IdentityResult> ConfirmPhoneAsync(ApplicationUser user, string token);
+
         Task GenerateEmailConfirmationToken(SignUpUserModel signUpModel, ApplicationUser userModel, DeviceParser device);
 
         Task GenerateEmailConfirmationToken(ApplicationUser userModel, DeviceParser device);
@@ -29,6 +31,12 @@ namespace Goliath.Repository
         Task GenerateForgotPasswordToken(ApplicationUser userModel, DeviceParser device);
 
         Task GenerateNewEmailConfirmationToken(ApplicationUser userModel, DeviceParser device);
+
+        Task GenerateNewPhoneConfirmationToken(ApplicationUser userModel, DeviceParser device);
+
+        Task<bool> DoesPhoneNumberExistAsync(string phone);
+
+        Task<bool> DoesEmailExistAsync(string email);
 
         Task<IdentityResult> ResetPasswordAsync(ResetPasswordModel model);
 

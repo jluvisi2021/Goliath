@@ -22,6 +22,8 @@ namespace Goliath.Models
         public string CurrentPhoneNumber { get; set; }
 
         [Phone(ErrorMessage = "Please enter a valid phone number.")]
+        [RegularExpression(@"^[0-9]+$", ErrorMessage = "Phone number must be 10 characters and include no area code or dashes. (ex: 4657659821)")]
+        [StringLength(maximumLength: 10, MinimumLength = 10, ErrorMessage = "Phone number must be 10 characters and include no area code or dashes. (ex: 4657659821)")]
         public string NewPhoneNumber { get; set; }
 
         [DataType(DataType.Password)]

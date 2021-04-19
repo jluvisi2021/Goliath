@@ -18,6 +18,8 @@
         Exception,
 
         // User Panel
-        SettingsUpdatedSuccess
+        SettingsUpdatedSuccess,
+        PhoneNumberConfirmedSuccess,
+        PhoneNumberConfirmedFailure
     }
 }

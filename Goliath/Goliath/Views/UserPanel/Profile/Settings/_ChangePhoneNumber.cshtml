@@ -39,14 +39,23 @@
 </div>
 @if (await _repository.HasConfirmedPhoneNumber(user))
 {
-    <span class="badge badge-success">Phone Number Confirmed</span>
+    <span class="badge badge-success"><i class="fas fa-check-circle mr-1"></i>Confirmed</span>
 }
 else
 {
-    if (await _repository.HasPhoneNumber(user))
+    if (await _repository.HasPhoneNumber(user) || !string.IsNullOrWhiteSpace(user.UnverifiedNewPhone))
     {
-        <span class="badge badge-danger">Phone Number Not Confirmed</span>
-        <a href="#!">Click to confirm your phone number.</a>
+        <span class="badge badge-danger"><i class="fas fa-times-circle mr-1"></i>Not Confirmed</span>
+        <a asp-controller="UserPanel" asp-action="ConfirmPhoneNumber">Click to confirm your phone number.</a>
     }
 
+}
+@if (!string.IsNullOrWhiteSpace(user.UnverifiedNewPhone))
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+        <strong>Notice!</strong> Your phone was changed to @user.UnverifiedNewPhone but it will not be valid until the new phone is confirmed.
+    </div>
 }

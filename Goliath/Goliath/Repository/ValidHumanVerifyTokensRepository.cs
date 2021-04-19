@@ -60,7 +60,7 @@ namespace Goliath.Repository
             List<int> primaryKeys = await _context.ValidTokens.Select(u => u.NumericID).ToListAsync();
             foreach (int keyIndex in primaryKeys)
             {
-                var key = await _context.ValidTokens.FindAsync(keyIndex);
+                ValidHumanVerifyTokens key = await _context.ValidTokens.FindAsync(keyIndex);
                 if (DateTime.Parse(key.GeneratedDateTime) < DateTime.UtcNow.Subtract(new TimeSpan(0, 5, 0)))
                 {
                     _context.Remove(key);

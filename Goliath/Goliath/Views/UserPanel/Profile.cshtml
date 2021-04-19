@@ -10,10 +10,23 @@
 <link rel="stylesheet" href="~/css/UserPanel/Profile/ProfileStyle.css" asp-append-version="true" />
 <!------------------->
 @*Display a modal if the values were updated.*@
+
 @if (TempData["ValuesUpdated"] != null && TempData["ValuesUpdated"].Equals(RedirectPurpose.SettingsUpdatedSuccess))
 {
     <partial name="~/Views/UserPanel/Profile/_SettingsUpdatedModal.cshtml" />
 }
+@if (TempData["Redirect"] != null)
+{
+    if (TempData["Redirect"].Equals(RedirectPurpose.PhoneNumberConfirmedSuccess))
+    {
+
+    }
+    else if (TempData["Redirect"].Equals(RedirectPurpose.PhoneNumberConfirmedFailure))
+    {
+
+    }
+}
+
 @if (_signInManager.IsSignedIn(User))
 {
     <div class="container pt-5 pb-5">

@@ -101,6 +101,7 @@ namespace Goliath
             services.AddScoped<IValidHumanVerifyTokensRepository, ValidHumanVerifyTokensRepository>();
             services.AddScoped<ICookieManager, CookieManager>();
             services.AddScoped<IGoliathCaptchaService, GoliathCaptchaService>();
+            services.AddScoped<ITwilioService, TwilioService>();
 
             // Configure secure cookie options for .NET Identity Core.
             services.ConfigureApplicationCookie(options =>

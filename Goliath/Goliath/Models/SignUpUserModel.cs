@@ -14,7 +14,6 @@ namespace Goliath.Models
         /// </summary>
         [Required(ErrorMessage = "Please enter a username.")]
         [DataType(DataType.Text)]
-        [Display(Name = "Username")]
         [RegularExpression("^[a-zA-Z0-9_]*$", ErrorMessage = "Username must be only letters, numbers, and underscores.")]
         [StringLength(18, MinimumLength = 6, ErrorMessage = "Username must be between 6 and 16 characters.")]
         public string Username { get; set; }
@@ -24,8 +23,8 @@ namespace Goliath.Models
         /// </summary>
         [Required(ErrorMessage = "Please enter your email.")]
         [EmailAddress(ErrorMessage = "Please enter a valid email.")]
+        [MaxLength(40, ErrorMessage = "Please enter a valid email.")]
         [Compare("ConfirmEmail", ErrorMessage = "Email does not match.")]
-        [Display(Name = "Email")]
         public string Email { get; set; }
 
         /// <summary>
@@ -33,7 +32,6 @@ namespace Goliath.Models
         /// </summary>
         [Required(ErrorMessage = "Please confirm your email.")]
         [EmailAddress(ErrorMessage = "Please confirm your email.")]
-        [Display(Name = "Confirm Email")]
         public string ConfirmEmail { get; set; }
 
         /// <summary>
@@ -50,7 +48,6 @@ namespace Goliath.Models
         [DataType(DataType.Password)]
         [StringLength(2048, MinimumLength = 6, ErrorMessage = "Password length must be 6-2048 characters.")]
         [RegularExpression(@"^[^\s]+$", ErrorMessage = "Password cannot contain spaces.")]
-        [Display(Name = "Password")]
         public string Password { get; set; }
 
         /// <summary>
@@ -64,7 +61,6 @@ namespace Goliath.Models
         /// </summary>
         [Required(ErrorMessage = "Please confirm your password.")]
         [DataType(DataType.Password)]
-        [Display(Name = "Confirm Password")]
         public string ConfirmPassword { get; set; }
     }
 }

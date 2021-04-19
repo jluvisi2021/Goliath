@@ -1,0 +1,51 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    {{$styles}}
+</head>
+<body>
+    <h3>Hello, {{Username}}!</h3>
+    <h4>You recently requested to update your phone!</h4>
+    <p>
+        You seemed to have requested an phone number change for your account. For this account
+        to utilize {{NewPhone}} as its phone number then please click the verification link on
+        your mobile device.
+        <br />
+        If you did not request this then please <strong><a href="#!">view this information</a></strong>.
+    </p>
+
+    <hr />
+    <em>Account Information:</em>
+    <span style="color: dimgray">
+        <code>
+            <br />
+            - Username: {{Username}}
+            <br />
+            - Email: {{Email}}
+            <br />
+            - Current Phone Number: {{PhoneNumber}}
+            <br />
+            - Account Creation Date: {{AccountCreationDate}}
+            <br />
+            - Last Login: {{LastLogin}}
+        </code>
+    </span>
+    <hr />
+    <em>Sender Information:</em>
+    <span style="color: dimgray">
+        <code>
+            <br />
+            - IP Address: {{IPAddress}}
+            <br />
+            <u>Computer/Browser Info:</u> {{ComputerInfo}}
+            <br />
+        </code>
+    </span>
+    <hr />
+
+    <p><em>Once you have verified your account Goliath recommends looking into additional security options such as Two-Factor Authentication.</em></p>
+    {{$footer}}
+</body>
+</html>

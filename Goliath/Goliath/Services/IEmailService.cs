@@ -20,5 +20,7 @@ namespace Goliath.Services
         Task<bool> SendConfirmNewEmail(UserEmailOptions options);
 
         Task<bool> SendNotifyOldEmail(UserEmailOptions options);
+
+        Task<bool> SendVerifyPhoneEmail(UserEmailOptions options);
     }
 }

@@ -24,8 +24,8 @@ namespace Goliath.Models
         [MaxLength(22)] // "12/31/9999 12:59:59 PM"
         public string LastUserLogin { get; set; }
 
-        /// <summary> The threshold of time until the user gets logged out.
-
+        /// <summary>
+        /// The threshold of time until the user gets logged out.
         /// </summary>
         [Required]
         [MaxLength(2)]
@@ -35,7 +35,11 @@ namespace Goliath.Models
         /// Represents a value when the user changes their email on their account but has not
         /// verified their new email yet.
         /// </summary>
+        [MaxLength(40)]
         public string UnverifiedNewEmail { get; set; }
+
+        [MaxLength(12)]
+        public string UnverifiedNewPhone { get; set; }
 
         [Required]
         [MaxLength(22)] // "12/31/9999 12:59:59 PM"

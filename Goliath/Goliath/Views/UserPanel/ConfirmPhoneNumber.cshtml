@@ -1,0 +1,89 @@
+﻿@using Goliath.Models
+@inject Microsoft.AspNetCore.Identity.SignInManager<ApplicationUser> _signInManager
+@inject Goliath.Repository.IAccountRepository _repository
+@model Goliath.Models.VerifyPhoneNumberModel
+@{
+    ViewData["Title"] = "Profile";
+    Layout = "_LoginRequired";
+    var user = await _repository.GetUserFromContext(User);
+}
+
+<!--Profile Scripts-->
+<script src="~/js/UserPanel/Profile/ProfileScript.js" asp-append-version="true"></script>
+<!------------------->
+@if (_signInManager.IsSignedIn(User))
+{
+
+    @*Custom Style*@
+    <style type="text/css">
+        @@media all and (max-device-width: 768px) {
+            #verify-phone-container {
+                width: 100% !important;
+                padding-right: 5%;
+                padding-left: 5%;
+            }
+        }
+    </style>
+
+    <main id="outer">
+        <section id="inner">
+            @if (string.IsNullOrWhiteSpace(user.UnverifiedNewPhone) && Model == null)
+            {
+                <p class="h4 font-weight-lighter text-danger">Your phone number is already confirmed.</p>
+            }
+            else
+            {
+                @if (Model?.IsCompleted == true)
+                {
+
+                    <div class="alert alert-primary" role="alert">
+                        <strong>Success!</strong> Your phone number was confirmed.
+                    </div>
+                    }
+                else
+                {
+                    <article id="verify-phone-container" class="container pb-5 mb-5 w-50">
+                        <form id="verify-phone-form" asp-action="ConfirmPhoneNumber" asp-antiforgery="true">
+                            <div class="text-left" id="captcha-view"></div>
+                            <p class="h3 font-weight-lighter">Verify Phone Number</p>
+                            @if (!ViewData.ModelState.IsValid)
+                            {
+                                <hr />
+                                <div class="text-danger text-left" asp-validation-summary="All"></div>
+
+                            }
+                            <hr />
+                            <div class="row align-self-center">
+                                <p class="text-muted">Enter the token sent to (+1) @(user.UnverifiedNewPhone[0..3])-@(user.UnverifiedNewPhone[3..6])-@(user.UnverifiedNewPhone[6..])</p>
+                                <div class="ht-tm-element input-group mb-3">
+                                    <div class="input-group-prepend ">
+                                        <button class="btn btn-danger" type="button">
+                                            <i class="fas fa-key fa-fw"></i>
+                                        </button>
+                                    </div>
+
+                                    <input asp-for="Token" value="" placeholder="Enter Token." required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
+                                </div>
+
+                                <div class="ht-tm-element input-group mb-3">
+                                    <div class="input-group-prepend ">
+                                        <button class="btn btn-danger" type="button">
+                                            <i class="fas fa-lock fa-fw"></i>
+                                        </button>
+                                    </div>
+
+                                    <input type="password" asp-for="Password" value="" placeholder="Enter Password." required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
+                                </div>
+                            </div>
+                            <button id="submit-verify-phone-form" class="btn btn-primary align-self-center" type="button">
+                                <i class="fas fa-upload mr-2"></i>Submit
+                            </button>
+                        </form>
+                    </article>
+                }
+
+            }
+        </section>
+    </main>
+
+}

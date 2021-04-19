@@ -33,11 +33,9 @@ namespace Goliath.Controllers
         private readonly IGoliathCaptchaService _captcha;
 
         public AuthController
-            (
-            IAccountRepository accountRepository,
+            (IAccountRepository accountRepository,
             SignInManager<ApplicationUser> signInManager,
-            IGoliathCaptchaService captcha
-            )
+            IGoliathCaptchaService captcha)
         {
             _accountRepository = accountRepository;
             _signInManager = signInManager;

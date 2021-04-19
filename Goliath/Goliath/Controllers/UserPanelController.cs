@@ -68,6 +68,11 @@ namespace Goliath.Controllers
             }
             if (HasValueChanged(model.NewEmail, goliathUser.Email))
             {
+                if (await _accountRepository.DoesEmailExistAsync(model.NewEmail))
+                {
+                    ModelState.AddModelError(string.Empty, $"The email {model.NewEmail} is already in use.");
+                    return View(model);
+                }
                 hasChanged = true;
                 goliathUser.UnverifiedNewEmail = model.NewEmail;
                 // Send a new verification email.
@@ -75,8 +80,15 @@ namespace Goliath.Controllers
             }
             if (HasValueChanged(model.NewPhoneNumber, goliathUser.PhoneNumber))
             {
+                if (await _accountRepository.DoesPhoneNumberExistAsync(model.NewPhoneNumber))
+                {
+                    ModelState.AddModelError(string.Empty, $"The phone number {model.NewPhoneNumber} is already in use.");
+                    return View(model);
+                }
                 hasChanged = true;
-                goliathUser.PhoneNumber = model.NewPhoneNumber;
+                goliathUser.UnverifiedNewPhone = model.NewPhoneNumber;
+
+                await _accountRepository.GenerateNewPhoneConfirmationToken(goliathUser, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
             }
 
             if (model.LogoutThreshold != null)
@@ -144,6 +156,54 @@ namespace Goliath.Controllers
                 return true;
             }
             return false;
+        }
+
+        [Route("userpanel/verify-phone")]
+        public IActionResult ConfirmPhoneNumber()
+        {
+            return View();
+        }
+
+        [Route("userpanel/verify-phone")]
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> ConfirmPhoneNumber(VerifyPhoneNumberModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            if (!int.TryParse(model.Token, out _))
+            {
+                ModelState.AddModelError(string.Empty, "Token must be a number.");
+                return View();
+            }
+
+            if (!await _captcha.IsCaptchaValidAsync())
+            {
+                ModelState.AddModelError(_captcha.CaptchaValidationError().Key, _captcha.CaptchaValidationError().Value);
+                return View();
+            }
+
+            ApplicationUser user = await _accountRepository.GetUserFromContext(User);
+
+            if (!await _accountRepository.IsPasswordValid(user, model.Password))
+            {
+                _captcha.DeleteCaptchaCookie();
+                ModelState.AddModelError(string.Empty, "Incorrect Password.");
+                return View();
+            }
+
+            if ((await _accountRepository.ConfirmPhoneAsync(user, model.Token)).Succeeded)
+            {
+                model.IsCompleted = true;
+                user.UnverifiedNewPhone = string.Empty;
+                await _captcha.CacheNewCaptchaValidateAsync();
+                await _accountRepository.UpdateUser(user);
+                return View(model);
+            }
+
+            ModelState.AddModelError(string.Empty, "Invalid or Expired Token.");
+            return View(model);
         }
 
         /// <summary>

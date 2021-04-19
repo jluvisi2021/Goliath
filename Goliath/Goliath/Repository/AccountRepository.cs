@@ -1,8 +1,10 @@
-﻿using Goliath.Enums;
+﻿using Goliath.Data;
+using Goliath.Enums;
 using Goliath.Helper;
 using Goliath.Models;
 using Goliath.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -37,6 +39,10 @@ namespace Goliath.Repository
         /// </summary>
         private readonly IConfiguration _config;
 
+        private readonly ITwilioService _twilio;
+
+        private readonly GoliathContext _context;
+
         /// <summary>
         /// The account repository is used for directly interacting with the ApplicationUser class.
         /// </summary>
@@ -44,13 +50,15 @@ namespace Goliath.Repository
         /// <param name="signInManager"> </param>
         /// <param name="emailService"> </param>
         /// <param name="config"> </param>
-        public AccountRepository(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<ApplicationRole> roleManager, IEmailService emailService, IConfiguration config)
+        public AccountRepository(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<ApplicationRole> roleManager, IEmailService emailService, IConfiguration config, ITwilioService twilio, GoliathContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
             _emailService = emailService;
             _config = config;
+            _twilio = twilio;
+            _context = context;
         }
 
         /// <summary>
@@ -332,6 +340,26 @@ namespace Goliath.Repository
             await _userManager.SetPhoneNumberAsync(user, number);
         }
 
+        public async Task<bool> DoesEmailExistAsync(string email)
+        {
+            ApplicationUser existingEmail = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
+            if (existingEmail == null)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public async Task<bool> DoesPhoneNumberExistAsync(string phone)
+        {
+            ApplicationUser existingEmail = await _context.Users.FirstOrDefaultAsync(u => u.PhoneNumber.ToLower() == phone.ToLower());
+            if (existingEmail == null)
+            {
+                return false;
+            }
+            return true;
+        }
+
         /// <summary>
         /// Creates the user and adds them to the database using Identity core.
         /// </summary>
@@ -396,7 +424,7 @@ namespace Goliath.Repository
         /// <returns> </returns>
         public async Task UpdateLastLogin(string userName)
         {
-            var user = await _userManager.FindByNameAsync(userName);
+            ApplicationUser user = await _userManager.FindByNameAsync(userName);
             user.LastUserLogin = DateTime.UtcNow.ToString();
             await UpdateUser(user);
         }
@@ -452,6 +480,20 @@ namespace Goliath.Repository
             {
                 await SendNewEmailConfirmationToken(userModel, device, token);
                 await SendNotifyOldEmail(userModel, device);
+            }
+        }
+
+        public async Task GenerateNewPhoneConfirmationToken(ApplicationUser userModel, DeviceParser device)
+        {
+            string token = await _userManager.GenerateChangePhoneNumberTokenAsync(userModel, userModel.UnverifiedNewPhone);
+            if (!string.IsNullOrWhiteSpace(token))
+            {
+                _twilio.SendSMS(new SMSTextModel()
+                {
+                    To = userModel.UnverifiedNewPhone,
+                    Message = $"This number has been request to be the new phone number for Goliath Account: {userModel.UserName}. Enter this number in the userpanel to confirm it: {token}"
+                });
+                await SendNewPhoneEmail(userModel, device);
             }
         }
 
@@ -570,6 +612,55 @@ namespace Goliath.Repository
                     {
                         "{{DateTime}}", DateTime.UtcNow.ToString()
                     }
+                        }
+            });
+        }
+
+        private async Task SendNewPhoneEmail(ApplicationUser user, DeviceParser device)
+        {
+            // Check if the phone number is null.
+            string phone;
+            if (string.IsNullOrWhiteSpace(user.PhoneNumber))
+            {
+                phone = "Not Specified.";
+            }
+            else
+            {
+                phone = user.PhoneNumber;
+            }
+
+            // Generate email with placeholders.
+            await _emailService.SendVerifyPhoneEmail(new()
+            {
+                ToEmails = new List<string>() { user.Email },
+                Placeholders = new Dictionary<string, string> {
+                    {
+                        "{{Username}}", user.UserName
+                    },
+                    {
+                        "{{Email}}", user.Email
+                    },
+                    {
+                        "{{IPAddress}}", device.IPv4
+                    },
+                    {
+                        "{{ComputerInfo}}", device.ToSimpleString()
+                    },
+                    {
+                        "{{DateTime}}", DateTime.UtcNow.ToString()
+                    },
+                    {
+                        "{{PhoneNumber}}", phone
+                    },
+                    {
+                        "{{NewPhone}}", user.UnverifiedNewPhone
+                    },
+                    {
+                        "{{AccountCreationDate}}", user.AccountCreationDate
+                    },
+                    {
+                        "{{LastLogin}}", user.LastUserLogin
+                    },
                         }
             });
         }
@@ -749,7 +840,7 @@ namespace Goliath.Repository
                         "{{Username}}", user.UserName
                     },
                     {
-                        "{{Email}}", user.Email
+                        "{{Email}}", user.UnverifiedNewEmail
                     },
                     {
                         "{{IPAddress}}", device.IPv4
@@ -837,19 +928,21 @@ namespace Goliath.Repository
             try
             {
                 // Get the user from the URL
-                var user = await _userManager.FindByIdAsync(uid);
+                ApplicationUser user = await _userManager.FindByIdAsync(uid);
                 // Check if the user is attempting to change their email.
                 if (!string.IsNullOrWhiteSpace(user.UnverifiedNewEmail))
                 {
                     user.Email = user.UnverifiedNewEmail;
                     user.EmailConfirmed = false;
                 }
-                var result = await _userManager.ConfirmEmailAsync(user, token);
+                IdentityResult result = await _userManager.ConfirmEmailAsync(user, token);
                 if (result.Succeeded)
                 {
                     // Set the unverified email of the user to nothing.
                     user.UnverifiedNewEmail = string.Empty;
+
                     await UpdateUser(user); // Update the user in database.
+
                     return IdentityResult.Success;
                 }
                 else
@@ -863,6 +956,20 @@ namespace Goliath.Repository
                 GoliathHelper.PrintDebugger(GoliathHelper.PrintType.Error, "ConfirmEmailAsync: Failed to execute.");
                 return IdentityResult.Failed();
             }
+        }
+
+        public async Task<IdentityResult> ConfirmPhoneAsync(ApplicationUser user, string token)
+        {
+            if (!string.IsNullOrWhiteSpace(user.UnverifiedNewPhone))
+            {
+                if (await _userManager.VerifyChangePhoneNumberTokenAsync(user, token, user.UnverifiedNewPhone))
+                {
+                    await _userManager.ChangePhoneNumberAsync(user, user.UnverifiedNewPhone, token);
+
+                    return IdentityResult.Success;
+                }
+            }
+            return IdentityResult.Failed();
         }
 
         public async Task<IdentityResult> ResetPasswordAsync(ResetPasswordModel model)

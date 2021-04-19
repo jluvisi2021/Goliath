@@ -31,6 +31,9 @@ const ProfileScript = (() => {
         $("#submit-settings").click(() => {
             $("#confirm-modal").load("/UserPanel/GetModule?partialName=Profile/_ConfirmSettingsModal");
         });
+        $("#submit-verify-phone-form").click(() => {
+            GlobalScript.loadCaptcha("verify-phone-form");
+        });
         if (GlobalScript.checkBrowser(false)) {
             $("#browser-supported").addClass("font-weight-bold").addClass("text-success").text("Yes");
         } else {

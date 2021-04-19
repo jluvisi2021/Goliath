@@ -70,6 +70,19 @@ namespace Goliath.Services
         }
 
         /// <summary>
+        /// Send email to a user to verify their phone.
+        /// </summary>
+        /// <param name="options"> </param>
+        /// <returns> </returns>
+        public async Task<bool> SendVerifyPhoneEmail(UserEmailOptions options)
+        {
+            options.Subject = "Confirm your Phone";
+            options.Body = GetTemplate("ConfirmPhoneEmail", options);
+
+            return await SendEmail(options);
+        }
+
+        /// <summary>
         /// Sends a resend verification email to a user.
         /// </summary>
         /// <param name="options"> </param>
