@@ -22,12 +22,10 @@ namespace Goliath.Models
         [DataType(DataType.Password)]
         [StringLength(2048, MinimumLength = 6, ErrorMessage = "Password length must be 6-2048 characters.")]
         [RegularExpression(@"^[^\s]+$", ErrorMessage = "Password cannot contain spaces.")]
-        [Display(Name = "Password")]
         public string NewPassword { get; set; }
 
         [Required(ErrorMessage = "Please confirm your password.")]
         [DataType(DataType.Password)]
-        [Display(Name = "Confirm Password")]
         public string ConfirmNewPassword { get; set; }
 
         public bool IsCompleted { get; set; }

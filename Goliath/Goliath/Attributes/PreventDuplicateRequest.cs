@@ -6,8 +6,8 @@ namespace Goliath.Attributes
 {
     //Credit: https://stackoverflow.com/a/32807640
     /// <summary>
-    /// An attribute to be applied to an HttpPost controller.<br />
-    /// Prevents the double submission of a controller by checking the anti-forgery token.
+    /// An attribute to be applied to an HttpPost controller. <br /> Prevents the double submission
+    /// of a controller by checking the anti-forgery token.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
     public class PreventDuplicateRequestAttribute : ActionFilterAttribute

@@ -21,9 +21,9 @@ namespace Goliath.Services
         private readonly SMTPConfigModel _smtpConfig;
 
         // For email templates
-        private static string footer = File.ReadAllText(@$"Services/EmailTemplate/Partial/Footer.html");
+        private static readonly string footerPath = @$"Services/EmailTemplate/Partial/Footer.html";
 
-        private static readonly string styles = File.ReadAllText(@$"Services/EmailTemplate/Partial/Styles.html");
+        private static readonly string stylesPath = @$"Services/EmailTemplate/Partial/Styles.html";
 
         public EmailService(IOptions<SMTPConfigModel> options)
         {
@@ -35,12 +35,12 @@ namespace Goliath.Services
         /// </summary>
         /// <param name="options"> </param>
         /// <returns> </returns>
-        public async Task<bool> SendTestEmail(UserEmailOptions options)
+        public async Task<bool> SendTestEmailAsync(UserEmailOptions options)
         {
             options.Subject = "Test Email";
-            options.Body = GetTemplate("Default", options);
+            options.Body = await GetTemplateAsync("Default", options);
 
-            return await SendEmail(options);
+            return await SendEmailAsync(options);
         }
 
         /// <summary>
@@ -48,12 +48,12 @@ namespace Goliath.Services
         /// </summary>
         /// <param name="options"> </param>
         /// <returns> </returns>
-        public async Task<bool> SendRoleMovedEmail(UserEmailOptions options)
+        public async Task<bool> SendRoleMovedEmailAsync(UserEmailOptions options)
         {
             options.Subject = "Goliath Notification";
-            options.Body = GetTemplate("RoleMovedEmail", options);
+            options.Body = await GetTemplateAsync("RoleMovedEmail", options);
 
-            return await SendEmail(options);
+            return await SendEmailAsync(options);
         }
 
         /// <summary>
@@ -61,12 +61,12 @@ namespace Goliath.Services
         /// </summary>
         /// <param name="options"> </param>
         /// <returns> If the email was sent. </returns>
-        public async Task<bool> SendConfirmationEmail(UserEmailOptions options)
+        public async Task<bool> SendConfirmationEmailAsync(UserEmailOptions options)
         {
             options.Subject = "Confirm Your Account";
-            options.Body = GetTemplate("ConfirmEmail", options);
+            options.Body = await GetTemplateAsync("ConfirmEmail", options);
 
-            return await SendEmail(options);
+            return await SendEmailAsync(options);
         }
 
         /// <summary>
@@ -74,12 +74,12 @@ namespace Goliath.Services
         /// </summary>
         /// <param name="options"> </param>
         /// <returns> </returns>
-        public async Task<bool> SendVerifyPhoneEmail(UserEmailOptions options)
+        public async Task<bool> SendVerifyPhoneEmailAsync(UserEmailOptions options)
         {
             options.Subject = "Confirm your Phone";
-            options.Body = GetTemplate("ConfirmPhoneEmail", options);
+            options.Body = await GetTemplateAsync("ConfirmPhoneEmail", options);
 
-            return await SendEmail(options);
+            return await SendEmailAsync(options);
         }
 
         /// <summary>
@@ -87,12 +87,12 @@ namespace Goliath.Services
         /// </summary>
         /// <param name="options"> </param>
         /// <returns> </returns>
-        public async Task<bool> ResendConfirmationEmail(UserEmailOptions options)
+        public async Task<bool> ResendConfirmationEmailAsync(UserEmailOptions options)
         {
             options.Subject = "Confirm Your Account";
-            options.Body = GetTemplate("ResendConfirmEmail", options);
+            options.Body = await GetTemplateAsync("ResendConfirmEmail", options);
 
-            return await SendEmail(options);
+            return await SendEmailAsync(options);
         }
 
         /// <summary>
@@ -100,36 +100,36 @@ namespace Goliath.Services
         /// </summary>
         /// <param name="options"> </param>
         /// <returns> </returns>
-        public async Task<bool> SendForgotPasswordEmail(UserEmailOptions options)
+        public async Task<bool> SendForgotPasswordEmailAsync(UserEmailOptions options)
         {
             options.Subject = "Reset Password";
-            options.Body = GetTemplate("ForgotPasswordEmail", options);
+            options.Body = await GetTemplateAsync("ForgotPasswordEmail", options);
 
-            return await SendEmail(options);
+            return await SendEmailAsync(options);
         }
 
-        public async Task<bool> SendForgotUsernameEmail(UserEmailOptions options)
+        public async Task<bool> SendForgotUsernameEmailAsync(UserEmailOptions options)
         {
             options.Subject = "Forgot Username";
-            options.Body = GetTemplate("ForgotUsernameEmail", options);
+            options.Body = await GetTemplateAsync("ForgotUsernameEmail", options);
 
-            return await SendEmail(options);
+            return await SendEmailAsync(options);
         }
 
-        public async Task<bool> SendConfirmNewEmail(UserEmailOptions options)
+        public async Task<bool> SendConfirmNewEmailAsync(UserEmailOptions options)
         {
             options.Subject = "Email Notice";
-            options.Body = GetTemplate("ConfirmNewEmail", options);
+            options.Body = await GetTemplateAsync("ConfirmNewEmail", options);
 
-            return await SendEmail(options);
+            return await SendEmailAsync(options);
         }
 
-        public async Task<bool> SendNotifyOldEmail(UserEmailOptions options)
+        public async Task<bool> SendNotifyOldEmailAsync(UserEmailOptions options)
         {
             options.Subject = "Email Notice";
-            options.Body = GetTemplate("NotifyOldEmail", options);
+            options.Body = await GetTemplateAsync("NotifyOldEmail", options);
 
-            return await SendEmail(options);
+            return await SendEmailAsync(options);
         }
 
         /// <summary>
@@ -139,7 +139,7 @@ namespace Goliath.Services
         /// </summary>
         /// <param name="options"> </param>
         /// <returns> If the email was sent successfully. </returns>
-        private async Task<bool> SendEmail(UserEmailOptions options)
+        private async Task<bool> SendEmailAsync(UserEmailOptions options)
         {
             // Setup the mail message.
             MimeMessage message = new()
@@ -186,10 +186,12 @@ namespace Goliath.Services
         /// </summary>
         /// <param name="name"> </param>
         /// <returns> </returns>
-        private static string GetTemplate(string name, UserEmailOptions options)
+        private static async Task<string> GetTemplateAsync(string name, UserEmailOptions options)
         {
             // Read all of the raw text data from the file.
-            string template = File.ReadAllText(@$"Services/EmailTemplate/{name}.html");
+            string template = await File.ReadAllTextAsync(@$"Services/EmailTemplate/{name}.html");
+
+            string footer = await File.ReadAllTextAsync(footerPath);
 
             // Go through each of the individual keys in the placeholder (values to replace).
             foreach (string s in options.Placeholders.Keys)
@@ -201,7 +203,7 @@ namespace Goliath.Services
             // Replace the partial footer.
             template = template.Replace("{{$footer}}", footer);
             // Replace with CSS styles.
-            template = template.Replace("{{$styles}}", styles);
+            template = template.Replace("{{$styles}}", await File.ReadAllTextAsync(stylesPath));
             return template;
         }
     }

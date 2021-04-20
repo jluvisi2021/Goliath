@@ -81,14 +81,6 @@
     <script type="text/javascript">
         $(document).ready(() => {
             GlobalScript.checkBrowser();
-        });
-    </script>
-}
-@if (bool.Parse(config["General:EnableTooltips"]))
-{
-    <script type="text/javascript">
-        // Load tooltips.
-        $(document).ready(() => {
             $('[data-toggle="tooltip"]').tooltip({
                 container: 'body'
             });

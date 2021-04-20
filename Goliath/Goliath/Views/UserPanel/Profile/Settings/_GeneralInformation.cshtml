@@ -1,8 +1,8 @@
 ﻿@inject Goliath.Repository.IAccountRepository _accoutRepository
 @{
-    var user = await _repository.GetUserFromContext(User);
-    var isAdmin = await _repository.IsAdmin(user);
-    var role = await _repository.GetPrimaryRole(user);
+    var user = await _repository.GetUserFromContextAsync(User);
+    var isAdmin = await _repository.IsAdminAsync(user);
+    var role = await _repository.GetPrimaryRoleAsync(user);
 }
 <p id="option-text">
     GENERAL INFO
@@ -34,7 +34,7 @@
     {
         <div class="row">
             <div class="col-12">
-                <strong>User Role:</strong>  <span class="font-italic">@(await _repository.GetPrimaryRole(user))</span>
+                <strong>User Role:</strong>  <span class="font-italic">@(await _repository.GetPrimaryRoleAsync(user))</span>
             </div>
             <div class="col-8">
                 <hr />

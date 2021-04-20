@@ -1,6 +1,6 @@
 ﻿@model Goliath.Models.ProfileSettingsGeneralModel
 @{
-    var user = await _repository.GetUserFromContext(User);
+    var user = await _repository.GetUserFromContextAsync(User);
 }
 
 <p id="option-text">
@@ -18,7 +18,7 @@
             <i class="fas fa-mobile-alt fa-fw"></i>
         </button>
     </div>
-    @if (await _repository.HasPhoneNumber(user))
+    @if (await _repository.HasPhoneNumberAsync(user))
     {
         <input asp-for="CurrentPhoneNumber" value="@user.PhoneNumber" placeholder="" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" readonly />
 
@@ -37,15 +37,17 @@
 
     <input id="phone-setting" asp-for="NewPhoneNumber" placeholder="Enter New Phone." required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
 </div>
-@if (await _repository.HasConfirmedPhoneNumber(user))
+@if (await _repository.HasConfirmedPhoneNumberAsync(user))
 {
-    <span class="badge badge-success"><i class="fas fa-check-circle mr-1"></i>Confirmed</span>
+    <span class="badge badge-success hvr-grow" data-toggle="tooltip" data-placement="right"
+          title="" data-original-title="Your phone number is confirmed and can be used."><i class="fas fa-check-circle mr-1"></i>Confirmed</span>
 }
 else
 {
-    if (await _repository.HasPhoneNumber(user) || !string.IsNullOrWhiteSpace(user.UnverifiedNewPhone))
+    if (await _repository.HasPhoneNumberAsync(user) || !string.IsNullOrWhiteSpace(user.UnverifiedNewPhone))
     {
-        <span class="badge badge-danger"><i class="fas fa-times-circle mr-1"></i>Not Confirmed</span>
+        <span class="badge badge-danger hvr-grow" data-toggle="tooltip" data-placement="right"
+              title="" data-original-title="Your phone number is not confirmed and cannot be used."><i class="fas fa-times-circle mr-1"></i>Not Confirmed</span>
         <a asp-controller="UserPanel" asp-action="ConfirmPhoneNumber">Click to confirm your phone number.</a>
     }
 

@@ -20,12 +20,10 @@ namespace Goliath.Services
         private readonly IValidHumanVerifyTokensRepository _validTokens;
 
         public GoliathCaptchaService
-            (
-            IDNTCaptchaValidatorService validatorService,
+            (IDNTCaptchaValidatorService validatorService,
             IOptions<DNTCaptchaOptions> options,
             ICookieManager cookieManager,
-            IValidHumanVerifyTokensRepository validTokens
-            )
+            IValidHumanVerifyTokensRepository validTokens)
         {
             _validatorService = validatorService;
             _captchaOptions = options == null ? throw new ArgumentNullException(nameof(options)) : options.Value;
@@ -59,7 +57,7 @@ namespace Goliath.Services
                     return false;
                 }
             }
-            await _validTokens.CleanUpUnusedTokens();
+            await _validTokens.CleanUpUnusedTokensAsync();
             // Captcha completed successfully by user.
             return true;
         }

@@ -20,6 +20,7 @@ namespace Goliath.Controllers
     {
         private readonly IAccountRepository _repository;
         private readonly SignInManager<ApplicationUser> _signInManager;
+
         public ErrorsController(IAccountRepository repository, SignInManager<ApplicationUser> signInManager)
         {
             _repository = repository;

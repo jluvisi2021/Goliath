@@ -1,5 +1,6 @@
 ﻿using Goliath.Models;
 using Microsoft.Extensions.Configuration;
+using System.Threading.Tasks;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
 
@@ -19,18 +20,35 @@ namespace Goliath.Services
             _authToken = _config["Twilio:AuthToken"];
         }
 
-        public void SendSMS(SMSTextModel model)
+        /// <summary>
+        /// Sends an Async message to an SMS using Twilio SMS service.
+        /// </summary>
+        /// <param name="model"> Data for the message. </param>
+        /// <returns> If the message was sent. </returns>
+        public async Task<bool> SendSmsAsync(SMSTextModel model)
         {
             if (string.IsNullOrWhiteSpace(model.From))
             {
                 model.From = _config["Twilio:DefaultFrom"];
             }
             TwilioClient.Init(_accountSid, _authToken);
-            _ = MessageResource.Create(
-                body: model.Message,
-                from: new Twilio.Types.PhoneNumber(model.From),
-                to: new Twilio.Types.PhoneNumber(model.To)
-            );
+            try
+            {
+                await MessageResource.CreateAsync
+                    (
+                body:
+                    model.Message,
+                from:
+                    new Twilio.Types.PhoneNumber(model.From),
+                to:
+                    new Twilio.Types.PhoneNumber(model.To)
+                    );
+            }
+            catch (System.Exception)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

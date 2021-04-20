@@ -6,7 +6,7 @@
 }
 @if (_signInManager.IsSignedIn(User))
 {
-    if (!await _accountRepository.IsAdmin(User.Identity.Name))
+    if (!await _accountRepository.IsAdminAsync(User.Identity.Name))
     {
 
         <partial name="_NotEnoughPermissionPartial" />

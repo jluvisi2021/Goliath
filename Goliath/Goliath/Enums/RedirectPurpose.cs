@@ -19,6 +19,7 @@
 
         // User Panel
         SettingsUpdatedSuccess,
+
         PhoneNumberConfirmedSuccess,
         PhoneNumberConfirmedFailure
     }

@@ -54,7 +54,7 @@ namespace Goliath.Controllers
                 return View();
             }
 
-            ApplicationUser goliathUser = await _accountRepository.GetUserFromContext(User);
+            ApplicationUser goliathUser = await _accountRepository.GetUserFromContextAsync(User);
             // track if there has been any updates.
             bool hasChanged = false;
 
@@ -78,7 +78,7 @@ namespace Goliath.Controllers
                 hasChanged = true;
                 goliathUser.UnverifiedNewEmail = model.NewEmail;
                 // Send a new verification email.
-                await _accountRepository.GenerateNewEmailConfirmationToken(goliathUser, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
+                await _accountRepository.GenerateNewEmailConfirmationTokenAsync(goliathUser, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
             }
             if (HasValueChanged(model.NewPhoneNumber, goliathUser.PhoneNumber))
             {
@@ -90,7 +90,7 @@ namespace Goliath.Controllers
                 hasChanged = true;
                 goliathUser.UnverifiedNewPhone = model.NewPhoneNumber;
 
-                await _accountRepository.GenerateNewPhoneConfirmationToken(goliathUser, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
+                await _accountRepository.GenerateNewPhoneConfirmationTokenAsync(goliathUser, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
             }
 
             if (model.LogoutThreshold != null)
@@ -112,7 +112,7 @@ namespace Goliath.Controllers
 
             if (!string.IsNullOrWhiteSpace(model.NewPassword))
             {
-                if (await _accountRepository.IsPasswordValid(goliathUser, model.NewPassword))
+                if (await _accountRepository.IsPasswordValidAsync(goliathUser, model.NewPassword))
                 {
                     ModelState.AddModelError(string.Empty, "Your new password matches your old password.");
                     _captcha.DeleteCaptchaCookie();
@@ -134,7 +134,7 @@ namespace Goliath.Controllers
 
             if (hasChanged)
             {
-                await _accountRepository.UpdateUser(goliathUser);
+                await _accountRepository.UpdateUserAsync(goliathUser);
                 await _captcha.CacheNewCaptchaValidateAsync();
             }
 
@@ -187,9 +187,9 @@ namespace Goliath.Controllers
                 return View();
             }
 
-            ApplicationUser user = await _accountRepository.GetUserFromContext(User);
+            ApplicationUser user = await _accountRepository.GetUserFromContextAsync(User);
 
-            if (!await _accountRepository.IsPasswordValid(user, model.Password))
+            if (!await _accountRepository.IsPasswordValidAsync(user, model.Password))
             {
                 _captcha.DeleteCaptchaCookie();
                 ModelState.AddModelError(string.Empty, "Incorrect Password.");
@@ -201,7 +201,7 @@ namespace Goliath.Controllers
                 model.IsCompleted = true;
                 user.UnverifiedNewPhone = string.Empty;
                 await _captcha.CacheNewCaptchaValidateAsync();
-                await _accountRepository.UpdateUser(user);
+                await _accountRepository.UpdateUserAsync(user);
                 return View(model);
             }
 

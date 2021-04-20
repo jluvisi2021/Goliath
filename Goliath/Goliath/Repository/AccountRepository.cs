@@ -66,7 +66,7 @@ namespace Goliath.Repository
         /// creates the default roles.
         /// </summary>
         /// <returns> </returns>
-        public async Task LoadDefaults()
+        public async Task LoadDefaultsAsync()
         {
             if (!(await _roleManager.RoleExistsAsync(GoliathRoles.Administrator)))
             {
@@ -116,7 +116,7 @@ namespace Goliath.Repository
         /// </summary>
         /// <param name="user"> </param>
         /// <returns> If the user is admin. </returns>
-        public async Task<bool> IsAdmin(ApplicationUser user)
+        public async Task<bool> IsAdminAsync(ApplicationUser user)
         {
             IList<string> roles = await _userManager.GetRolesAsync(user);
             foreach (string role in roles)
@@ -129,7 +129,7 @@ namespace Goliath.Repository
             return false;
         }
 
-        public async Task<bool> IsAdmin(string username)
+        public async Task<bool> IsAdminAsync(string username)
         {
             ApplicationUser user = await _userManager.FindByNameAsync(username);
             IList<string> roles = await _userManager.GetRolesAsync(user);
@@ -143,7 +143,7 @@ namespace Goliath.Repository
             return false;
         }
 
-        public async Task<string> GetPrimaryRole(ApplicationUser user)
+        public async Task<string> GetPrimaryRoleAsync(ApplicationUser user)
         {
             if ((await _userManager.GetRolesAsync(user)).Count != 0)
             {
@@ -157,14 +157,14 @@ namespace Goliath.Repository
         /// </summary>
         /// <param name="user"> </param>
         /// <returns> </returns>
-        public async Task MoveUserToAdminRole(ApplicationUser user)
+        public async Task MoveUserToAdminRoleAsync(ApplicationUser user)
         {
             if (!await _userManager.IsInRoleAsync(user, GoliathRoles.Administrator))
             {
                 await _userManager.RemoveFromRolesAsync(user, await _userManager.GetRolesAsync(user));
                 await _userManager.AddToRoleAsync(user, GoliathRoles.Administrator);
                 IList<string> s = await _userManager.GetRolesAsync(user);
-                await SendRoleMovedEmail(user, s[0].ToString(), GoliathRoles.Administrator);
+                await SendRoleMovedEmailAsync(user, s[0].ToString(), GoliathRoles.Administrator);
             }
         }
 
@@ -173,18 +173,18 @@ namespace Goliath.Repository
         /// </summary>
         /// <param name="user"> </param>
         /// <returns> </returns>
-        public async Task MoveUserToDefaultRole(ApplicationUser user)
+        public async Task MoveUserToDefaultRoleAsync(ApplicationUser user)
         {
             if (!await _userManager.IsInRoleAsync(user, GoliathRoles.Default))
             {
                 await _userManager.RemoveFromRolesAsync(user, await _userManager.GetRolesAsync(user));
                 await _userManager.AddToRoleAsync(user, GoliathRoles.Default);
                 IList<string> s = await _userManager.GetRolesAsync(user);
-                await SendRoleMovedEmail(user, s[0].ToString(), GoliathRoles.Administrator);
+                await SendRoleMovedEmailAsync(user, s[0].ToString(), GoliathRoles.Administrator);
             }
         }
 
-        public async Task CreateRole(string name)
+        public async Task CreateRoleAsync(string name)
         {
             await _roleManager.CreateAsync(new ApplicationRole()
             {
@@ -192,7 +192,7 @@ namespace Goliath.Repository
             });
         }
 
-        public async Task CreateRole(string name, bool isAdmin)
+        public async Task CreateRoleAsync(string name, bool isAdmin)
         {
             await _roleManager.CreateAsync(new ApplicationRole()
             {
@@ -201,7 +201,7 @@ namespace Goliath.Repository
             });
         }
 
-        public async Task CreateRole(string name, bool isAdmin, string excludedURLComponents)
+        public async Task CreateRoleAsync(string name, bool isAdmin, string excludedURLComponents)
         {
             await _roleManager.CreateAsync(new ApplicationRole()
             {
@@ -211,7 +211,7 @@ namespace Goliath.Repository
             });
         }
 
-        public async Task CreateRole(string name, string icon, bool isAdmin)
+        public async Task CreateRoleAsync(string name, string icon, bool isAdmin)
         {
             await _roleManager.CreateAsync(new ApplicationRole()
             {
@@ -221,7 +221,7 @@ namespace Goliath.Repository
             });
         }
 
-        public async Task DeleteRole(string name)
+        public async Task DeleteRoleAsync(string name)
         {
             if (await _roleManager.RoleExistsAsync(name))
             {
@@ -229,7 +229,7 @@ namespace Goliath.Repository
             }
         }
 
-        public async Task<string> GetRoleIcon(string name)
+        public async Task<string> GetRoleIconAsync(string name)
         {
             if (await _roleManager.RoleExistsAsync(name))
             {
@@ -243,12 +243,12 @@ namespace Goliath.Repository
         /// </summary>
         /// <param name="claims"> </param>
         /// <returns> </returns>
-        public async Task<string> GetRoleIcon(ClaimsPrincipal claims)
+        public async Task<string> GetRoleIconAsync(ClaimsPrincipal claims)
         {
-            return (await _roleManager.FindByNameAsync(await GetPrimaryRole(await GetUserFromContext(claims)))).Icon;
+            return (await _roleManager.FindByNameAsync(await GetPrimaryRoleAsync(await GetUserFromContextAsync(claims)))).Icon;
         }
 
-        public async Task<string> GetRoleExcludedURLComponents(string name)
+        public async Task<string> GetRoleExcludedURLComponentsAsync(string name)
         {
             if (await _roleManager.RoleExistsAsync(name))
             {
@@ -257,7 +257,7 @@ namespace Goliath.Repository
             return "Error";
         }
 
-        public async Task<List<ApplicationUser>> GetAllUsersInRole(string name)
+        public async Task<List<ApplicationUser>> GetAllUsersInRoleAsync(string name)
         {
             if (await _roleManager.RoleExistsAsync(name))
             {
@@ -272,7 +272,7 @@ namespace Goliath.Repository
         /// <param name="user"> </param>
         /// <param name="name"> </param>
         /// <returns> </returns>
-        public async Task MoveUserToRoleByName(ApplicationUser user, string name)
+        public async Task MoveUserToRoleByNameAsync(ApplicationUser user, string name)
         {
             if (await _roleManager.RoleExistsAsync(name))
             {
@@ -281,12 +281,12 @@ namespace Goliath.Repository
                     await _userManager.RemoveFromRolesAsync(user, await _userManager.GetRolesAsync(user));
                     await _userManager.AddToRoleAsync(user, name);
                     IList<string> s = await _userManager.GetRolesAsync(user);
-                    await SendRoleMovedEmail(user, s[0].ToString(), GoliathRoles.Administrator);
+                    await SendRoleMovedEmailAsync(user, s[0].ToString(), GoliathRoles.Administrator);
                 }
             }
         }
 
-        public async Task<ApplicationUser> GetUserByName(string name)
+        public async Task<ApplicationUser> GetUserByNameAsync(string name)
         {
             return await _userManager.FindByNameAsync(name);
         }
@@ -298,24 +298,24 @@ namespace Goliath.Repository
         /// </summary>
         /// <param name="claimsPrincipal"> </param>
         /// <returns> </returns>
-        public async Task<ApplicationUser> GetFromUserClaim(ClaimsPrincipal claimsPrincipal)
+        public async Task<ApplicationUser> GetFromUserClaimAsync(ClaimsPrincipal claimsPrincipal)
         {
             return await _userManager.FindByNameAsync(claimsPrincipal.Identity.Name);
         }
 
         /// <summary> The correct way to get a user from a view. </summary> <param
         /// name="claims">@User.<></param> <returns>Get a user from a view.</returns>
-        public async Task<ApplicationUser> GetUserFromContext(ClaimsPrincipal claims)
+        public async Task<ApplicationUser> GetUserFromContextAsync(ClaimsPrincipal claims)
         {
             return await _userManager.GetUserAsync(claims);
         }
 
-        public async Task<IdentityResult> UpdateUser(ApplicationUser user)
+        public async Task<IdentityResult> UpdateUserAsync(ApplicationUser user)
         {
             return await _userManager.UpdateAsync(user);
         }
 
-        public async Task<bool> IsPasswordValid(ApplicationUser user, string pass)
+        public async Task<bool> IsPasswordValidAsync(ApplicationUser user, string pass)
         {
             return await _userManager.CheckPasswordAsync(user, pass);
         }
@@ -325,17 +325,17 @@ namespace Goliath.Repository
             return await _userManager.ChangePasswordAsync(user, currPassword, newPassword);
         }
 
-        public async Task<bool> HasPhoneNumber(ApplicationUser user)
+        public async Task<bool> HasPhoneNumberAsync(ApplicationUser user)
         {
             return ((await _userManager.GetPhoneNumberAsync(user)) != null);
         }
 
-        public async Task<bool> HasConfirmedPhoneNumber(ApplicationUser user)
+        public async Task<bool> HasConfirmedPhoneNumberAsync(ApplicationUser user)
         {
             return await _userManager.IsPhoneNumberConfirmedAsync(user);
         }
 
-        public async Task UpdatePhone(ApplicationUser user, string number)
+        public async Task UpdatePhoneAsync(ApplicationUser user, string number)
         {
             await _userManager.SetPhoneNumberAsync(user, number);
         }
@@ -391,7 +391,7 @@ namespace Goliath.Repository
                     // add them to default role.
                     await _userManager.AddToRoleAsync(user, GoliathRoles.Default);
                     // Send them a token.
-                    await GenerateEmailConfirmationToken(userModel, user, device);
+                    await GenerateEmailConfirmationTokenAsync(userModel, user, device);
                 }
 
                 return result;
@@ -412,21 +412,21 @@ namespace Goliath.Repository
         /// Updates the "LastUserLogin" with DateTime.UtcNow.ToString()
         /// </summary>
         /// <returns> </returns>
-        public async Task UpdateLastLogin(ApplicationUser user)
+        public async Task UpdateLastLoginAsync(ApplicationUser user)
         {
             user.LastUserLogin = DateTime.UtcNow.ToString();
-            await UpdateUser(user);
+            await UpdateUserAsync(user);
         }
 
         /// <summary>
         /// Updates the "LastUserLogin" with DateTime.UtcNow.ToString()
         /// </summary>
         /// <returns> </returns>
-        public async Task UpdateLastLogin(string userName)
+        public async Task UpdateLastLoginAsync(string userName)
         {
             ApplicationUser user = await _userManager.FindByNameAsync(userName);
             user.LastUserLogin = DateTime.UtcNow.ToString();
-            await UpdateUser(user);
+            await UpdateUserAsync(user);
         }
 
         /// <summary>
@@ -437,14 +437,14 @@ namespace Goliath.Repository
         /// <param name="userModel"> </param>
         /// <param name="data"> </param>
         /// <returns> </returns>
-        public async Task GenerateEmailConfirmationToken(SignUpUserModel signUpModel, ApplicationUser userModel, DeviceParser device)
+        public async Task GenerateEmailConfirmationTokenAsync(SignUpUserModel signUpModel, ApplicationUser userModel, DeviceParser device)
         {
             // Generate a token using Identity Core.
             string token = await _userManager.GenerateEmailConfirmationTokenAsync(userModel);
             // If the token is valid.
             if (!string.IsNullOrWhiteSpace(token))
             {
-                await SendEmailConfirmationToken(signUpModel, userModel, device, token);
+                await SendEmailConfirmationTokenAsync(signUpModel, userModel, device, token);
             }
         }
 
@@ -453,14 +453,14 @@ namespace Goliath.Repository
         /// </summary>
         /// <param name="user"> </param>
         /// <returns> </returns>
-        public async Task GenerateEmailConfirmationToken(ApplicationUser userModel, DeviceParser device)
+        public async Task GenerateEmailConfirmationTokenAsync(ApplicationUser userModel, DeviceParser device)
         {
             // Generate a token using Identity Core.
             string token = await _userManager.GenerateEmailConfirmationTokenAsync(userModel);
             // If the token is valid.
             if (!string.IsNullOrWhiteSpace(token))
             {
-                await ResendEmailConfirmationToken(userModel, device, token);
+                await ResendEmailConfirmationTokenAsync(userModel, device, token);
             }
         }
 
@@ -471,29 +471,29 @@ namespace Goliath.Repository
         /// <param name="userModel"> </param>
         /// <param name="device"> </param>
         /// <returns> </returns>
-        public async Task GenerateNewEmailConfirmationToken(ApplicationUser userModel, DeviceParser device)
+        public async Task GenerateNewEmailConfirmationTokenAsync(ApplicationUser userModel, DeviceParser device)
         {
             // Generate a token using Identity Core.
             string token = await _userManager.GenerateEmailConfirmationTokenAsync(userModel);
             // If the token is valid.
             if (!string.IsNullOrWhiteSpace(token))
             {
-                await SendNewEmailConfirmationToken(userModel, device, token);
-                await SendNotifyOldEmail(userModel, device);
+                await SendNewEmailConfirmationTokenAsync(userModel, device, token);
+                await SendNotifyOldEmailAsync(userModel, device);
             }
         }
 
-        public async Task GenerateNewPhoneConfirmationToken(ApplicationUser userModel, DeviceParser device)
+        public async Task GenerateNewPhoneConfirmationTokenAsync(ApplicationUser userModel, DeviceParser device)
         {
             string token = await _userManager.GenerateChangePhoneNumberTokenAsync(userModel, userModel.UnverifiedNewPhone);
             if (!string.IsNullOrWhiteSpace(token))
             {
-                _twilio.SendSMS(new SMSTextModel()
+                await _twilio.SendSmsAsync(new SMSTextModel()
                 {
                     To = userModel.UnverifiedNewPhone,
                     Message = $"This number has been request to be the new phone number for Goliath Account: {userModel.UserName}. Enter this number in the userpanel to confirm it: {token}"
                 });
-                await SendNewPhoneEmail(userModel, device);
+                await SendNewPhoneEmailAsync(userModel, device);
             }
         }
 
@@ -503,11 +503,11 @@ namespace Goliath.Repository
         /// <param name="model"> </param>
         /// <param name="device"> </param>
         /// <returns> </returns>
-        public async Task GenerateUsername(ApplicationUser user, DeviceParser device)
+        public async Task GenerateUsernameAsync(ApplicationUser user, DeviceParser device)
         {
             if (!(string.IsNullOrWhiteSpace(user?.UserName)))
             {
-                await SendEmailWithUsername(user, device);
+                await SendEmailWithUsernameAsync(user, device);
             }
         }
 
@@ -517,14 +517,14 @@ namespace Goliath.Repository
         /// <param name="userModel"> </param>
         /// <param name="data"> </param>
         /// <returns> </returns>
-        public async Task GenerateForgotPasswordToken(ApplicationUser userModel, DeviceParser device)
+        public async Task GenerateForgotPasswordTokenAsync(ApplicationUser userModel, DeviceParser device)
         {
             // Generate a token using Identity Core.
             string token = await _userManager.GeneratePasswordResetTokenAsync(userModel);
             // If the token is valid.
             if (!string.IsNullOrWhiteSpace(token))
             {
-                await SendForgotPasswordToken(userModel, device, token);
+                await SendForgotPasswordTokenAsync(userModel, device, token);
             }
         }
 
@@ -584,13 +584,13 @@ namespace Goliath.Repository
         /// <param name="ip"> IPv4 Address </param>
         /// <param name="token"> </param>
         /// <returns> </returns>
-        private async Task ResendEmailConfirmationToken(ApplicationUser user, DeviceParser device, string token)
+        private async Task ResendEmailConfirmationTokenAsync(ApplicationUser user, DeviceParser device, string token)
         {
             // Get the information required to send the email from the appsettings.json.
             string appDomain = _config["Application:AppDomain"];
             string verifyLink = _config["Application:EmailConfirmation"];
             // Send an email while replacing all placeholders.
-            await _emailService.ResendConfirmationEmail(new()
+            await _emailService.ResendConfirmationEmailAsync(new()
             {
                 ToEmails = new List<string>() { user.Email },
                 Placeholders = new Dictionary<string, string> {
@@ -616,7 +616,7 @@ namespace Goliath.Repository
             });
         }
 
-        private async Task SendNewPhoneEmail(ApplicationUser user, DeviceParser device)
+        private async Task SendNewPhoneEmailAsync(ApplicationUser user, DeviceParser device)
         {
             // Check if the phone number is null.
             string phone;
@@ -630,7 +630,7 @@ namespace Goliath.Repository
             }
 
             // Generate email with placeholders.
-            await _emailService.SendVerifyPhoneEmail(new()
+            await _emailService.SendVerifyPhoneEmailAsync(new()
             {
                 ToEmails = new List<string>() { user.Email },
                 Placeholders = new Dictionary<string, string> {
@@ -673,13 +673,13 @@ namespace Goliath.Repository
         /// <param name="ip"> </param>
         /// <param name="token"> </param>
         /// <returns> </returns>
-        private async Task SendForgotPasswordToken(ApplicationUser user, DeviceParser device, string token)
+        private async Task SendForgotPasswordTokenAsync(ApplicationUser user, DeviceParser device, string token)
         {
             // Get the information required to send the email from the appsettings.json.
             string appDomain = _config["Application:AppDomain"];
             string verifyLink = _config["Application:ForgotPassword"];
             // Send an email while replacing all placeholders.
-            await _emailService.SendForgotPasswordEmail(new()
+            await _emailService.SendForgotPasswordEmailAsync(new()
             {
                 ToEmails = new List<string>() { user.Email },
                 Placeholders = new Dictionary<string, string> {
@@ -715,13 +715,13 @@ namespace Goliath.Repository
         /// <param name="ip"> Mapped IPv4 address. </param>
         /// <param name="token"> Generated .NET Core token. </param>
         /// <returns> </returns>
-        private async Task SendEmailConfirmationToken(SignUpUserModel signUpModel, ApplicationUser user, DeviceParser device, string token)
+        private async Task SendEmailConfirmationTokenAsync(SignUpUserModel signUpModel, ApplicationUser user, DeviceParser device, string token)
         {
             // Get values from appsettings.json
             string appDomain = _config["Application:AppDomain"];
             string verifyLink = _config["Application:EmailConfirmation"];
             // Generate email with placeholders.
-            await _emailService.SendConfirmationEmail(new()
+            await _emailService.SendConfirmationEmailAsync(new()
             {
                 ToEmails = new List<string>() { user.Email },
                 Placeholders = new Dictionary<string, string> {
@@ -759,7 +759,7 @@ namespace Goliath.Repository
         /// <param name="device"> </param>
         /// <param name="token"> </param>
         /// <returns> </returns>
-        private async Task SendNewEmailConfirmationToken(ApplicationUser user, DeviceParser device, string token)
+        private async Task SendNewEmailConfirmationTokenAsync(ApplicationUser user, DeviceParser device, string token)
         {
             // Get values from appsettings.json
             string appDomain = _config["Application:AppDomain"];
@@ -776,7 +776,7 @@ namespace Goliath.Repository
             }
 
             // Generate email with placeholders.
-            await _emailService.SendConfirmNewEmail(new()
+            await _emailService.SendConfirmNewEmailAsync(new()
             {
                 // send the token to the user's new unverified email.
                 ToEmails = new List<string>() { user.UnverifiedNewEmail },
@@ -818,7 +818,7 @@ namespace Goliath.Repository
         /// <param name="user"> </param>
         /// <param name="device"> </param>
         /// <returns> </returns>
-        private async Task SendNotifyOldEmail(ApplicationUser user, DeviceParser device)
+        private async Task SendNotifyOldEmailAsync(ApplicationUser user, DeviceParser device)
         {
             // Check if the phone number is null.
             string phone;
@@ -832,7 +832,7 @@ namespace Goliath.Repository
             }
 
             // Generate email with placeholders.
-            await _emailService.SendNotifyOldEmail(new()
+            await _emailService.SendNotifyOldEmailAsync(new()
             {
                 ToEmails = new List<string>() { user.Email },
                 Placeholders = new Dictionary<string, string> {
@@ -864,10 +864,10 @@ namespace Goliath.Repository
             });
         }
 
-        private async Task SendEmailWithUsername(ApplicationUser user, DeviceParser device)
+        private async Task SendEmailWithUsernameAsync(ApplicationUser user, DeviceParser device)
         {
             // Generate email with placeholders.
-            await _emailService.SendForgotUsernameEmail(new()
+            await _emailService.SendForgotUsernameEmailAsync(new()
             {
                 ToEmails = new List<string>() { user.Email },
                 Placeholders = new Dictionary<string, string> {
@@ -890,10 +890,10 @@ namespace Goliath.Repository
             });
         }
 
-        private async Task SendRoleMovedEmail(ApplicationUser user, string previousRole, string currentRole)
+        private async Task SendRoleMovedEmailAsync(ApplicationUser user, string previousRole, string currentRole)
         {
             // Generate email with placeholders.
-            await _emailService.SendForgotUsernameEmail(new()
+            await _emailService.SendForgotUsernameEmailAsync(new()
             {
                 ToEmails = new List<string>() { user.Email },
                 Placeholders = new Dictionary<string, string> {
@@ -941,7 +941,7 @@ namespace Goliath.Repository
                     // Set the unverified email of the user to nothing.
                     user.UnverifiedNewEmail = string.Empty;
 
-                    await UpdateUser(user); // Update the user in database.
+                    await UpdateUserAsync(user); // Update the user in database.
 
                     return IdentityResult.Success;
                 }

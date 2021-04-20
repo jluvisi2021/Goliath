@@ -37,7 +37,7 @@ namespace Goliath.Repository
             }
 
             // Remove old tokens before searching database.
-            await CleanUpUnusedTokens();
+            await CleanUpUnusedTokensAsync();
 
             List<string> result = await _context.ValidTokens.Select(u => u.Token).ToListAsync();
 
@@ -55,7 +55,7 @@ namespace Goliath.Repository
         /// Moves throughout the database and removes all tokens over 5 minutes old.
         /// </summary>
         /// <returns> </returns>
-        public async Task CleanUpUnusedTokens()
+        public async Task CleanUpUnusedTokensAsync()
         {
             List<int> primaryKeys = await _context.ValidTokens.Select(u => u.NumericID).ToListAsync();
             foreach (int keyIndex in primaryKeys)

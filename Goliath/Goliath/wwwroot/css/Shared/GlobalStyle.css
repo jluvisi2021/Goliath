@@ -1,4 +1,13 @@
-﻿/* Tool for centering */
+﻿/*
+    -----------------------
+        GlobalStyle.css
+    -----------------------
+
+    For managing the CSS elements in the entire
+    project.
+*/
+
+/* Tool for centering */
 #outer {
     width: 100%;
     height: calc(100vh - 3.55rem);

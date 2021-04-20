@@ -53,7 +53,7 @@
                         <a class="nav-link" asp-controller="UserPanel" asp-action="BuildInfo">Build Info</a>
                     </li>
                     @*If the user is signed in and is an admin then load admin tab.*@
-                    @if (_signInManager.IsSignedIn(User) && await _accountRepository.IsAdmin(User.Identity.Name))
+                    @if (_signInManager.IsSignedIn(User) && await _accountRepository.IsAdminAsync(User.Identity.Name))
                     {
                         <li class="nav-item" id="admin-nav">
                             <a class="nav-link" asp-controller="AdminPanel" asp-action="Index">Admin Panel</a>

@@ -138,7 +138,7 @@ namespace Goliath
         {
             _accountRepository = accountRepository;
             // Create roles and super user if not created.
-            _accountRepository.LoadDefaults().Wait();
+            _accountRepository.LoadDefaultsAsync().Wait();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

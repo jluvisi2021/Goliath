@@ -44,12 +44,11 @@ namespace Goliath.Controllers
 
         public IActionResult Index()
         {
-
             // If the user is signed in redirect them to the user panel.
             if (_signInManager.IsSignedIn(User))
             {
-                // Fixes an error where the website would throw exception
-                // if the database was refreshed but the auth cookie was still valid.
+                // Fixes an error where the website would throw exception if the database was
+                // refreshed but the auth cookie was still valid.
                 if (User == null)
                 {
                     _accountRepository.SignOutAsync();
@@ -62,7 +61,6 @@ namespace Goliath.Controllers
 
             return RedirectToAction("Login");
         }
-
 
         [Route("login")]
         [HttpGet]
@@ -100,7 +98,7 @@ namespace Goliath.Controllers
                 // Store the fact that the CAPTCHA was completed successfully.
                 await _captcha.CacheNewCaptchaValidateAsync();
                 // Change the time of last login.
-                await _accountRepository.UpdateLastLogin(signInModel.Username);
+                await _accountRepository.UpdateLastLoginAsync(signInModel.Username);
                 // Redirect
                 return RedirectToAction("Index", "UserPanel");
             }
@@ -236,7 +234,7 @@ namespace Goliath.Controllers
             }
 
             // Generate a token as well as a user agent.
-            await _accountRepository.GenerateForgotPasswordToken(user, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
+            await _accountRepository.GenerateForgotPasswordTokenAsync(user, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
             // Indicate to the View that the email was sent.
             model.IsEmailSent = true;
             // Clear all fields.
@@ -285,7 +283,7 @@ namespace Goliath.Controllers
                 return View();
             }
 
-            await _accountRepository.GenerateUsername(user, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
+            await _accountRepository.GenerateUsernameAsync(user, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
             model.IsEmailSent = true;
             ModelState.Clear();
             await _captcha.CacheNewCaptchaValidateAsync();
@@ -293,7 +291,7 @@ namespace Goliath.Controllers
         }
 
         [Route("verify")]
-        public IActionResult VerifyEmail()
+        public IActionResult VerifyEmailAsync()
         {
             ViewData["ButtonID"] = ButtonID.VerifyEmail;
             return View();
@@ -302,7 +300,7 @@ namespace Goliath.Controllers
         [Route("verify")]
         [PreventDuplicateRequest]
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> VerifyEmail(EmailConfirmModel model)
+        public async Task<IActionResult> VerifyEmailAsync(EmailConfirmModel model)
         {
             ViewData["ButtonID"] = ButtonID.VerifyEmail;
 
@@ -339,12 +337,12 @@ namespace Goliath.Controllers
 
             if (newEmail)
             {
-                await _accountRepository.GenerateNewEmailConfirmationToken(user, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
+                await _accountRepository.GenerateNewEmailConfirmationTokenAsync(user, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
             }
             else
             {
                 // Generate a token as well as a user agent.
-                await _accountRepository.GenerateEmailConfirmationToken(user, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
+                await _accountRepository.GenerateEmailConfirmationTokenAsync(user, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
             }
 
             // Indicate to the View that the email was sent.
@@ -363,7 +361,7 @@ namespace Goliath.Controllers
         /// <param name="token"> </param>
         /// <returns> </returns>
         [HttpGet("verify-email")]
-        public async Task<IActionResult> VerifyEmail(string uid, string token)
+        public async Task<IActionResult> VerifyEmailAsync(string uid, string token)
         {
             // Check for blanks in URL query.
             if (string.IsNullOrWhiteSpace(uid) || string.IsNullOrWhiteSpace(token))

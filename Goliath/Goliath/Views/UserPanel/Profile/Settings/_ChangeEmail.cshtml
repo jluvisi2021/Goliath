@@ -1,6 +1,6 @@
 ﻿@model Goliath.Models.ProfileSettingsGeneralModel
 @{
-    var user = await _repository.GetUserFromContext(User);
+    var user = await _repository.GetUserFromContextAsync(User);
 }
 <p id="option-text">
     CHANGE EMAIL
@@ -30,7 +30,7 @@
 </div>
 @if (user.EmailConfirmed && string.IsNullOrWhiteSpace(user.UnverifiedNewEmail))
 {
-    <span class="badge badge-success" data-toggle="tooltip" data-placement="right"
+    <span class="badge badge-success hvr-grow" data-toggle="tooltip" data-placement="right"
           title="" data-original-title="Your email is confirmed and can be used to login.">
         <i class="fas fa-check-circle mr-1"></i>
         Confirmed
@@ -38,7 +38,7 @@
 }
 else
 {
-    <span class="badge badge-danger" data-toggle="tooltip" data-placement="right"
+    <span class="badge badge-danger hvr-grow" data-toggle="tooltip" data-placement="right"
           title="" data-original-title="Your email is not confirmed and can not be used to login.">
         <i class="fas fa-times-circle mr-1"></i>
         Not Confirmed

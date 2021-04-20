@@ -5,22 +5,22 @@ namespace Goliath.Services
 {
     public interface IEmailService
     {
-        Task<bool> SendTestEmail(UserEmailOptions options);
+        Task<bool> SendTestEmailAsync(UserEmailOptions options);
 
-        Task<bool> SendConfirmationEmail(UserEmailOptions options);
+        Task<bool> SendConfirmationEmailAsync(UserEmailOptions options);
 
-        Task<bool> ResendConfirmationEmail(UserEmailOptions options);
+        Task<bool> ResendConfirmationEmailAsync(UserEmailOptions options);
 
-        Task<bool> SendForgotPasswordEmail(UserEmailOptions options);
+        Task<bool> SendForgotPasswordEmailAsync(UserEmailOptions options);
 
-        Task<bool> SendForgotUsernameEmail(UserEmailOptions options);
+        Task<bool> SendForgotUsernameEmailAsync(UserEmailOptions options);
 
-        Task<bool> SendRoleMovedEmail(UserEmailOptions options);
+        Task<bool> SendRoleMovedEmailAsync(UserEmailOptions options);
 
-        Task<bool> SendConfirmNewEmail(UserEmailOptions options);
+        Task<bool> SendConfirmNewEmailAsync(UserEmailOptions options);
 
-        Task<bool> SendNotifyOldEmail(UserEmailOptions options);
+        Task<bool> SendNotifyOldEmailAsync(UserEmailOptions options);
 
-        Task<bool> SendVerifyPhoneEmail(UserEmailOptions options);
+        Task<bool> SendVerifyPhoneEmailAsync(UserEmailOptions options);
     }
 }

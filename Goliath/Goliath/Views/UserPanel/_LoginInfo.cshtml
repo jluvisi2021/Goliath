@@ -6,15 +6,11 @@
 {
     <form class="form-inline my-2 my-lg-0">
         <a asp-controller="UserPanel" asp-action="Index" class="nav-item text-white">Welcome Back, @User.Identity.Name</a>
-        @*
-            <span class="badge badge-pill badge-danger ml-1">ADMIN</span>
-        *@
+
         @*Display the role badge.*@
+
         @Html.Raw(System.Web.HttpUtility.HtmlDecode(
-     await _accoutRepository.GetRoleIcon(
-       await _accoutRepository.GetPrimaryRole(
-           await _accoutRepository.GetUserFromContext(
-               User)))))
+     await _accoutRepository.GetRoleIconAsync(User)))
 
         <span class="pl-1" style="color: white; opacity: 0.5;">|</span>
         <a asp-controller="UserPanel" asp-action="Logout" class="btn btn-secondary ml-2 px-3">Logout</a>

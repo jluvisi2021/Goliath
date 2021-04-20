@@ -10,6 +10,6 @@ namespace Goliath.Repository
 
         Task<bool> DoesTokenExistAsync(string hashCode);
 
-        Task CleanUpUnusedTokens();
+        Task CleanUpUnusedTokensAsync();
     }
 }

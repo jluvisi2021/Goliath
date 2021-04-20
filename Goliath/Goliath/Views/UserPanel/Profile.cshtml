@@ -1,12 +1,13 @@
 ﻿@using Goliath.Models
 @inject Microsoft.AspNetCore.Identity.SignInManager<ApplicationUser> _signInManager
-@{ 
+@{
     ViewData["Title"] = "Profile";
     Layout = "_LoginRequired";
 }
 <!--Profile Scripts-->
 <script src="~/js/UserPanel/Profile/ProfileScript.js" asp-append-version="true"></script>
 <link rel="stylesheet" href="~/css/UserPanel/Profile/ProfileStyle.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/Shared/Interact.slim.css" asp-append-version="true" />
 <!------------------->
 @*Display a modal if the values were updated.*@
 
@@ -14,7 +15,6 @@
 {
     <partial name="~/Views/UserPanel/Profile/_SettingsUpdatedModal.cshtml" />
 }
-
 
 @if (_signInManager.IsSignedIn(User))
 {

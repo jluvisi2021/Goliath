@@ -24,15 +24,15 @@ namespace Goliath.Repository
 
         Task<IdentityResult> ConfirmPhoneAsync(ApplicationUser user, string token);
 
-        Task GenerateEmailConfirmationToken(SignUpUserModel signUpModel, ApplicationUser userModel, DeviceParser device);
+        Task GenerateEmailConfirmationTokenAsync(SignUpUserModel signUpModel, ApplicationUser userModel, DeviceParser device);
 
-        Task GenerateEmailConfirmationToken(ApplicationUser userModel, DeviceParser device);
+        Task GenerateEmailConfirmationTokenAsync(ApplicationUser userModel, DeviceParser device);
 
-        Task GenerateForgotPasswordToken(ApplicationUser userModel, DeviceParser device);
+        Task GenerateForgotPasswordTokenAsync(ApplicationUser userModel, DeviceParser device);
 
-        Task GenerateNewEmailConfirmationToken(ApplicationUser userModel, DeviceParser device);
+        Task GenerateNewEmailConfirmationTokenAsync(ApplicationUser userModel, DeviceParser device);
 
-        Task GenerateNewPhoneConfirmationToken(ApplicationUser userModel, DeviceParser device);
+        Task GenerateNewPhoneConfirmationTokenAsync(ApplicationUser userModel, DeviceParser device);
 
         Task<bool> DoesPhoneNumberExistAsync(string phone);
 
@@ -40,60 +40,60 @@ namespace Goliath.Repository
 
         Task<IdentityResult> ResetPasswordAsync(ResetPasswordModel model);
 
-        Task GenerateUsername(ApplicationUser user, DeviceParser device);
+        Task GenerateUsernameAsync(ApplicationUser user, DeviceParser device);
 
-        Task LoadDefaults();
+        Task LoadDefaultsAsync();
 
-        Task<bool> IsAdmin(ApplicationUser user);
+        Task<bool> IsAdminAsync(ApplicationUser user);
 
-        Task<bool> IsAdmin(string username);
+        Task<bool> IsAdminAsync(string username);
 
-        Task MoveUserToAdminRole(ApplicationUser user);
+        Task MoveUserToAdminRoleAsync(ApplicationUser user);
 
-        Task MoveUserToDefaultRole(ApplicationUser user);
+        Task MoveUserToDefaultRoleAsync(ApplicationUser user);
 
-        Task CreateRole(string name);
+        Task CreateRoleAsync(string name);
 
-        Task CreateRole(string name, bool isAdmin);
+        Task CreateRoleAsync(string name, bool isAdmin);
 
-        Task CreateRole(string name, bool isAdmin, string excludedURLComponents);
+        Task CreateRoleAsync(string name, bool isAdmin, string excludedURLComponents);
 
-        Task CreateRole(string name, string icon, bool isAdmin);
+        Task CreateRoleAsync(string name, string icon, bool isAdmin);
 
-        Task DeleteRole(string name);
+        Task DeleteRoleAsync(string name);
 
-        Task<string> GetRoleIcon(string name);
+        Task<string> GetRoleExcludedURLComponentsAsync(string name);
 
-        Task<string> GetRoleExcludedURLComponents(string name);
+        Task<List<ApplicationUser>> GetAllUsersInRoleAsync(string name);
 
-        Task<List<ApplicationUser>> GetAllUsersInRole(string name);
+        Task MoveUserToRoleByNameAsync(ApplicationUser user, string name);
 
-        Task MoveUserToRoleByName(ApplicationUser user, string name);
+        Task<string> GetPrimaryRoleAsync(ApplicationUser user);
 
-        Task<string> GetPrimaryRole(ApplicationUser user);
+        Task<ApplicationUser> GetFromUserClaimAsync(ClaimsPrincipal claimsPrincipal);
 
-        Task<ApplicationUser> GetFromUserClaim(ClaimsPrincipal claimsPrincipal);
+        Task<ApplicationUser> GetUserByNameAsync(string name);
 
-        Task<ApplicationUser> GetUserByName(string name);
+        Task<IdentityResult> UpdateUserAsync(ApplicationUser user);
 
-        Task<IdentityResult> UpdateUser(ApplicationUser user);
+        Task<bool> HasPhoneNumberAsync(ApplicationUser user);
 
-        Task<bool> HasPhoneNumber(ApplicationUser user);
+        Task<bool> HasConfirmedPhoneNumberAsync(ApplicationUser user);
 
-        Task<bool> HasConfirmedPhoneNumber(ApplicationUser user);
-
-        Task UpdatePhone(ApplicationUser user, string number);
+        Task UpdatePhoneAsync(ApplicationUser user, string number);
 
         Task<IdentityResult> UpdatePasswordAsync(ApplicationUser user, string currPassword, string newPassword);
 
-        Task<bool> IsPasswordValid(ApplicationUser user, string pass);
+        Task<bool> IsPasswordValidAsync(ApplicationUser user, string pass);
 
-        Task<ApplicationUser> GetUserFromContext(ClaimsPrincipal claims);
+        Task<ApplicationUser> GetUserFromContextAsync(ClaimsPrincipal claims);
 
-        Task<string> GetRoleIcon(ClaimsPrincipal claims);
+        Task<string> GetRoleIconAsync(ClaimsPrincipal claims);
 
-        Task UpdateLastLogin(ApplicationUser user);
+        Task<string> GetRoleIconAsync(string name);
 
-        Task UpdateLastLogin(string userName);
+        Task UpdateLastLoginAsync(ApplicationUser user);
+
+        Task UpdateLastLoginAsync(string userName);
     }
 }
