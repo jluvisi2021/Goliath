@@ -1,4 +1,5 @@
-﻿using Goliath.Enums;
+﻿using Goliath.Attributes;
+using Goliath.Enums;
 using Goliath.Helper;
 using Goliath.Models;
 using Goliath.Repository;
@@ -17,7 +18,6 @@ namespace Goliath.Controllers
     /// Manages the Views for Authentication. <br /> ButtonID indicates the radio button to be checked.
     /// </summary>
     [Route("account")]
-    [RequireHttps]
     public sealed class AuthController : Controller
     {
         /// <summary>
@@ -44,14 +44,25 @@ namespace Goliath.Controllers
 
         public IActionResult Index()
         {
+
             // If the user is signed in redirect them to the user panel.
             if (_signInManager.IsSignedIn(User))
             {
-                return RedirectToAction("Index", "UserPanel");
+                // Fixes an error where the website would throw exception
+                // if the database was refreshed but the auth cookie was still valid.
+                if (User == null)
+                {
+                    _accountRepository.SignOutAsync();
+                }
+                else
+                {
+                    return RedirectToAction("Index", "UserPanel");
+                }
             }
 
             return RedirectToAction("Login");
         }
+
 
         [Route("login")]
         [HttpGet]
@@ -62,6 +73,7 @@ namespace Goliath.Controllers
         }
 
         [Route("login")]
+        [PreventDuplicateRequest]
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(SignInModel signInModel)
         {
@@ -125,6 +137,7 @@ namespace Goliath.Controllers
         }
 
         [Route("register/goliath")]
+        [PreventDuplicateRequest]
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(SignUpUserModel model)
         {
@@ -185,11 +198,15 @@ namespace Goliath.Controllers
         }
 
         [Route("restore/password")]
+        [PreventDuplicateRequest]
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordModel model)
         {
             ViewData["ButtonID"] = ButtonID.ForgotPassword;
-
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
             // Verify that the user exists with the specified email.
             ApplicationUser user = await _accountRepository.FindByEmailAsync(model.Email);
 
@@ -238,10 +255,16 @@ namespace Goliath.Controllers
         }
 
         [Route("restore/username")]
+        [PreventDuplicateRequest]
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotUsername(ForgotUsernameModel model)
         {
             ViewData["ButtonID"] = ButtonID.ForgotUsername;
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+
             ApplicationUser user = await _accountRepository.FindByEmailAsync(model.Email);
 
             if (user == null)
@@ -277,10 +300,17 @@ namespace Goliath.Controllers
         }
 
         [Route("verify")]
+        [PreventDuplicateRequest]
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> VerifyEmail(EmailConfirmModel model)
         {
             ViewData["ButtonID"] = ButtonID.VerifyEmail;
+
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+
             // Verify that the user exists with the specified email.
             ApplicationUser user = await _accountRepository.FindByEmailAsync(model.Email);
 
@@ -382,6 +412,7 @@ namespace Goliath.Controllers
             return RedirectToAction("Index");
         }
 
+        [PreventDuplicateRequest]
         [HttpPost("forgot-password"), ValidateAntiForgeryToken]
         public async Task<IActionResult> ResetPassword(ResetPasswordModel model)
         {

@@ -1,4 +1,5 @@
-﻿using Goliath.Enums;
+﻿using Goliath.Attributes;
+using Goliath.Enums;
 using Goliath.Helper;
 using Goliath.Models;
 using Goliath.Repository;
@@ -38,6 +39,7 @@ namespace Goliath.Controllers
             return View();
         }
 
+        [PreventDuplicateRequest]
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Profile(ProfileSettingsGeneralModel model)
         {
@@ -165,6 +167,7 @@ namespace Goliath.Controllers
         }
 
         [Route("userpanel/verify-phone")]
+        [PreventDuplicateRequest]
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> ConfirmPhoneNumber(VerifyPhoneNumberModel model)
         {

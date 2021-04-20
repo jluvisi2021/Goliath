@@ -42,6 +42,7 @@
 
 /* For drop down menus */
 .drop-down {
+    cursor: pointer;
     position: absolute;
     will-change: transform;
     top: 0px;

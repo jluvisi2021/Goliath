@@ -1,10 +1,13 @@
 ﻿using Goliath.Enums;
 using Goliath.Helper;
 using Goliath.Models;
+using Goliath.Repository;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
+using System.Threading.Tasks;
 
 namespace Goliath.Controllers
 {
@@ -15,8 +18,12 @@ namespace Goliath.Controllers
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public sealed class ErrorsController : Controller
     {
-        public ErrorsController()
+        private readonly IAccountRepository _repository;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        public ErrorsController(IAccountRepository repository, SignInManager<ApplicationUser> signInManager)
         {
+            _repository = repository;
+            _signInManager = signInManager;
         }
 
         public IActionResult Index(string code)
@@ -31,7 +38,7 @@ namespace Goliath.Controllers
             return View(model);
         }
 
-        public IActionResult GeneralException()
+        public async Task<IActionResult> GeneralException()
         {
             IExceptionHandlerPathFeature feature = HttpContext
               .Features
@@ -48,6 +55,10 @@ namespace Goliath.Controllers
                 StatusCode = HttpContext.Response.StatusCode.ToString() ?? "Unknown"
             };
             GoliathHelper.PrintDebugger(GoliathHelper.PrintType.Error, feature.Error.StackTrace);
+            if (_signInManager.IsSignedIn(User))
+            {
+                await _repository.SignOutAsync();
+            }
             TempData["Redirect"] = RedirectPurpose.Exception;
             TempData["ErrorInformation"] = JsonConvert.SerializeObject(model);
             return RedirectToActionPermanent("Index", "Auth");
