@@ -1,0 +1,23 @@
+﻿@inject Goliath.Repository.ISmsVerifyTokensRepository _requestTable
+@inject Goliath.Repository.IAccountRepository _repository
+@*
+    Represents the "Resend" button in the view.
+    The button is disabled if the user has already requested
+    a token within the last 2 hours.
+*@
+@if (await _requestTable.IsUserResendValidAsync((await _repository.GetUserFromContextAsync(User)).Id))
+{
+    <a asp-action="ResendSmsVerifyToken" asp-route-username="@User.Identity.Name" class="btn btn-primary align-self-center"
+       data-toggle="tooltip" data-placement="right" title="Request a new code. This can only be done once every 2 hours.">
+        <i class="fas fa-redo mr-2"></i>
+        Resend
+    </a>
+
+}
+else
+{
+    <button class="btn btn-primary align-self-center" type="button" disabled>
+        <i class="fas fa-redo mr-2"></i>
+        Resend
+    </button>
+}

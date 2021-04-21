@@ -4,14 +4,16 @@ using Goliath.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Goliath.Migrations
 {
     [DbContext(typeof(GoliathContext))]
-    partial class GoliathContextModelSnapshot : ModelSnapshot
+    [Migration("20210420225630_addedSmsResendTable")]
+    partial class addedSmsResendTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -49,8 +51,7 @@ namespace Goliath.Migrations
 
                     b.Property<string>("GeneratedDateTime")
                         .IsRequired()
-                        .HasMaxLength(22)
-                        .HasColumnType("nvarchar(22)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Token")
                         .IsRequired()

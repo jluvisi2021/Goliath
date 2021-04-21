@@ -21,12 +21,14 @@ namespace Goliath.Controllers
         /// </summary>
         private readonly IAccountRepository _accountRepository;
 
+        private readonly ISmsVerifyTokensRepository _requestTable;
         private readonly IGoliathCaptchaService _captcha;
 
-        public UserPanelController(IAccountRepository accountRepository, IGoliathCaptchaService captcha)
+        public UserPanelController(IAccountRepository accountRepository, IGoliathCaptchaService captcha, ISmsVerifyTokensRepository requestTable)
         {
             _accountRepository = accountRepository;
             _captcha = captcha;
+            _requestTable = requestTable;
         }
 
         public IActionResult Index()
@@ -84,7 +86,7 @@ namespace Goliath.Controllers
             {
                 if (await _accountRepository.DoesPhoneNumberExistAsync(model.NewPhoneNumber))
                 {
-                    ModelState.AddModelError(string.Empty, $"The phone number {model.NewPhoneNumber} is already in use.");
+                    ModelState.AddModelError(string.Empty, $"The phone number (+1) {model.NewPhoneNumber[0..3]}-{model.NewPhoneNumber[3..6]}-{model.NewPhoneNumber[6..]} is already in use.");
                     return View(model);
                 }
                 hasChanged = true;
@@ -207,6 +209,65 @@ namespace Goliath.Controllers
 
             ModelState.AddModelError(string.Empty, "Invalid or Expired Token.");
             return View(model);
+        }
+
+        /// <summary>
+        /// Manages the default view for resending sms verify tokens.
+        /// </summary>
+        /// <returns> </returns>
+        [Route("userpanel/resend-code")]
+        public IActionResult ResendSmsVerifyToken()
+        {
+            return View();
+        }
+
+        /// <summary>
+        /// Checks if the user is allowed to request another SMS verify token. The default time span
+        /// until a token request is allowed is 2 hours.
+        /// </summary>
+        /// <param name="model"> </param>
+        /// <returns> </returns>
+        [HttpGet]
+        [Route("userpanel/resend-code")]
+        public async Task<IActionResult> ResendSmsVerifyToken(ResendSmsVerifyTokenModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                model.IsSuccess = false;
+                return View();
+            }
+            ApplicationUser user = await _accountRepository.GetUserByNameAsync(model.Username);
+            // Make sure the user exists and is the current user logged in.
+            if (user == null || !user.UserName.Equals(User.Identity.Name))
+            {
+                model.IsSuccess = false;
+                return View();
+            }
+            if (await _requestTable.IsUserResendValidAsync(user.Id))
+            {
+                // User can request a resend.
+                model.IsSuccess = true;
+                await _requestTable.AddRequestAsync(user.Id);
+                await _accountRepository.GenerateNewPhoneConfirmationTokenAsync(user);
+                return View(model);
+            }
+            model.IsSuccess = false;
+            return View();
+        }
+
+        /// <summary>
+        /// Accept a parameter in the URL and pass it into the model.
+        /// </summary>
+        /// <param name="username"> </param>
+        /// <returns> </returns>
+        [HttpPost]
+        [Route("userpanel/resend-code")]
+        public IActionResult ResendSmsVerifyToken(string username)
+        {
+            return View(new ResendSmsVerifyTokenModel()
+            {
+                Username = username
+            });
         }
 
         /// <summary>

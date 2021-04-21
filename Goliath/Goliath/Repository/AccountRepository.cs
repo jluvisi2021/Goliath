@@ -483,6 +483,12 @@ namespace Goliath.Repository
             }
         }
 
+        /// <summary>
+        /// Generate a new token for a user's phone and send it to them. Also alerts the user's email.
+        /// </summary>
+        /// <param name="userModel"> </param>
+        /// <param name="device"> </param>
+        /// <returns> </returns>
         public async Task GenerateNewPhoneConfirmationTokenAsync(ApplicationUser userModel, DeviceParser device)
         {
             string token = await _userManager.GenerateChangePhoneNumberTokenAsync(userModel, userModel.UnverifiedNewPhone);
@@ -494,6 +500,24 @@ namespace Goliath.Repository
                     Message = $"This number has been request to be the new phone number for Goliath Account: {userModel.UserName}. Enter this number in the userpanel to confirm it: {token}"
                 });
                 await SendNewPhoneEmailAsync(userModel, device);
+            }
+        }
+
+        /// <summary>
+        /// Generates a token to a user's phone. Does not send an email alerting the user of the resend.
+        /// </summary>
+        /// <param name="userModel"> </param>
+        /// <returns> </returns>
+        public async Task GenerateNewPhoneConfirmationTokenAsync(ApplicationUser userModel)
+        {
+            string token = await _userManager.GenerateChangePhoneNumberTokenAsync(userModel, userModel.UnverifiedNewPhone);
+            if (!string.IsNullOrWhiteSpace(token))
+            {
+                await _twilio.SendSmsAsync(new SMSTextModel()
+                {
+                    To = userModel.UnverifiedNewPhone,
+                    Message = $"This number has been request to be the new phone number for Goliath Account: {userModel.UserName}. Enter this number in the userpanel to confirm it: {token}"
+                });
             }
         }
 

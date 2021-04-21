@@ -99,6 +99,7 @@ namespace Goliath
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IValidHumanVerifyTokensRepository, ValidHumanVerifyTokensRepository>();
+            services.AddScoped<ISmsVerifyTokensRepository, SmsVerifyTokensRepository>();
             services.AddScoped<ICookieManager, CookieManager>();
             services.AddScoped<IGoliathCaptchaService, GoliathCaptchaService>();
             services.AddScoped<ITwilioService, TwilioService>();

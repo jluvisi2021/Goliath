@@ -3,61 +3,69 @@
     var user = await _repository.GetUserFromContextAsync(User);
 }
 
-<p id="option-text">
-    CHANGE PHONE NUMBER
-    <i class="fas fa-question-circle item-info hvr-grow"
-       tabindex="0" role="button" data-toggle="popover"
-       data-trigger="focus"
-       title="Update Phone Number"
-       data-content="Update the phone number for your account. Your phone number can be used to retrieve lost account details and is required for two-factor Authentication.">
-    </i>
-</p>
-<div class="ht-tm-element input-group mb-3">
-    <div class="input-group-prepend ">
-        <button class="btn btn-outline-primary" type="button">
-            <i class="fas fa-mobile-alt fa-fw"></i>
-        </button>
-    </div>
-    @if (await _repository.HasPhoneNumberAsync(user))
-    {
-        <input asp-for="CurrentPhoneNumber" value="@user.PhoneNumber" placeholder="" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" readonly />
+<div class="col-8">
+    <p id="option-text">
+        CHANGE PHONE NUMBER
+        <i class="fas fa-question-circle item-info hvr-grow"
+           tabindex="0" role="button" data-toggle="popover"
+           data-trigger="focus"
+           title="Update Phone Number"
+           data-content="Update the phone number for your account. Your phone number can be used to retrieve lost account details and is required for two-factor Authentication.">
+        </i>
+    </p>
+</div>
+<div class="col-12">
+    <p class="text-muted font-italic">Goliath only supports U.S./Canada Phone Numbers (+1).</p>
+</div>
+<div class="col-8">
+    <div class="ht-tm-element input-group mb-3">
+        <div class="input-group-prepend ">
+            <button class="btn btn-outline-primary" type="button">
+                <i class="fas fa-mobile-alt fa-fw"></i>
+            </button>
+        </div>
+        @if (await _repository.HasPhoneNumberAsync(user))
+        {
+            <input asp-for="CurrentPhoneNumber" value="@user.PhoneNumber" placeholder="" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" readonly />
 
+        }
+        else
+        {
+            <input asp-for="CurrentPhoneNumber" value="None Specified" placeholder="" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" readonly />
+        }
+    </div>
+    <div class="ht-tm-element input-group mb-3">
+        <div class="input-group-prepend ">
+            <button class="btn btn-outline-primary" type="button">
+                <i class="fas fa-mobile-alt fa-fw"></i>
+            </button>
+        </div>
+
+        <input id="phone-setting" asp-for="NewPhoneNumber" placeholder="Enter New Phone." required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
+    </div>
+    @if (await _repository.HasConfirmedPhoneNumberAsync(user))
+    {
+        <span class="badge badge-success hvr-grow" data-toggle="tooltip" data-placement="right"
+              title="" data-original-title="Your phone number is confirmed and can be used."><i class="fas fa-check-circle mr-1"></i>Confirmed</span>
     }
     else
     {
-        <input asp-for="CurrentPhoneNumber" value="None Specified" placeholder="" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" readonly />
-    }
-</div>
-<div class="ht-tm-element input-group mb-3">
-    <div class="input-group-prepend ">
-        <button class="btn btn-outline-primary" type="button">
-            <i class="fas fa-mobile-alt fa-fw"></i>
-        </button>
-    </div>
+        if (await _repository.HasPhoneNumberAsync(user) || !string.IsNullOrWhiteSpace(user.UnverifiedNewPhone))
+        {
+            <span class="badge badge-danger hvr-grow" data-toggle="tooltip" data-placement="right"
+                  title="" data-original-title="Your phone number is not confirmed and cannot be used."><i class="fas fa-times-circle mr-1"></i>Not Confirmed</span>
+                  <br />
+            <a asp-controller="UserPanel" asp-action="ConfirmPhoneNumber">Click to confirm your phone number.</a>
+        }
 
-    <input id="phone-setting" asp-for="NewPhoneNumber" placeholder="Enter New Phone." required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
-</div>
-@if (await _repository.HasConfirmedPhoneNumberAsync(user))
-{
-    <span class="badge badge-success hvr-grow" data-toggle="tooltip" data-placement="right"
-          title="" data-original-title="Your phone number is confirmed and can be used."><i class="fas fa-check-circle mr-1"></i>Confirmed</span>
-}
-else
-{
-    if (await _repository.HasPhoneNumberAsync(user) || !string.IsNullOrWhiteSpace(user.UnverifiedNewPhone))
+    }
+    @if (!string.IsNullOrWhiteSpace(user.UnverifiedNewPhone))
     {
-        <span class="badge badge-danger hvr-grow" data-toggle="tooltip" data-placement="right"
-              title="" data-original-title="Your phone number is not confirmed and cannot be used."><i class="fas fa-times-circle mr-1"></i>Not Confirmed</span>
-        <a asp-controller="UserPanel" asp-action="ConfirmPhoneNumber">Click to confirm your phone number.</a>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">×</span>
+            </button>
+            <strong>Notice!</strong> Your phone was changed to @user.UnverifiedNewPhone but it will not be valid until the new phone is confirmed.
+        </div>
     }
-
-}
-@if (!string.IsNullOrWhiteSpace(user.UnverifiedNewPhone))
-{
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">×</span>
-        </button>
-        <strong>Notice!</strong> Your phone was changed to @user.UnverifiedNewPhone but it will not be valid until the new phone is confirmed.
-    </div>
-}
+</div>

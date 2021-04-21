@@ -6,8 +6,14 @@
     ViewData["Title"] = "Profile";
     Layout = "_LoginRequired";
     var user = await _repository.GetUserFromContextAsync(User);
+    //var userCanResend = await _requestTable.IsUserResendValidAsync(user.Id);
 }
+@*
 
+A view which handles the confirmation of phone numbers in
+the UserPanel.
+
+*@
 <!--Profile Scripts-->
 <script src="~/js/UserPanel/Profile/ProfileScript.js" asp-append-version="true"></script>
 <!------------------->
@@ -80,9 +86,11 @@
                             <button id="submit-verify-phone-form" class="btn btn-primary align-self-center" type="button">
                                 <i class="fas fa-upload mr-2"></i>Submit
                             </button>
+                            <partial name="~/Views/UserPanel/Partial/_ResendPhoneVerifyButton.cshtml" />
                         </form>
                     </article>
-                }
+
+                                    }
 
             }
         </section>

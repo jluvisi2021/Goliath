@@ -16,6 +16,7 @@ namespace Goliath.Data
         public string Token { get; set; }
 
         [Required]
+        [MaxLength(22)]
         public string GeneratedDateTime { get; set; }
     }
 }

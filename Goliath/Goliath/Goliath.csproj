@@ -29,4 +29,9 @@
     <PackageReference Include="Twilio" Version="5.58.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\UserPanel\Database\" />
+    <Folder Include="Views\UserPanel\Utilities\" />
+  </ItemGroup>
+
 </Project>

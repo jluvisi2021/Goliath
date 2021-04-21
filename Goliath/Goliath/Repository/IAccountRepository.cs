@@ -34,6 +34,8 @@ namespace Goliath.Repository
 
         Task GenerateNewPhoneConfirmationTokenAsync(ApplicationUser userModel, DeviceParser device);
 
+        Task GenerateNewPhoneConfirmationTokenAsync(ApplicationUser userModel);
+
         Task<bool> DoesPhoneNumberExistAsync(string phone);
 
         Task<bool> DoesEmailExistAsync(string email);
