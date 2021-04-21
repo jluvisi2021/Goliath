@@ -1,4 +1,39 @@
-﻿<h1>Colors Tab</h1>
-<h1>Hello World!</h1>
-<h1>Hello World!</h1>
-<h1>Hello World!</h1>
+﻿@using Goliath.Helper
+
+@{
+    // Check if settings have been changed.
+}
+
+<h3>Color Settings</h3>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger pb-0 pt-3" role="alert">
+        <p>We encountered errors trying to update your profile</p>
+        <div class="text-danger font-weight-bold text-left" asp-validation-summary="All"> </div>
+    </div>
+}
+
+<hr />
+
+<form id="settings" asp-action="Profile" asp-antiforgery="true" novalidate>
+
+    <div id="confirm-modal"></div>
+    <div class="container">
+        <div class="text-left">
+
+            <div class="row col-8">
+                <partial name="~/Views/UserPanel/Profile/Settings/_ChangeBackgroundColor.cshtml" />
+            </div>
+
+            <hr />
+
+            <partial name="~/Views/UserPanel/Profile/Settings/_ToggleDarkTheme.cshtml" />
+        </div>
+    </div>
+    <hr />
+    <button id="submit-settings" type="button" class="btn btn-secondary mt-1">
+        <i class="fas fa-cloud-upload-alt mr-2"></i>
+        Save Changes
+    </button>
+</form>

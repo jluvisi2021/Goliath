@@ -7,9 +7,11 @@ namespace Goliath.Models
     /// Used for the "Profile" tab in UserPanel. <br /> Belongs to Partial View for modifying
     /// individual settings.
     /// </summary>
-    [UserSettings(Enums.SettingsType.General)]
-    public class ProfileSettingsGeneralModel
+    [UserSettings]
+    public class ProfileSettingsModel
     {
+
+        
         public string BackgroundColor { get; set; }
 
         public string DarkThemeEnabled { get; set; }

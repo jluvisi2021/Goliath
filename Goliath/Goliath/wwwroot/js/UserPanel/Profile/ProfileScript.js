@@ -7,27 +7,12 @@ const ProfileScript = (() => {
      */
     $(document).ready(() => {
         const listItems = $(".list-group .list-group-item");
-        const viewDiv = $("#view");
         let showSecurity = false;
         listItems.click((e) => {
             listItems.removeClass("active").removeClass("font-weight-bold");
             $(e.target).addClass("active").addClass("font-weight-bold");
         });
-        $("#profile-nav-general").click(() => {
-            viewDiv.load("/UserPanel/GetModule?partialName=Profile/_General");
-        });
-        $("#profile-nav-colors").click(() => {
-            viewDiv.load("/UserPanel/GetModule?partialName=Profile/_Colors");
-        });
-        $("#profile-nav-security").click(() => {
-            viewDiv.load("/UserPanel/GetModule?partialName=Profile/_Security");
-        });
-        $("#profile-nav-manage-data").click(() => {
-            viewDiv.load("/UserPanel/GetModule?partialName=Profile/_ManageData");
-        });
-        $("#profile-nav-other").click(() => {
-            viewDiv.load("/UserPanel/GetModule?partialName=Profile/_Other");
-        });
+
         $("#submit-settings").click(() => {
             $("#confirm-modal").load("/UserPanel/GetModule?partialName=Profile/_ConfirmSettingsModal");
         });
@@ -65,12 +50,13 @@ const ProfileScript = (() => {
          * @returns {boolean} If the values are different.
          */
         valueChanged: (prev, curr) => {
-            if (prev === "" || prev === null) {
+            if (prev === "" || prev === null || typeof prev === "undefined") {
                 return false;
             }
             if (prev != curr) {
                 return true;
             }
+            return false;
         },
         /**
          * Checks the background value in the settings form and

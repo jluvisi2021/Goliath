@@ -43,7 +43,7 @@ namespace Goliath.Controllers
 
         [PreventDuplicateRequest]
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> Profile(ProfileSettingsGeneralModel model)
+        public async Task<IActionResult> Profile(ProfileSettingsModel model)
         {
             if (!ModelState.IsValid)
             {

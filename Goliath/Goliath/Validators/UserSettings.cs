@@ -10,24 +10,12 @@ namespace Goliath.Validators
     /// </summary>
     public class UserSettings : ValidationAttribute
     {
-        /// <summary>
-        /// The type of setting model to validate. Ex. General, Colors, etc
-        /// </summary>
-        private readonly SettingsType _settingsValidator;
 
-        /// <summary>
-        /// </summary>
-        /// <param name="type"> The type of settings model to validate. </param>
-        public UserSettings(SettingsType type)
-        {
-            _settingsValidator = type;
-        }
 
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            if (_settingsValidator.Equals(SettingsType.General))
-            {
-                ProfileSettingsGeneralModel settings = (ProfileSettingsGeneralModel)validationContext.ObjectInstance;
+
+                ProfileSettingsModel settings = (ProfileSettingsModel)validationContext.ObjectInstance;
                 if (!BackgroundColorValid(settings.BackgroundColor))
                 {
                     if (string.IsNullOrWhiteSpace(settings.BackgroundColor))
@@ -42,9 +30,7 @@ namespace Goliath.Validators
                 }
 
                 return ValidationResult.Success;
-            }
 
-            return ValidationResult.Success;
         }
 
         private static bool EmailValid(string email)

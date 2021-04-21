@@ -1,4 +1,6 @@
-﻿@model Goliath.Models.ResendSmsVerifyTokenModel
+﻿@using Goliath.Models
+@inject Microsoft.AspNetCore.Identity.SignInManager<ApplicationUser> _signInManager
+@model Goliath.Models.ResendSmsVerifyTokenModel
 @{
     ViewData["Title"] = "Profile";
     Layout = "_LoginRequired";
@@ -7,22 +9,25 @@
     Displays whether or not the user has successfully received a token
     on their phone.
 *@
-<main id="outer">
-    <section id="inner">
-        @if (Model?.IsSuccess == true)
-        {
+@if (_signInManager.IsSignedIn(User))
+{
+    <div id="outer">
+        <div id="inner">
+            @if (Model?.IsSuccess == true)
+            {
 
-        <div class="alert alert-success pt-4" role="alert">
-            <p class="h4 alert-heading text-left"><i class="fas fa-check-circle mr-2"></i><strong>Success</strong></p>
-            <span class="">A verification code was sent to this accounts phone number.</span>
+                <div class="alert alert-success pt-4" role="alert">
+                    <p class="h4 alert-heading text-left"><i class="fas fa-check-circle mr-2"></i><strong>Success</strong></p>
+                    <span class="">A verification code was sent to this accounts phone number.</span>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-danger pt-4" role="alert">
+                    <p class="h4 alert-heading text-left"><i class="fas fa-times-circle mr-2"></i><strong>Error</strong></p>
+                    <span class="">You must wait <u>2 hours</u> between each verification request to a cellphone. Try again later.</span>
+                </div>
+            }
         </div>
-        }
-        else
-        {
-    <div class="alert alert-danger pt-4" role="alert">
-        <p class="h4 alert-heading text-left"><i class="fas fa-times-circle mr-2"></i><strong>Error</strong></p>
-        <span class="">You must wait <u>2 hours</u> between each verification request to a cellphone. Try again later.</span>
     </div>
-        }
-    </section>
-</main>
+}
