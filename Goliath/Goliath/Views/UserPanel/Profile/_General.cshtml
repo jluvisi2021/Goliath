@@ -6,6 +6,7 @@
 
 <h3>All Available Settings</h3>
 
+
 @if (!ViewData.ModelState.IsValid)
 {
     <div class="alert alert-danger pb-0 pt-3" role="alert">
@@ -20,12 +21,13 @@
 
     <div id="confirm-modal"></div>
     <div class="container">
+        
         <div class="text-left">
 
             <partial name="~/Views/UserPanel/Profile/Settings/_GeneralInformation.cshtml" />
             <hr />
 
-            <div class="row col-8">
+            <div class="row col-8 expand">
                 <partial name="~/Views/UserPanel/Profile/Settings/_ChangeBackgroundColor.cshtml" />
             </div>
 
@@ -34,22 +36,22 @@
             <partial name="~/Views/UserPanel/Profile/Settings/_ToggleDarkTheme.cshtml" />
 
             <hr />
-            <div class="row col-8">
+            <div class="row col-8 expand">
                 <partial name="~/Views/UserPanel/Profile/Settings/_ChangeEmail.cshtml" />
             </div>
             <hr />
-            <div class="row col-12 p-0">
+            <div class="row col-12 p-0 expand">
                 <partial name="~/Views/UserPanel/Profile/Settings/_ChangePassword.cshtml" />
             </div>
 
             <hr />
-            <div class="row col-12 p-0">
+            <div class="row col-12 p-0 expand">
                 <partial name="~/Views/UserPanel/Profile/Settings/_ChangePhoneNumber.cshtml" />
             </div>
             <hr />
             <partial name="~/Views/UserPanel/Profile/Settings/_TwoFactor.cshtml" />
             <hr />
-            <div class="row col-8">
+            <div class="row col-8 expand">
                 <partial name="~/Views/UserPanel/Profile/Settings/_LogoutThreshold.cshtml" />
             </div>
             <hr />

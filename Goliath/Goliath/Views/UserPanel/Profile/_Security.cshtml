@@ -1,5 +1,5 @@
 ﻿@using Goliath.Helper
-
+@model Goliath.Models.ProfileSettingsModel
 @{
     // Check if settings have been changed.
 }
@@ -20,6 +20,7 @@
 
     <div id="confirm-modal"></div>
     <div class="container">
+        
         <div class="text-left">
 
             <div class="row col-8">
@@ -42,7 +43,7 @@
             </div>
             <hr />
             <partial name="~/Views/UserPanel/Profile/Settings/_LoggedInTrace.cshtml" />
-            
+
         </div>
     </div>
     <hr />

@@ -10,8 +10,6 @@ namespace Goliath.Models
     [UserSettings]
     public class ProfileSettingsModel
     {
-
-        
         public string BackgroundColor { get; set; }
 
         public string DarkThemeEnabled { get; set; }

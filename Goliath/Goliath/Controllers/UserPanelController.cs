@@ -41,13 +41,14 @@ namespace Goliath.Controllers
             return View();
         }
 
+
         [PreventDuplicateRequest]
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Profile(ProfileSettingsModel model)
         {
             if (!ModelState.IsValid)
             {
-                return View();
+                return View(model);
             }
 
             if (!await _captcha.IsCaptchaValidAsync())
