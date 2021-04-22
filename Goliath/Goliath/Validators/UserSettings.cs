@@ -8,9 +8,8 @@ namespace Goliath.Validators
     /// <summary>
     /// Validates the custom Goliath settings which can be <br /> configured in the UserPanel.
     /// </summary>
-    public class UserSettings : ValidationAttribute
+    public class UserSettingsAttribute : ValidationAttribute
     {
-
 
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {

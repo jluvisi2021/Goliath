@@ -1,0 +1,43 @@
+﻿@if (_signInManager.IsSignedIn(User))
+{
+    var user = await _repository.GetUserFromContextAsync(User);
+    int method = user.TwoFactorMethod;
+    bool accountSecure = user.PhoneNumberConfirmed && user.EmailConfirmed && string.IsNullOrWhiteSpace(user.UnverifiedNewEmail) && string.IsNullOrWhiteSpace(user.UnverifiedNewPhone);
+
+    @*Make sure account is secure.*@
+    if (!accountSecure)
+    {
+        <partial name="_AccountNotSecure" />
+    }
+    else
+    {
+        @*Show Error Message. Only one 2FA active at a time.*@
+        if (user.TwoFactorMethod == (int)TwoFactorMethod.MobileAppVerify)
+        {
+            <partial name="_BadTwoFactorMethod" />
+        }
+        @*Show Configure Message. You can configure this 2FA option here.*@
+        else if (user.TwoFactorMethod == (int)TwoFactorMethod.SmsVerify)
+        {
+<div class="container align-self-center mt-5 pb-5">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <h1>Configure Two Factor</h1>
+        </div>
+    </div>
+</div>
+        }
+        @*Show Setup Message. You can setup your 2 factor authentication.*@
+        else if (user.TwoFactorMethod == (int)TwoFactorMethod.None)
+        {
+<div class="container align-self-center mt-5 pb-5">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <h1>Setup Two Factor</h1>
+        </div>
+    </div>
+</div>
+        }
+    }
+
+}

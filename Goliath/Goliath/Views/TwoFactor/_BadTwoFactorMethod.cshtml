@@ -1,0 +1,18 @@
+﻿@{
+    int method = (await _repository.GetUserFromContextAsync(User)).TwoFactorMethod;
+    string methodString = method == (int)TwoFactorMethod.MobileAppVerify ? "Two Factor SMS Verification" : "Two Factor Mobile App Authentication";
+}
+<div class="container align-self-center mt-5 pb-5 text-center">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <div class="alert alert-danger" role="alert">
+                <h4 class="alert-heading"><i class="fas fa-times-circle fa-fw mr-1"></i>You cannot do this.</h4>
+                You cannot enable <u>@methodString</u> because you currently have another two-factor method enabled. 
+                <br />
+                Please disable it before enabling <u>@methodString</u>.
+                <br />
+                <a asp-action="Index" class="alert-link">Change Two-Factor Settings.</a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Goliath.Enums;
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 
 namespace Goliath.Models
@@ -62,5 +63,8 @@ namespace Goliath.Models
         /// </summary>
         [Required]
         public string UserData { get; set; }
+
+        
+        public int TwoFactorMethod { get; set; }
     }
 }
