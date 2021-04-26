@@ -10,7 +10,6 @@ namespace Goliath.Models
 
         public string TwoFactorCode { get; set; }
         public string Password { get; set; }
-
         public bool IsSubmitted { get; set; }
     }
 }

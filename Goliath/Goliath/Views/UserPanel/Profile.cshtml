@@ -7,7 +7,7 @@
 
     string result(string param)
     {
-        if(query.Contains($"?tab={param}") || (!query.Contains("tab") && param == ProfileTab.General))
+        if (query.Contains($"?tab={param}") || (!query.Contains("tab") && param == ProfileTab.General))
         {
             return "active font-weight-bold";
         }

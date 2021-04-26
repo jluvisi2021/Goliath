@@ -1,16 +1,24 @@
-﻿<div class="modal fade" id="two-factor-disabled" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-hidden="true">
+﻿<div class="modal fade" id="verification-codes" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Two Factor Disabled</h5>
+                <h5 class="modal-title">Verification Codes</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body pb-0">
                 <div class="alert alert-success" role="alert">
-                    <h4 class="alert-heading">Success <i class="fas fa-check-circle fa-fw"></i></h4>
-                    You have <strong><u>disabled</u></strong> Two-Factor Authentication.
+                    <h4 class="alert-heading">Two-Factor Codes</h4>
+                    <p>
+                        <span class="text-muted">Each two-factor code can be used only one time.</span>
+                        <hr />
+                        100-000
+                        <br />
+                        222-877
+                        <br />
+                        ...
+                    </p>
                 </div>
             </div>
             <div class="modal-footer">
@@ -20,5 +28,5 @@
     </div>
 </div>
 <script type="text/javascript">
-    $('#two-factor-disabled').modal('toggle')
+    $('#verification-codes').modal('toggle')
 </script>

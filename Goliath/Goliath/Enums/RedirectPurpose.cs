@@ -6,9 +6,9 @@
     /// </summary>
     public enum RedirectPurpose
     {
+        None,
         // Authentication Panel
         RegisterSuccess,
-
         LogoutSuccess,
         VerifiedEmailSuccess,
         VerifiedEmailFailure,

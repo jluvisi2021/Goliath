@@ -41,7 +41,6 @@ namespace Goliath.Controllers
             return View();
         }
 
-
         [PreventDuplicateRequest]
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Profile(ProfileSettingsModel model)

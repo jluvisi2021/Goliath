@@ -66,9 +66,9 @@
                             </p>
                             <hr />
                             <div class="row justify-content-center">
-                                <button class="btn btn-primary">
+                                <a class="btn btn-primary" asp-action="Authenticate" asp-route-userAction="@TwoFactorAction.ENABLE_TWO_FACTOR" asp-route-requireCode="false">
                                     <i class="fas fa-lock fa-fw mr-1"></i>Enable SMS Two-Factor
-                                </button>
+                                </a>
                             </div>
                             <div class="row justify-content-center">
                                 <a href="javascript:history.go(-1);">Go Back</a>
