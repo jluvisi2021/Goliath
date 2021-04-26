@@ -350,6 +350,15 @@ namespace Goliath.Repository
             return true;
         }
 
+        public async Task<bool> TwoFactorCodeValidAsync(ApplicationUser user, string token)
+        {
+            if (user.TwoFactorEnabled && user.TwoFactorMethod != (int)TwoFactorMethod.None)
+            {
+                return token == "12345"; // Placeholder value
+            }
+            return false;
+        }
+
         public async Task<bool> DoesPhoneNumberExistAsync(string phone)
         {
             ApplicationUser existingEmail = await _context.Users.FirstOrDefaultAsync(u => u.PhoneNumber.ToLower() == phone.ToLower());

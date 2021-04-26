@@ -1,6 +1,4 @@
-﻿@model Goliath.Models.TwoFactorModifyModel
-
-@if (_signInManager.IsSignedIn(User))
+﻿@if (_signInManager.IsSignedIn(User))
 {
     var user = await _repository.GetUserFromContextAsync(User);
     int method = user.TwoFactorMethod;
@@ -30,32 +28,14 @@
                             <span class="h3">SMS Two-Factor Settings</span>
                             <hr />
                             <p class="text-muted">Last Two-Factor Update: @last2FAUpdate</p>
-                            
-                                
-                                <div class="ht-tm-element input-group mb-3">
-                                    <div class="input-group-prepend">
-                                        <button class="btn btn-outline-primary" type="button">
-                                            <i class="fas fa-lock fa-fw"></i>
-                                        </button>
-                                    </div>
-                                    <input placeholder="Two-Factor Code" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
-                                </div>
-                                <div class="ht-tm-element input-group mb-3">
-                                    <div class="input-group-prepend">
-                                        <button class="btn btn-outline-primary" type="button">
-                                            <i class="fas fa-lock fa-fw"></i>
-                                        </button>
-                                    </div>
-                                    <input placeholder="Password" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
-                                </div>
-                          
-                            <button type="button" class="btn btn-primary">
+
+                            <a asp-action="Authenticate" asp-route-userAction="@TwoFactorAction.DISABLE_TWO_FACTOR" asp-route-requireCode="true" class="btn btn-primary">
                                 <i class="fas fa-lock-open fa-fw mr-1"></i>Disable Two-Factor
-                            </button>
+                            </a>
                             <div class="pt-3 pb-3" />
-                            <button type="button" class="btn btn-primary">
+                            <a asp-action="Authenticate" asp-route-userAction="@TwoFactorAction.GET_VERIFICATION_CODES" asp-route-requireCode="true" class="btn btn-primary">
                                 <i class="fas fa-file fa-fw mr-1"></i>Get Verification Codes
-                            </button>
+                            </a>
                         </div>
                         <hr />
                         <div class="col-12">

@@ -1,5 +1,7 @@
 ﻿using Goliath.Attributes;
+using Goliath.Enums;
 using Goliath.Models;
+using Goliath.Repository;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -15,9 +17,10 @@ namespace Goliath.Controllers
     [Route("userpanel/2fa")]
     public class TwoFactorController : Controller
     {
-        public TwoFactorController()
+        private IAccountRepository _repository;
+        public TwoFactorController(IAccountRepository repository)
         {
-
+            _repository = repository;
         }
 
         /// <summary>
@@ -39,23 +42,72 @@ namespace Goliath.Controllers
         {
             return View();
         }
-        [Route("sms")]
+
         [HttpGet]
-        public IActionResult SetupSms2FA(TwoFactorModifyModel model)
+        [Route("authenticate-changes")]
+        public IActionResult Authenticate(TwoFactorAction userAction, string requireCode)
         {
+            if(userAction == TwoFactorAction.ERROR || !bool.TryParse(requireCode, out _))
+            {
+                return Content("We encountered an error. Please try again.");
+            }
+            else
+            {
+                return View(new TwoFactorAuthenticateRedirectModel()
+                {
+                    Action = userAction,
+                    TwoFactorCodeRequired = bool.Parse(requireCode)
+                });
+            }
+        }
+        [Route("authenticate-changes")]
+        [ValidateAntiForgeryToken]
+        [PreventDuplicateRequest]
+        [HttpPost]
+        public async Task<IActionResult> Authenticate(TwoFactorAuthenticateRedirectModel model)
+        {
+            // If the model has not been submitted yet.
+            if(!model.IsSubmitted)
+            {
+                return View(model);
+            }
+            var user = await _repository.GetUserFromContextAsync(User);
+            bool passwordValid = await _repository.IsPasswordValidAsync(user, model.Password);
+            bool twoFactorValid = false;
+            if (model.TwoFactorCodeRequired)
+            {
+                twoFactorValid = model.TwoFactorCode == "12345";
+            }
+            
+            switch(model.Action)
+            {
+                case TwoFactorAction.ENABLE_TWO_FACTOR:
+                    if(!passwordValid)
+                    {
+                        ModelState.AddModelError(string.Empty, "Invalid Password.");
+                        return View(model);
+                    }
+                    TempData["Redirect"] = RedirectPurpose.TwoFactorEnabled;
+                    return View("Index");
+                case TwoFactorAction.DISABLE_TWO_FACTOR:
+                    if (!passwordValid || !twoFactorValid)
+                    {
+                        ModelState.AddModelError(string.Empty, "Invalid Credentials.");
+                        return View(model);
+                    }
+                    TempData["Redirect"] = RedirectPurpose.TwoFactorDisabled;
+                    return View("Index");
+                case TwoFactorAction.GET_VERIFICATION_CODES:
+                    if (!passwordValid || !twoFactorValid)
+                    {
+                        ModelState.AddModelError(string.Empty, "Invalid Credentials.");
+                        return View(model);
+                    }
+                    TempData["Redirect"] = RedirectPurpose.VerificationCodes;
+                    return View("Index");
+            }
+
             return View(model);
-        }
-
-        [HttpPost]
-        public IActionResult DisableTwoFactor(TwoFactorModifyModel model)
-        {
-            return View("SetupSms2FA", model);
-        }
-
-        [HttpPost]
-        public IActionResult GetVerificationCodes(TwoFactorModifyModel model)
-        {
-            return View("SetupSms2FA", model);
         }
 
         /// <summary>

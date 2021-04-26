@@ -18,6 +18,10 @@
         Exception,
 
         // User Panel
-        SettingsUpdatedSuccess
+        SettingsUpdatedSuccess,
+
+        TwoFactorEnabled,
+        TwoFactorDisabled,
+        VerificationCodes
     }
 }

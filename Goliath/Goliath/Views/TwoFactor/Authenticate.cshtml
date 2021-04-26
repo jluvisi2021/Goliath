@@ -1,0 +1,64 @@
+﻿@model Goliath.Models.TwoFactorAuthenticateRedirectModel
+@if(_signInManager.IsSignedIn(User))
+            {
+<style type="text/css">
+    #background {
+        width: 500px;
+    }
+</style>
+<div class="container align-self-center mt-5 pb-5">
+    <div class="row justify-content-center">
+        <div id="background" class="bg-white p-5 rounded">
+
+            <div class="col-12">
+                <span class="h3">Authenticate</span>
+                <hr />
+                @if(ViewData.ModelState.IsValid)
+                {
+            <span class="text-muted">
+                Please verify your identity before completing this action.
+            </span>
+                }else{
+                <div class="text-danger text-left" asp-validation-summary="All"></div>
+                }
+            </div>
+            <hr />
+            <div class="col-12">
+
+                <form asp-action="Authenticate" asp-antiforgery="true">
+                    <input type="hidden" asp-for="Action" value="@Model?.Action" />
+                    <input type="hidden" asp-for="IsSubmitted" value="@true" />
+                    <input type="hidden" asp-for="TwoFactorCodeRequired" value="@Model?.TwoFactorCodeRequired" />
+                    @if (Model?.TwoFactorCodeRequired == true)
+                    {
+                        <div class="ht-tm-element input-group mb-3">
+                            <div class="input-group-prepend">
+                                <button class="btn btn-outline-primary" type="button">
+                                    <i class="fas fa-hashtag fa-fw"></i>
+                                </button>
+                            </div>
+                            <input asp-for="TwoFactorCode" type="password" placeholder="Two-Factor Code" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
+                        </div>
+                    }
+
+                    <div class="ht-tm-element input-group mb-3">
+                        <div class="input-group-prepend">
+                            <button class="btn btn-outline-primary" type="button">
+                                <i class="fas fa-lock fa-fw"></i>
+                            </button>
+                        </div>
+                        <input asp-for="Password" type="password" placeholder="Password" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        Submit
+                    </button>
+                    <a href="javascript:history.go(-1);" class="btn btn-primary">
+                        Go Back
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+                }

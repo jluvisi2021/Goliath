@@ -1,5 +1,4 @@
-﻿using Goliath.Enums;
-using Goliath.Models;
+﻿using Goliath.Models;
 using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 
@@ -10,26 +9,23 @@ namespace Goliath.Validators
     /// </summary>
     public class UserSettingsAttribute : ValidationAttribute
     {
-
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-
-                ProfileSettingsModel settings = (ProfileSettingsModel)validationContext.ObjectInstance;
-                if (!BackgroundColorValid(settings.BackgroundColor))
+            ProfileSettingsModel settings = (ProfileSettingsModel)validationContext.ObjectInstance;
+            if (!BackgroundColorValid(settings.BackgroundColor))
+            {
+                if (string.IsNullOrWhiteSpace(settings.BackgroundColor))
                 {
-                    if (string.IsNullOrWhiteSpace(settings.BackgroundColor))
-                    {
-                        return ValidationResult.Success;
-                    }
-                    return new ValidationResult("Input a valid background color.");
+                    return ValidationResult.Success;
                 }
-                if (string.IsNullOrWhiteSpace(settings.DarkThemeEnabled))
-                {
-                    return new ValidationResult("Invalid theme selection.");
-                }
+                return new ValidationResult("Input a valid background color.");
+            }
+            if (string.IsNullOrWhiteSpace(settings.DarkThemeEnabled))
+            {
+                return new ValidationResult("Invalid theme selection.");
+            }
 
-                return ValidationResult.Success;
-
+            return ValidationResult.Success;
         }
 
         private static bool EmailValid(string email)

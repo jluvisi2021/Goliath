@@ -28,6 +28,8 @@ namespace Goliath.Repository
 
         Task GenerateEmailConfirmationTokenAsync(ApplicationUser userModel, DeviceParser device);
 
+        Task<bool> TwoFactorCodeValidAsync(ApplicationUser user, string token);
+
         Task GenerateForgotPasswordTokenAsync(ApplicationUser userModel, DeviceParser device);
 
         Task GenerateNewEmailConfirmationTokenAsync(ApplicationUser userModel, DeviceParser device);
