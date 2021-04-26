@@ -1,11 +1,11 @@
-﻿@if (_signInManager.IsSignedIn(User))
-{
-
+﻿@{
     var user = await _repository.GetUserFromContextAsync(User);
     int method = user.TwoFactorMethod;
     bool accountSecure = user.PhoneNumberConfirmed && string.IsNullOrWhiteSpace(user.UnverifiedNewPhone) && user.EmailConfirmed && string.IsNullOrWhiteSpace(user.UnverifiedNewEmail);
     object redirectPurpose = TempData["Redirect"];
-    if (redirectPurpose != null)
+}
+
+    @if (redirectPurpose != null)
     {
         if (redirectPurpose.Equals((int)RedirectPurpose.TwoFactorEnabled))
         {
@@ -185,4 +185,3 @@
             </div>
         </div>
     </div>
-}

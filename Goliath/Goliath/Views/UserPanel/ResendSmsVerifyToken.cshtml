@@ -3,14 +3,13 @@
 @model Goliath.Models.ResendSmsVerifyTokenModel
 @{
     ViewData["Title"] = "Profile";
-    Layout = "_LoginRequired";
+    Layout = "~/Views/Shared/Layouts/_UserPanel.cshtml";
 }
 @*
     Displays whether or not the user has successfully received a token
     on their phone.
 *@
-@if (_signInManager.IsSignedIn(User))
-{
+
     <div id="outer">
         <div id="inner">
             @if (Model?.IsSuccess == true)
@@ -30,4 +29,3 @@
             }
         </div>
     </div>
-}

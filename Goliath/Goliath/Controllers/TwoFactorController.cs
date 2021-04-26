@@ -12,6 +12,7 @@ namespace Goliath.Controllers
     /// views are stored in userpanel.
     /// </summary>
     [Route("userpanel/2fa")]
+    [GoliathAuthorize("Profile")]
     public class TwoFactorController : Controller
     {
         private readonly IAccountRepository _repository;

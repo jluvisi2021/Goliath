@@ -31,16 +31,34 @@ namespace Goliath.Controllers
             _requestTable = requestTable;
         }
 
+        [HttpPost]
+        public IActionResult NotAuthenticated(string title)
+        {
+            return View(new NotAuthorizedModel()
+            {
+                Title = title
+            });
+        }
+
+        [HttpGet]
+        public IActionResult NotAuthenticated(NotAuthorizedModel model)
+        {
+            return View(model);
+        }
+
+        [GoliathAuthorize("Profile")]
         public IActionResult Index()
         {
             return View("Profile");
         }
 
+        [GoliathAuthorize("Profile")]
         public IActionResult Profile()
         {
             return View();
         }
 
+        [GoliathAuthorize("Profile")]
         [PreventDuplicateRequest]
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Profile(ProfileSettingsModel model)
@@ -162,12 +180,14 @@ namespace Goliath.Controllers
             return false;
         }
 
+        [GoliathAuthorize("Profile")]
         [Route("userpanel/verify-phone")]
         public IActionResult ConfirmPhoneNumber()
         {
             return View();
         }
 
+        [GoliathAuthorize("Profile")]
         [Route("userpanel/verify-phone")]
         [PreventDuplicateRequest]
         [HttpPost, ValidateAntiForgeryToken]
@@ -215,6 +235,7 @@ namespace Goliath.Controllers
         /// Manages the default view for resending sms verify tokens.
         /// </summary>
         /// <returns> </returns>
+        [GoliathAuthorize("Profile")]
         [Route("userpanel/resend-code")]
         public IActionResult ResendSmsVerifyToken()
         {
@@ -228,6 +249,7 @@ namespace Goliath.Controllers
         /// <param name="model"> </param>
         /// <returns> </returns>
         [HttpGet]
+        [GoliathAuthorize("Profile")]
         [Route("userpanel/resend-code")]
         public async Task<IActionResult> ResendSmsVerifyToken(ResendSmsVerifyTokenModel model)
         {
@@ -261,6 +283,7 @@ namespace Goliath.Controllers
         /// <param name="username"> </param>
         /// <returns> </returns>
         [HttpPost]
+        [GoliathAuthorize("Profile")]
         [Route("userpanel/resend-code")]
         public IActionResult ResendSmsVerifyToken(string username)
         {
@@ -278,6 +301,7 @@ namespace Goliath.Controllers
         /// <returns> </returns>
         public ActionResult GetModule(string partialName) => PartialView($"~/Views/UserPanel/{partialName}.cshtml");
 
+        [GoliathAuthorize("Profile")]
         [Route("logout")]
         public async Task<IActionResult> Logout()
         {
@@ -289,8 +313,10 @@ namespace Goliath.Controllers
             return RedirectToAction("Index", "Auth");
         }
 
+        [GoliathAuthorize("Database")]
         public IActionResult Database() => View();
 
+        [GoliathAuthorize("Utilities")]
         public IActionResult Utilities() => View();
 
         [ResponseCache(Duration = 14400, Location = ResponseCacheLocation.Any, NoStore = false)]

@@ -1,12 +1,13 @@
-﻿@if (_signInManager.IsSignedIn(User))
-{
+﻿@{
     var user = await _repository.GetUserFromContextAsync(User);
     int method = user.TwoFactorMethod;
     bool accountSecure = user.PhoneNumberConfirmed && user.EmailConfirmed && string.IsNullOrWhiteSpace(user.UnverifiedNewEmail) && string.IsNullOrWhiteSpace(user.UnverifiedNewPhone);
     string last2FAUpdate = string.IsNullOrWhiteSpace(user.TwoFactorUpdated) ? "Never" : user.TwoFactorUpdated;
 
+}
+
     @*Make sure account is secure.*@
-    if (!accountSecure)
+    @if (!accountSecure)
     {
         <partial name="_AccountNotSecure" />
     }
@@ -86,5 +87,3 @@
             </div>
         }
     }
-
-}

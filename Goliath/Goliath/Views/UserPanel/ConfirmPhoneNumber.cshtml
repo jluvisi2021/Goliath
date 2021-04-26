@@ -4,7 +4,7 @@
 @model Goliath.Models.VerifyPhoneNumberModel
 @{
     ViewData["Title"] = "Profile";
-    Layout = "_LoginRequired";
+    Layout = "~/Views/Shared/Layouts/_UserPanel.cshtml";
     var user = await _repository.GetUserFromContextAsync(User);
     //var userCanResend = await _requestTable.IsUserResendValidAsync(user.Id);
 }
@@ -17,8 +17,6 @@
 <!--Profile Scripts-->
 <script src="~/js/UserPanel/Profile/ProfileScript.js" asp-append-version="true"></script>
 <!------------------->
-@if (_signInManager.IsSignedIn(User))
-{
 
     @*Custom Style*@
     <style type="text/css">
@@ -95,5 +93,3 @@
             }
         </div>
     </div>
-
-}
