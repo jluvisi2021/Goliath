@@ -46,6 +46,9 @@ namespace Goliath.Models
         [MaxLength(22)] // "12/31/9999 12:59:59 PM"
         public string LastPasswordUpdate { get; set; }
 
+        [MaxLength(22)]
+        public string TwoFactorUpdated { get; set; }
+
         /// <summary>
         /// Stores a JSON that can be compiled into a list. <br /> The last 10 logins on the
         /// account, their IPs, and the time of occurrence.

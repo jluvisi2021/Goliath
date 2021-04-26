@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Goliath.Attributes;
+using Goliath.Models;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,6 +38,24 @@ namespace Goliath.Controllers
         public IActionResult SetupSms2FA()
         {
             return View();
+        }
+        [Route("sms")]
+        [HttpGet]
+        public IActionResult SetupSms2FA(TwoFactorModifyModel model)
+        {
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult DisableTwoFactor(TwoFactorModifyModel model)
+        {
+            return View("SetupSms2FA", model);
+        }
+
+        [HttpPost]
+        public IActionResult GetVerificationCodes(TwoFactorModifyModel model)
+        {
+            return View("SetupSms2FA", model);
         }
 
         /// <summary>

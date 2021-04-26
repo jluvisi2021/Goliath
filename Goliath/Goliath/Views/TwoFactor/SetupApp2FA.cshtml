@@ -3,6 +3,7 @@
     var user = await _repository.GetUserFromContextAsync(User);
     int method = user.TwoFactorMethod;
     bool accountSecure = user.PhoneNumberConfirmed && user.EmailConfirmed && string.IsNullOrWhiteSpace(user.UnverifiedNewEmail) && string.IsNullOrWhiteSpace(user.UnverifiedNewPhone);
+    string last2FAUpdate = string.IsNullOrWhiteSpace(user.TwoFactorUpdated) ? "Never" : user.TwoFactorUpdated;
 
     @*Make sure account is secure.*@
     if (!accountSecure)
@@ -21,8 +22,30 @@
         {
             <div class="container align-self-center mt-5 pb-5">
                 <div class="row justify-content-center">
-                    <div class="col-12">
-                        <h1>Configure Two Factor</h1>
+                    <div class="bg-white p-5 rounded">
+                        <div class="col-12">
+
+                            <span class="h3">App Two-Factor Settings</span>
+                            <hr />
+                            <p class="text-muted">Last Two-Factor Update: @last2FAUpdate</p>
+                            
+                            <button type="button" class="btn btn-primary">
+                                <i class="fas fa-lock-open fa-fw mr-1"></i>Disable Two-Factor
+                            </button>
+                            <div class="pt-3 pb-3" />
+                            <button type="button" class="btn btn-primary">
+                                <i class="fas fa-file fa-fw mr-1"></i>Get Verification Codes
+                            </button>
+                        </div>
+                        <hr />
+                        <div class="col-12">
+                            <div class="row pt-1 pb-1">
+                                <a href="#!">Learn more about Mobile App Two-Factor Authentication.</a>
+                            </div>
+                            <div class="row pt-1">
+                                <a href="#!">Learn about how Two-Factor Authentication works.</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -32,8 +55,32 @@
         {
             <div class="container align-self-center mt-5 pb-5">
                 <div class="row justify-content-center">
-                    <div class="col-12">
-                        <h1>Setup Two Factor</h1>
+                    <div class="bg-white p-5 rounded">
+
+                        <div class="col-12">
+                            <h1>Setup SMS Two-Factor</h1>
+                            <hr />
+                            <p class="text-muted">
+                                When enabling two-factor authentication a code will be required
+                                <br />upon each time you login or a password is required.
+                            </p>
+                            <hr />
+                            <div class="row justify-content-center">
+                                <button class="btn btn-primary">
+                                    <i class="fas fa-lock fa-fw mr-1"></i>Enable SMS Two-Factor
+                                </button>
+                            </div>
+                            <div class="row justify-content-center">
+                                <a href="javascript:history.go(-1);">Go Back</a>
+                            </div>
+
+                            <hr />
+                            <div class="alert alert-warning" role="alert">
+                                <a href="#!" class="alert-link">
+                                    <i class="fas fa-user-lock fa-fw mr-1"></i>Please view Goliath's official warning before enabling two-factor authentication.
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
