@@ -19,14 +19,16 @@
             <h4 class="alert-heading">Enabled <i class="fas fa-user-lock ml-1"></i></h4>
             Two-Factor authentication is currently enabled.
             <br />
-            <a asp-controller="TwoFactor" asp-action="Index" class="btn btn-danger mb-2 mt-2">Click to Disable</a>
+            <a asp-controller="TwoFactor" asp-action="Index" class="btn btn-secondary mb-2 mt-2">
+                <i class="fas fa-edit fa-fw mr-1"></i>Configure
+            </a>
             <br />
             <a href="#!" class="alert-link">Learn more about Two-Factor Authentication.</a>
         </p>
     </div>
-    <button class="btn btn-primary">
+    <a asp-controller="TwoFactor" asp-action="@(user.TwoFactorMethod == (int)TwoFactorMethod.SmsVerify ? "SetupSms2FA" : "SetupApp2FA")" class="btn btn-primary">
         <i class="fas fa-file mr-2"></i>Recover 2FA Codes
-    </button>
+    </a>
 }
 else
 {
@@ -35,7 +37,8 @@ else
             <h4 class="alert-heading">Disabled</h4>
             Two-Factor authentication is currently disabled.
             <br />
-            <a asp-controller="TwoFactor" asp-action="Index" class="btn btn-danger mb-2 mt-2">Click to Enable</a>
+            <a asp-controller="TwoFactor" asp-action="Index" class="btn btn-danger mb-2 mt-2">
+                <i class="fas fa-toggle-on fa-fw mr-1"></i>Enable</a>
             <br />
             <a href="#!" class="alert-link">Learn more about Two-Factor Authentication.</a>
         </p>

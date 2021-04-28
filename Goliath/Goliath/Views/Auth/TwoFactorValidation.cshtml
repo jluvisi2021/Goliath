@@ -1,0 +1,58 @@
+﻿@*
+    Validate a two factor code for a user login.
+*@
+@using Goliath.Models
+@model TwoFactorAuthenticateModel 
+@inject Goliath.Repository.IAccountRepository _repository;
+@{
+    ViewData["Title"] = "Two-Factor";
+    ApplicationUser user = await _repository.GetUserByNameAsync(Model.InputUsername);
+}
+
+@section RightContainerHeader {
+    <h3 class="display-4">Two-Factor</h3>
+    <p class="text-muted mb-4">Enter the two factor verification code sent to your device or from a two-factor app.</p>
+}
+
+    @if (user?.TwoFactorEnabled == false || user == null)
+    {
+        <hr /><p class="text-danger">You cannot access this page because two factor authentication is not enabled and/or your account could not be found.</p> }
+    else
+    {
+        <hr />
+        <div class="text-danger" asp-validation-summary="All"></div>
+        <form asp-action="TwoFactorValidation" asp-antiforgery="true">
+            <input asp-for="InputUsername" type="hidden" value="@Model.InputUsername" />
+            <input asp-for="UserMethod" type="hidden" value="@Model.UserMethod" />
+
+            <div class="ht-tm-element input-group mb-3">
+                <div class="input-group-prepend">
+                    <button class="btn btn-outline-primary" type="button">
+                        <i class="fas fa-unlock fa-fw"></i>
+                    </button>
+                </div>
+                <input asp-for="InputTwoFactorCode" placeholder="Two-Factor Code" required="" class="form-control shadow-sm px-2 rounded-right text-primary" />
+            </div>
+            <div class="custom-control custom-checkbox mb-3">
+                <input asp-for="RememberMe" id="rememberMe2fa" type="checkbox" class="custom-control-input">
+                <label for="rememberMe2fa" class="custom-control-label" data-toggle="tooltip" data-placement="right" title="Click for us to remember your account on this browser.">Remember Me</label>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+        <hr />
+        <span class="text-muted font-italic">(SMS Only)</span>
+        <br />
+        <a asp-controller="TwoFactor" asp-action="SendSmsCode">Resend Code</a>
+        <hr />
+        <p class="text-muted">
+            Cannot access your two-factor authentication code?
+            <br />
+            <a href="#!">Find out what to do next.</a>
+        </p>
+        <script>
+
+            console.log('@Model.InputUsername');
+
+        </script>
+    }

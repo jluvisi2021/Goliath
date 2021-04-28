@@ -3,6 +3,7 @@ using Goliath.Enums;
 using Goliath.Models;
 using Goliath.Repository;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Threading.Tasks;
 
 namespace Goliath.Controllers
@@ -46,7 +47,7 @@ namespace Goliath.Controllers
         [Route("authenticate-changes")]
         public IActionResult Authenticate(TwoFactorAction userAction, string requireCode)
         {
-            if (userAction == TwoFactorAction.ERROR || !bool.TryParse(requireCode, out _))
+            if (userAction == TwoFactorAction.Error || !bool.TryParse(requireCode, out _))
             {
                 return Content("We encountered an error. Please try again.");
             }
@@ -66,12 +67,25 @@ namespace Goliath.Controllers
         [HttpPost]
         public async Task<IActionResult> Authenticate(TwoFactorAuthenticateRedirectModel model)
         {
+
             // If the model has not been submitted yet.
             if (!model.IsSubmitted)
             {
                 return View(model);
             }
+            if(!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            
             ApplicationUser user = await _repository.GetUserFromContextAsync(User);
+
+            if (model.Action != TwoFactorAction.EnableTwoFactor && !user.TwoFactorEnabled)
+            {
+                ModelState.AddModelError(string.Empty, "You must have two factor enabled to do this.");
+                return View(model);
+            }
+
             bool passwordValid = await _repository.IsPasswordValidAsync(user, model.Password);
             bool twoFactorValid = false;
             if (model.TwoFactorCodeRequired)
@@ -81,27 +95,31 @@ namespace Goliath.Controllers
 
             switch (model.Action)
             {
-                case TwoFactorAction.ENABLE_TWO_FACTOR:
+                case TwoFactorAction.EnableTwoFactor:
                     if (!passwordValid)
                     {
                         ModelState.AddModelError(string.Empty, "Invalid Password.");
                         return View(model);
                     }
+                    await _repository.SetTwoFactorEnabledAsync(user, TwoFactorMethod.SmsVerify);
 
                     TempData["Redirect"] = RedirectPurpose.TwoFactorEnabled;
+                    TempData["RecoveryCodes"] = JsonConvert.SerializeObject(await _repository.GenerateUserRecoveryCodesAsync(user));
                     return RedirectToAction("Index");
 
-                case TwoFactorAction.DISABLE_TWO_FACTOR:
+                case TwoFactorAction.DisableTwoFactor:
                     if (!passwordValid || !twoFactorValid)
                     {
                         ModelState.AddModelError(string.Empty, "Invalid Credentials.");
                         return View(model);
                     }
 
+                    await _repository.SetTwoFactorDisabledAsync(user);
+
                     TempData["Redirect"] = RedirectPurpose.TwoFactorDisabled;
                     return RedirectToAction("Index");
 
-                case TwoFactorAction.GET_VERIFICATION_CODES:
+                case TwoFactorAction.GetVerificationCodes:
                     if (!passwordValid || !twoFactorValid)
                     {
                         ModelState.AddModelError(string.Empty, "Invalid Credentials.");
@@ -109,6 +127,7 @@ namespace Goliath.Controllers
                     }
 
                     TempData["Redirect"] = RedirectPurpose.VerificationCodes;
+                    TempData["RecoveryCodes"] = JsonConvert.SerializeObject(await _repository.GenerateUserRecoveryCodesAsync(user));
                     return RedirectToAction("Index");
             }
 

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -59,6 +60,7 @@ namespace Goliath.Repository
             _config = config;
             _twilio = twilio;
             _context = context;
+
         }
 
         /// <summary>
@@ -350,11 +352,66 @@ namespace Goliath.Repository
             return true;
         }
 
+        public async Task SetTwoFactorEnabledAsync(ApplicationUser user, TwoFactorMethod method)
+        {
+            user.TwoFactorMethod = (int)method;
+            user.TwoFactorUpdated = DateTime.UtcNow.ToString();
+            await _userManager.SetTwoFactorEnabledAsync(user, true);
+            await _userManager.UpdateAsync(user);
+        }
+
+        public async Task SetTwoFactorDisabledAsync(ApplicationUser user)
+        {
+            user.TwoFactorMethod = (int)TwoFactorMethod.None;
+            user.TwoFactorUpdated = DateTime.UtcNow.ToString();
+            await _userManager.SetTwoFactorEnabledAsync(user, false);
+            await _userManager.UpdateAsync(user);
+        }
+
+        public async Task<SignInResult> AuthorizeUserTwoFactorAsync(ApplicationUser user, string token)
+        {
+            return await _signInManager.TwoFactorSignInAsync(TokenOptions.DefaultPhoneProvider, token, false, false);
+        }
+
+        public async Task<SignInResult> AuthorizeUserTwoFactorAsync(ApplicationUser user, string token, bool rememberMe)
+        {
+            return await _signInManager.TwoFactorSignInAsync(TokenOptions.DefaultPhoneProvider, token, rememberMe, false);
+        }
+
+        public async Task SendTwoFactorCodeSms(ApplicationUser user)
+        {
+            string code = await _userManager.GenerateTwoFactorTokenAsync(user, TokenOptions.DefaultPhoneProvider);
+            await _twilio.SendSmsAsync(new SMSTextModel()
+            {
+                Message = $"Your Two-Factor Code is: {code}.",
+                To = user.PhoneNumber
+            });
+        }
+        public async Task<List<string>> GenerateUserRecoveryCodesAsync(ApplicationUser user)
+        {
+            return (await _userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 10)).ToList();
+        }
+
+        public async Task<int> GetUserRecoveryCodeAmountAsync(ApplicationUser user)
+        {
+            return await _userManager.CountRecoveryCodesAsync(user);
+        }
+
+        public async Task<IdentityResult> RedeemRecoveryCodeAsync(ApplicationUser user, string code)
+        {
+            return await _userManager.RedeemTwoFactorRecoveryCodeAsync(user, code);
+        }
+
+        public async Task GenerateTwoFactorCode(ApplicationUser user)
+        {
+            await _userManager.GenerateTwoFactorTokenAsync(user, TokenOptions.DefaultPhoneProvider);
+        }
+
         public async Task<bool> TwoFactorCodeValidAsync(ApplicationUser user, string token)
         {
             if (user.TwoFactorEnabled && user.TwoFactorMethod != (int)TwoFactorMethod.None)
             {
-                return token == "12345"; // Placeholder value
+                return await _userManager.VerifyTwoFactorTokenAsync(user, TokenOptions.DefaultPhoneProvider, token);
             }
             return false;
         }

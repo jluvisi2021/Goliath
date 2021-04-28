@@ -37,7 +37,7 @@ namespace Goliath.Helper
             {
                 case PrintType.Error:
                     System.Diagnostics.Debug.WriteLine("!-------------------------!");
-                    System.Diagnostics.Debug.WriteLine($"ERROR: {data}");
+                    System.Diagnostics.Debug.WriteLine($"Error: {data}");
                     System.Diagnostics.Debug.WriteLine("!-------------------------!");
                     return;
 

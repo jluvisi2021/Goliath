@@ -114,7 +114,7 @@ namespace Goliath.Controllers
             }
             else if (result.RequiresTwoFactor)
             {
-                ModelState.AddModelError(string.Empty, "You must login through 2FA.");
+                return RedirectToAction(nameof(TwoFactorValidation), new { userName = signInModel.Username });
             }
             else
             {
@@ -125,6 +125,84 @@ namespace Goliath.Controllers
             _captcha.DeleteCaptchaCookie();
             // Return view with errors.
             return View(signInModel);
+        }
+
+        [Route("validate")]
+        public IActionResult TwoFactorValidation()
+        {
+            return View();
+        }
+        [Route("validate")]
+        [HttpGet]
+        public async Task<IActionResult> TwoFactorValidation(string userName)
+        {
+            ViewData["ButtonID"] = ButtonID.Login;
+            if(string.IsNullOrWhiteSpace(userName))
+            {
+                //TODO: Add notification.
+                return RedirectToActionPermanent(nameof(Login));
+            }
+            var user = await _accountRepository.GetUserByNameAsync(userName);
+            if(user == null)
+            {
+                //TODO: Add notification
+                return RedirectToActionPermanent(nameof(Login));
+            }
+            if(user.TwoFactorMethod == (int)TwoFactorMethod.SmsVerify)
+            {
+                await _accountRepository.SendTwoFactorCodeSms(user);
+            }
+            return View(new TwoFactorAuthenticateModel()
+            {
+                InputUsername = userName,
+                UserMethod = user.TwoFactorMethod == (int)TwoFactorMethod.SmsVerify ? TwoFactorMethod.SmsVerify : TwoFactorMethod.MobileAppVerify,
+            });
+        }
+
+        [Route("validate")]
+        [PreventDuplicateRequest]
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> TwoFactorValidation(TwoFactorAuthenticateModel model)
+        {
+            if(!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            var user = await _accountRepository.GetUserByNameAsync(model.InputUsername);
+            if(model.UserMethod == TwoFactorMethod.SmsVerify)
+            {
+                if(await _accountRepository.TwoFactorCodeValidAsync(user, model.InputTwoFactorCode))
+                {
+                    var result = await _accountRepository.AuthorizeUserTwoFactorAsync(user, model.InputTwoFactorCode, model.RememberMe);
+
+                    if (result.Succeeded)
+                    {
+                        // Store the fact that the CAPTCHA was completed successfully.
+                        await _captcha.CacheNewCaptchaValidateAsync();
+                        // Change the time of last login.
+                        await _accountRepository.UpdateLastLoginAsync(user);
+                        // Redirect
+                        return RedirectToAction("Index", "UserPanel");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Bad Login. Try again later.");
+                        return View(model);
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Invalid Two-Factor Code.");
+                    return View(model);
+                }
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Is an app.");
+                return View(model);
+                // Is an app.
+            }
+            return View(model);
         }
 
         [Route("register/goliath")]

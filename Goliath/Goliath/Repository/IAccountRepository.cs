@@ -1,4 +1,5 @@
-﻿using Goliath.Helper;
+﻿using Goliath.Enums;
+using Goliath.Helper;
 using Goliath.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
@@ -29,6 +30,21 @@ namespace Goliath.Repository
         Task GenerateEmailConfirmationTokenAsync(ApplicationUser userModel, DeviceParser device);
 
         Task<bool> TwoFactorCodeValidAsync(ApplicationUser user, string token);
+
+        Task GenerateTwoFactorCode(ApplicationUser user);
+        Task<SignInResult> AuthorizeUserTwoFactorAsync(ApplicationUser user, string token);
+        Task<SignInResult> AuthorizeUserTwoFactorAsync(ApplicationUser user, string token, bool rememberMe);
+        Task SendTwoFactorCodeSms(ApplicationUser user);
+
+        Task<List<string>> GenerateUserRecoveryCodesAsync(ApplicationUser user);
+
+        Task SetTwoFactorDisabledAsync(ApplicationUser user);
+
+        Task SetTwoFactorEnabledAsync(ApplicationUser user, TwoFactorMethod method);
+
+        Task<int> GetUserRecoveryCodeAmountAsync(ApplicationUser user);
+
+        Task<IdentityResult> RedeemRecoveryCodeAsync(ApplicationUser user, string code);
 
         Task GenerateForgotPasswordTokenAsync(ApplicationUser userModel, DeviceParser device);
 

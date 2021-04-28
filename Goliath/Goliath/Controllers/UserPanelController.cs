@@ -40,6 +40,7 @@ namespace Goliath.Controllers
             });
         }
 
+        [Route("authorize")]
         [HttpGet]
         public IActionResult NotAuthenticated(NotAuthorizedModel model)
         {
@@ -117,8 +118,18 @@ namespace Goliath.Controllers
             {
                 if (int.TryParse(model.LogoutThreshold, out int num))
                 {
-                    hasChanged = true;
-                    goliathUser.LogoutThreshold = num;
+                    if(num >= 0)
+                    {
+                        hasChanged = true;
+                        goliathUser.LogoutThreshold = num;
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Logout threshold must be greater than one.");
+                        _captcha.DeleteCaptchaCookie();
+                        return View(model);
+                    }
+                    
                 }
                 else
                 {
@@ -195,7 +206,8 @@ namespace Goliath.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
+                ModelState.Clear();
+                return View();
             }
             if (!int.TryParse(model.Token, out _))
             {

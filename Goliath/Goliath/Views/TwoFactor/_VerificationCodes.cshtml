@@ -1,4 +1,5 @@
-﻿<div class="modal fade" id="verification-codes" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-hidden="true">
+﻿@using Newtonsoft.Json 
+<div class="modal fade" id="verification-codes" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -13,11 +14,15 @@
                     <p>
                         <span class="text-muted">Each two-factor code can be used only one time.</span>
                         <hr />
-                        100-000
-                        <br />
-                        222-877
-                        <br />
-                        ...
+                        @{
+                            List<string> codes = JsonConvert.DeserializeObject<List<string>>((string)TempData["RecoveryCodes"]);
+                        }
+                        @foreach (string s in codes)
+                        {
+                            <br />
+                            @s
+                            <br />
+                        }
                     </p>
                 </div>
             </div>

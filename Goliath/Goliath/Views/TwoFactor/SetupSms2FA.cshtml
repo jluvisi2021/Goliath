@@ -6,84 +6,86 @@
 
 }
 
-    @*Make sure account is secure.*@
-    @if (!accountSecure)
+@*Make sure account is secure.*@
+@if (!accountSecure)
+{
+    <partial name="_AccountNotSecure" />
+}
+else
+{
+    @*Show Error Message. Only one 2FA active at a time.*@
+    if (user.TwoFactorMethod == (int)TwoFactorMethod.MobileAppVerify)
     {
-        <partial name="_AccountNotSecure" />
+        <partial name="_BadTwoFactorMethod" />
     }
-    else
+    @*Show Configure Message. You can configure this 2FA option here.*@
+    else if (user.TwoFactorMethod == (int)TwoFactorMethod.SmsVerify)
     {
-        @*Show Error Message. Only one 2FA active at a time.*@
-        if (user.TwoFactorMethod == (int)TwoFactorMethod.MobileAppVerify)
-        {
-            <partial name="_BadTwoFactorMethod" />
-        }
-        @*Show Configure Message. You can configure this 2FA option here.*@
-        else if (user.TwoFactorMethod == (int)TwoFactorMethod.SmsVerify)
-        {
-            <div class="container align-self-center mt-5 pb-5">
-                <div class="row justify-content-center">
-                    <div class="bg-white p-5 rounded">
-                        <div class="col-12">
+        <div class="container align-self-center mt-5 pb-5">
+            <div class="row justify-content-center">
+                <div class="bg-white p-5 rounded">
+                    <div class="col-12">
 
-                            <span class="h3">SMS Two-Factor Settings</span>
-                            <hr />
-                            <p class="text-muted">Last Two-Factor Update: @last2FAUpdate</p>
-
-                            <a asp-action="Authenticate" asp-route-userAction="@TwoFactorAction.DISABLE_TWO_FACTOR" asp-route-requireCode="true" class="btn btn-primary">
-                                <i class="fas fa-lock-open fa-fw mr-1"></i>Disable Two-Factor
-                            </a>
-                            <div class="pt-3 pb-3" />
-                            <a asp-action="Authenticate" asp-route-userAction="@TwoFactorAction.GET_VERIFICATION_CODES" asp-route-requireCode="true" class="btn btn-primary">
-                                <i class="fas fa-file fa-fw mr-1"></i>Get Verification Codes
-                            </a>
-                        </div>
+                        <span class="h3">SMS Two-Factor Settings</span>
                         <hr />
-                        <div class="col-12">
-                            <div class="row pb-1">
-                                <a href="#!">Learn more about SMS Two-Factor Authentication.</a>
-                            </div>
-                            <div class="row pt-1">
-                                <a href="#!">Learn about how Two-Factor Authentication works.</a>
-                            </div>
+                        <p class="text-muted">Last Two-Factor Update: @last2FAUpdate</p>
+
+                        <a asp-action="Authenticate" asp-route-userAction="@TwoFactorAction.DisableTwoFactor" asp-route-requireCode="true" class="btn btn-primary">
+                            <i class="fas fa-lock-open fa-fw mr-1"></i>Disable Two-Factor
+                        </a>
+                        <div class="pt-3 pb-3" />
+                        <a asp-action="Authenticate" asp-route-userAction="@TwoFactorAction.GetVerificationCodes" asp-route-requireCode="true" class="btn btn-primary">
+                            <i class="fas fa-file fa-fw mr-1"></i>Get Verification Codes
+                        </a>
+                        <div class="pt-3 pb-3" />
+                        <a asp-action="Index">Go Back</a>
+                    </div>
+                    <hr />
+                    <div class="col-12">
+                        <div class="row pb-1">
+                            <a href="#!">Learn more about SMS Two-Factor Authentication.</a>
+                        </div>
+                        <div class="row pt-1">
+                            <a href="#!">Learn about how Two-Factor Authentication works.</a>
                         </div>
                     </div>
                 </div>
             </div>
-        }
-        @*Show Setup Message. You can setup your 2 factor authentication.*@
-        else if (user.TwoFactorMethod == (int)TwoFactorMethod.None)
-        {
-            <div class="container align-self-center mt-5 pb-5">
-                <div class="row justify-content-center">
-                    <div class="bg-white p-5 rounded">
-
-                        <div class="col-12">
-                            <h1>Setup SMS Two-Factor</h1>
-                            <hr />
-                            <p class="text-muted">
-                                When enabling two-factor authentication a code will be required
-                                <br />upon each time you login or a password is required.
-                            </p>
-                            <hr />
-                            <div class="row justify-content-center">
-                                <a class="btn btn-primary" asp-action="Authenticate" asp-route-userAction="@TwoFactorAction.ENABLE_TWO_FACTOR" asp-route-requireCode="false">
-                                    <i class="fas fa-lock fa-fw mr-1"></i>Enable SMS Two-Factor
-                                </a>
-                            </div>
-                            <div class="row justify-content-center">
-                                <a href="javascript:history.go(-1);">Go Back</a>
-                            </div>
-
-                            <hr />
-                            <div class="alert alert-warning" role="alert">
-                                <a href="#!" class="alert-link">
-                                    <i class="fas fa-user-lock fa-fw mr-1"></i>Please view Goliath's official warning before enabling two-factor authentication.
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        }
+        </div>
     }
+    @*Show Setup Message. You can setup your 2 factor authentication.*@
+    else if (user.TwoFactorMethod == (int)TwoFactorMethod.None)
+    {
+        <div class="container align-self-center mt-5 pb-5">
+            <div class="row justify-content-center">
+                <div class="bg-white p-5 rounded">
+
+                    <div class="col-12">
+                        <h1>Setup SMS Two-Factor</h1>
+                        <hr />
+                        <p class="text-muted">
+                            When enabling two-factor authentication a code will be required
+                            <br />upon each time you login or a password is required.
+                        </p>
+                        <hr />
+                        <div class="row justify-content-center">
+                            <a class="btn btn-primary" asp-action="Authenticate" asp-route-userAction="@TwoFactorAction.EnableTwoFactor" asp-route-requireCode="false">
+                                <i class="fas fa-lock fa-fw mr-1"></i>Enable SMS Two-Factor
+                            </a>
+                        </div>
+                        <div class="row justify-content-center">
+                            <a href="javascript:history.go(-1);">Go Back</a>
+                        </div>
+
+                        <hr />
+                        <div class="alert alert-warning" role="alert">
+                            <a href="#!" class="alert-link">
+                                <i class="fas fa-user-lock fa-fw mr-1"></i>Please view Goliath's official warning before enabling two-factor authentication.
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}

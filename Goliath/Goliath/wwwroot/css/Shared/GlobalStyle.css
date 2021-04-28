@@ -27,6 +27,7 @@
 
 /*Specific values for the bottom footer.*/
 #footer {
+    cursor: pointer;
     bottom: 0;
     height: 3.5rem;
     position: fixed;

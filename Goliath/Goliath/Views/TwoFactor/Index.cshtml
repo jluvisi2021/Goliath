@@ -5,81 +5,90 @@
     object redirectPurpose = TempData["Redirect"];
 }
 
-    @if (redirectPurpose != null)
+@if (redirectPurpose != null)
+{
+    if (redirectPurpose.Equals((int)RedirectPurpose.TwoFactorEnabled))
     {
-        if (redirectPurpose.Equals((int)RedirectPurpose.TwoFactorEnabled))
-        {
-            <partial name="_TwoFactorEnabled" />
-        }
-        if (redirectPurpose.Equals((int)RedirectPurpose.TwoFactorDisabled))
-        {
-            <partial name="_TwoFactorDisabled" />
-        }
-        if (redirectPurpose.Equals((int)RedirectPurpose.VerificationCodes))
-        {
-            <partial name="_VerificationCodes" />
-        }
+        <partial name="_TwoFactorEnabled" />
     }
+    if (redirectPurpose.Equals((int)RedirectPurpose.TwoFactorDisabled))
+    {
+        <partial name="_TwoFactorDisabled" />
+    }
+    if (redirectPurpose.Equals((int)RedirectPurpose.VerificationCodes))
+    {
+        <partial name="_VerificationCodes" />
+    }
+}
 
-    <div class="container align-self-center mt-5 pb-5">
-        <div class="row justify-content-center">
+<div class="container align-self-center mt-5 pb-5">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <span class="h2 font-weight-lighter">
+                <i class="fas fa-lock fa-fw"></i>
+                Configure Two-Factor Authentication
+                <i class="fas fa-lock fa-fw"></i>
+            </span>
+        </div>
+    </div>
+    <hr />
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <span class="h5 font-weight-lighter text-muted font-italic">
+                Note that you can only have one two factor authentication method active at a time.
+            </span>
+        </div>
+    </div>
+
+    <hr />
+    @if (!accountSecure)
+    {
+        <div class="row text-left">
             <div class="col-12">
-                <span class="h2 font-weight-lighter">
-                    <i class="fas fa-lock fa-fw"></i>
-                    Configure Two-Factor Authentication
-                    <i class="fas fa-lock fa-fw"></i>
-                </span>
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <strong><i class="fas fa-exclamation-triangle fa-fw mr-1"></i>You can only enable two-factor authentication with a confirmed phone number and email.</strong>
+                </div>
             </div>
         </div>
-        <hr />
-        <div class="row justify-content-center">
-            <div class="col-12">
-                <span class="h5 font-weight-lighter text-muted font-italic">
-                    Note that you can only have one two factor authentication method active at a time.
-                </span>
-            </div>
-        </div>
-
-        <hr />
-        @if (!accountSecure)
-        {
-            <div class="row text-left">
-                <div class="col-12">
-                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">×</span>
+    }
+    <div class="row justify-content-center">
+        <div class="col-6">
+            <div class="card text-center">
+                <div class="card-header">
+                    Setup Phone Authentication
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title">SMS Text Authentication</h4>
+                    <p class="card-text">
+                        Setup two-factor authentication on Goliath by using a text service.
+                        Each time your password is required on Goliath you
+                        will also be required to enter a code
+                        which will be sent to your mobile device.
+                        We recommend using the mobile app two-factor method instead
+                        as it is a more convenient and potentially secure way
+                        of utilizing two-factor authentication.
+                    </p>
+                    <hr />
+                    @if (method == (int)TwoFactorMethod.SmsVerify)
+                    {
+                        <a asp-action="SetupSms2FA" class="btn btn-secondary">
+                            <i class="fas fa-cog fa-fw"></i>
+                            Configure
+                        </a>
+                    }
+                    else if (method == (int)TwoFactorMethod.MobileAppVerify)
+                    {
+                        <button type="button" class="btn btn-primary" disabled>
+                            <i class="fas fa-plus-square fa-fw"></i>
+                            Setup
                         </button>
-                        <strong><i class="fas fa-exclamation-triangle fa-fw mr-1"></i>You can only enable two-factor authentication with a confirmed phone number and email.</strong>
-                    </div>
-                </div>
-            </div>
-        }
-        <div class="row justify-content-center">
-            <div class="col-6">
-                <div class="card text-center">
-                    <div class="card-header">
-                        Setup Phone Authentication
-                    </div>
-                    <div class="card-body">
-                        <h4 class="card-title">SMS Text Authentication</h4>
-                        <p class="card-text">
-                            Setup two-factor authentication on Goliath by using a text service.
-                            Each time your password is required on Goliath you
-                            will also be required to enter a code
-                            which will be sent to your mobile device.
-                            We recommend using the mobile app two-factor method instead
-                            as it is a more convenient and potentially secure way
-                            of utilizing two-factor authentication.
-                        </p>
-                        <hr />
-                        @if (method == (int)TwoFactorMethod.SmsVerify)
-                        {
-                            <a asp-action="SetupSms2FA" class="btn btn-secondary">
-                                <i class="fas fa-cog fa-fw"></i>
-                                Configure
-                            </a>
-                        }
-                        else if (method == (int)TwoFactorMethod.MobileAppVerify)
+                    }
+                    else
+                    {
+                        if (!accountSecure)
                         {
                             <button type="button" class="btn btn-primary" disabled>
                                 <i class="fas fa-plus-square fa-fw"></i>
@@ -88,100 +97,91 @@
                         }
                         else
                         {
-                            if (!accountSecure)
-                            {
-                                <button type="button" class="btn btn-primary" disabled>
-                                    <i class="fas fa-plus-square fa-fw"></i>
-                                    Setup
-                                </button>
-                            }
-                            else
-                            {
-                                <a asp-action="SetupSms2FA" class="btn btn-primary">
-                                    <i class="fas fa-plus-square fa-fw"></i>
-                                    Setup
-                                </a>
-                            }
-
-                        }
-                    </div>
-                </div>
-            </div>
-            <div class="col-6">
-                <div class="card text-center">
-                    <div class="card-header">
-                        Setup App Authentication
-                    </div>
-                    <div class="card-body">
-                        <h4 class="card-title">Mobile App Authentication</h4>
-                        <p class="card-text">
-                            Setup two-factor authentication on Goliath by using a secure
-                            mobile app.
-                            Download a secure two-factor authentication app from your phone's store
-                            (Such as <a href="#!">Microsoft Authenticator</a>) and then input the
-                            code that Goliath will give you. Every time your password is required on
-                            Goliath you will enter the code in the app that is displayed under "Goliath".
-                        </p>
-                        <hr />
-                        @if (method == (int)TwoFactorMethod.MobileAppVerify)
-                        {
-                            <a asp-action="SetupApp2FA" class="btn btn-secondary">
-                                <i class="fas fa-cog fa-fw"></i>
-                                Configure
-                            </a>
-                        }
-                        else if (method == (int)TwoFactorMethod.SmsVerify)
-                        {
-                            <button type="button" class="btn btn-primary" disabled>
+                            <a asp-action="SetupSms2FA" class="btn btn-primary">
                                 <i class="fas fa-plus-square fa-fw"></i>
                                 Setup
-                            </button>
+                            </a>
                         }
-                        else
-                        {
-                            if (!accountSecure)
-                            {
-                                <button type="button" class="btn btn-primary" disabled>
-                                    <i class="fas fa-plus-square fa-fw"></i>
-                                    Setup
-                                </button>
-                            }
-                            else
-                            {
-                                <a asp-action="SetupApp2FA" class="btn btn-primary">
-                                    <i class="fas fa-plus-square fa-fw"></i>
-                                    Setup
-                                </a>
-                            }
 
-                        }
-                    </div>
+                    }
                 </div>
             </div>
         </div>
-        <hr />
-        <div class="row">
-            <div class="row col-6">
-                <a href="#!" class="btn btn-primary mb-2">
-                    <i class="fas fa-info-circle fa-fw mr-2"></i>Learn More about 2FA
-                </a>
-            </div>
+        <div class="col-6">
+            <div class="card text-center">
+                <div class="card-header">
+                    Setup App Authentication
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title">Mobile App Authentication</h4>
+                    <p class="card-text">
+                        Setup two-factor authentication on Goliath by using a secure
+                        mobile app.
+                        Download a secure two-factor authentication app from your phone's store
+                        (Such as <a href="#!">Microsoft Authenticator</a>) and then input the
+                        code that Goliath will give you. Every time your password is required on
+                        Goliath you will enter the code in the app that is displayed under "Goliath".
+                    </p>
+                    <hr />
+                    @if (method == (int)TwoFactorMethod.MobileAppVerify)
+                    {
+                        <a asp-action="SetupApp2FA" class="btn btn-secondary">
+                            <i class="fas fa-cog fa-fw"></i>
+                            Configure
+                        </a>
+                    }
+                    else if (method == (int)TwoFactorMethod.SmsVerify)
+                    {
+                        <button type="button" class="btn btn-primary" disabled>
+                            <i class="fas fa-plus-square fa-fw"></i>
+                            Setup
+                        </button>
+                    }
+                    else
+                    {
+                        if (!accountSecure)
+                        {
+                            <button type="button" class="btn btn-primary" disabled>
+                                <i class="fas fa-plus-square fa-fw"></i>
+                                Setup
+                            </button>
+                        }
+                        else
+                        {
+                            <a asp-action="SetupApp2FA" class="btn btn-primary">
+                                <i class="fas fa-plus-square fa-fw"></i>
+                                Setup
+                            </a>
+                        }
 
-            <div class="row col-4">
-                <hr />
-            </div>
-            <div class="row col-6">
-                <a href="#!" class="btn btn-primary mt-2 mb-2">
-                    <i class="fas fa-mobile-alt fa-fw mr-2"></i>Get Microsoft Authenticator
-                </a>
-            </div>
-            <div class="row col-4">
-                <hr />
-            </div>
-            <div class="row col-6">
-                <a href="#!" class="btn btn-primary mt-2">
-                    <i class="fas fa-mobile-alt fa-fw mr-2"></i>Get Google Authenticator
-                </a>
+                    }
+                </div>
             </div>
         </div>
     </div>
+    <hr />
+    <div class="row">
+        <div class="row col-6">
+            <a href="#!" class="btn btn-primary mb-2">
+                <i class="fas fa-info-circle fa-fw mr-2"></i>Learn More about 2FA
+            </a>
+        </div>
+
+        <div class="row col-4">
+            <hr />
+        </div>
+        <div class="row col-6">
+            <a href="#!" class="btn btn-primary mt-2 mb-2">
+                <i class="fas fa-mobile-alt fa-fw mr-2"></i>Get Microsoft Authenticator
+            </a>
+        </div>
+        <div class="row col-4">
+            <hr />
+        </div>
+        <div class="row col-6">
+            <a href="#!" class="btn btn-primary mt-2">
+                <i class="fas fa-mobile-alt fa-fw mr-2"></i>Get Google Authenticator
+            </a>
+        </div>
+    </div>
+</div>
