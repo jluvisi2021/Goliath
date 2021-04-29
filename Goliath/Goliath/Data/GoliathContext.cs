@@ -12,5 +12,6 @@ namespace Goliath.Data
 
         public DbSet<ValidHumanVerifyTokens> ValidTokens { get; set; }
         public DbSet<ResendSmsConfirmationToken> SmsVerifyTable { get; set; }
+        public DbSet<UnauthorizedTimeouts> TimeoutsUnauthorizedTable { get; set; }
     }
 }

@@ -14,6 +14,7 @@ namespace Goliath.Data
         public int NumericID { get; set; }
 
         [Required]
+        [MaxLength(36)]
         public string UserID { get; set; }
 
         [Required]

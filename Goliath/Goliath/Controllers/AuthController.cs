@@ -32,14 +32,18 @@ namespace Goliath.Controllers
 
         private readonly IGoliathCaptchaService _captcha;
 
+        private readonly IUnauthorizedTimeoutsRepository _timeoutsRepository;
+
         public AuthController
             (IAccountRepository accountRepository,
             SignInManager<ApplicationUser> signInManager,
-            IGoliathCaptchaService captcha)
+            IGoliathCaptchaService captcha,
+            IUnauthorizedTimeoutsRepository timeoutsRepository)
         {
             _accountRepository = accountRepository;
             _signInManager = signInManager;
             _captcha = captcha;
+            _timeoutsRepository = timeoutsRepository;
         }
 
         public IActionResult Index()
@@ -114,6 +118,7 @@ namespace Goliath.Controllers
             }
             else if (result.RequiresTwoFactor)
             {
+                //TODO: Store a hash in tempdata of the user's
                 return RedirectToAction(nameof(TwoFactorValidation), new { userName = signInModel.Username });
             }
             else
@@ -127,11 +132,7 @@ namespace Goliath.Controllers
             return View(signInModel);
         }
 
-        [Route("validate")]
-        public IActionResult TwoFactorValidation()
-        {
-            return View();
-        }
+
         [Route("validate")]
         [HttpGet]
         public async Task<IActionResult> TwoFactorValidation(string userName)
@@ -152,7 +153,8 @@ namespace Goliath.Controllers
             {
                 await _accountRepository.SendTwoFactorCodeSms(user);
             }
-            return View(new TwoFactorAuthenticateModel()
+            
+            return View(nameof(TwoFactorValidation), new TwoFactorAuthenticateModel()
             {
                 InputUsername = userName,
                 UserMethod = user.TwoFactorMethod == (int)TwoFactorMethod.SmsVerify ? TwoFactorMethod.SmsVerify : TwoFactorMethod.MobileAppVerify,
@@ -202,7 +204,6 @@ namespace Goliath.Controllers
                 return View(model);
                 // Is an app.
             }
-            return View(model);
         }
 
         [Route("register/goliath")]
@@ -428,6 +429,7 @@ namespace Goliath.Controllers
             // Clear all fields.
             ModelState.Clear();
             await _captcha.CacheNewCaptchaValidateAsync();
+            await _timeoutsRepository.UpdateRequestAsync(user.Id, UnauthorizedRequest.RequestVerificationEmail);
             return View(model);
         }
 
