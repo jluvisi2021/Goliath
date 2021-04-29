@@ -70,15 +70,95 @@ namespace Goliath.Repository
                     }
                     return;
                 case UnauthorizedRequest.RequestForgotPasswordEmail:
+                    if (numericId != -1)
+                    {
+                        UnauthorizedTimeouts existingUser = await _context.TimeoutsUnauthorizedTable.FirstOrDefaultAsync(u => u.NumericID == numericId);
+                        existingUser.RequestForgotPassword = DateTime.UtcNow.ToString();
+                        await _context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        UnauthorizedTimeouts newUser = new()
+                        {
+                            UserId = userId,
+                            RequestForgotPassword = DateTime.UtcNow.ToString()
+                        };
+                        await _context.AddAsync(newUser);
+                        await _context.SaveChangesAsync();
+                    }
                     return;
                 case UnauthorizedRequest.InitalTwoFactorRequestSms:
+                    if (numericId != -1)
+                    {
+                        UnauthorizedTimeouts existingUser = await _context.TimeoutsUnauthorizedTable.FirstOrDefaultAsync(u => u.NumericID == numericId);
+                        existingUser.RequestTwoFactorSmsInital = DateTime.UtcNow.ToString();
+                        await _context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        UnauthorizedTimeouts newUser = new()
+                        {
+                            UserId = userId,
+                            RequestTwoFactorSmsInital = DateTime.UtcNow.ToString()
+                        };
+                        await _context.AddAsync(newUser);
+                        await _context.SaveChangesAsync();
+                    }
                     return;
                 case UnauthorizedRequest.RequestTwoFactorResendSms:
+                    if (numericId != -1)
+                    {
+                        UnauthorizedTimeouts existingUser = await _context.TimeoutsUnauthorizedTable.FirstOrDefaultAsync(u => u.NumericID == numericId);
+                        existingUser.RequestTwoFactorSmsResend = DateTime.UtcNow.ToString();
+                        await _context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        UnauthorizedTimeouts newUser = new()
+                        {
+                            UserId = userId,
+                            RequestTwoFactorSmsResend = DateTime.UtcNow.ToString()
+                        };
+                        await _context.AddAsync(newUser);
+                        await _context.SaveChangesAsync();
+                    }
                     return;
                 default:
                     GoliathHelper.PrintDebugger(GoliathHelper.PrintType.Error, "Invalid Enum for parameter requestType");
                     return;
             }
+        }
+
+        public async Task<bool> CanRequestTwoFactorSmsAsync(string userId)
+        {
+            int numericId = await GetUserNumericIndex(userId);
+            if(numericId == -1)
+            {
+                return true;
+            }
+            UnauthorizedTimeouts existingUser = await _context.TimeoutsUnauthorizedTable.FirstOrDefaultAsync(u => u.NumericID == numericId);
+            // Over 5 Minutes Old
+            if(DateTime.Parse(existingUser.RequestTwoFactorSmsInital) < DateTime.UtcNow.Subtract(new TimeSpan(0, 5, 0))) 
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public async Task<bool> CanRequestResendTwoFactorSmsAsync(string userId)
+        {
+            int numericId = await GetUserNumericIndex(userId);
+            if (numericId == -1)
+            {
+                return true;
+            }
+            UnauthorizedTimeouts existingUser = await _context.TimeoutsUnauthorizedTable.FirstOrDefaultAsync(u => u.NumericID == numericId);
+            // Over 2 Minutes Old
+            if (DateTime.Parse(existingUser.RequestTwoFactorSmsResend) < DateTime.UtcNow.Subtract(new TimeSpan(0, 2, 0)))
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

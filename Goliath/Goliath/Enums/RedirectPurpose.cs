@@ -17,6 +17,9 @@
         ResetPasswordSuccess,
         ResetPasswordFailure,
         ResetPasswordModal,
+        TwoFactorSmsResendSuccess,
+        TwoFactorSmsResendFailureTimeout,
+        TwoFactorSmsResendFailure,
         Exception,
 
         // User Panel

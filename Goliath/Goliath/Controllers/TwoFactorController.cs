@@ -1,10 +1,17 @@
 ﻿using Goliath.Attributes;
 using Goliath.Enums;
+using Goliath.Helper;
 using Goliath.Models;
 using Goliath.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Newtonsoft.Json;
+using System;
+using System.Text;
+using System.Text.Unicode;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Goliath.Controllers
 {
@@ -13,14 +20,16 @@ namespace Goliath.Controllers
     /// views are stored in userpanel.
     /// </summary>
     [Route("userpanel/2fa")]
-    [GoliathAuthorize("Profile")]
+    //[GoliathAuthorize("Profile")]
     public class TwoFactorController : Controller
     {
         private readonly IAccountRepository _repository;
+        private readonly IUnauthorizedTimeoutsRepository _timeoutsRepository;
 
-        public TwoFactorController(IAccountRepository repository)
+        public TwoFactorController(IAccountRepository repository, IUnauthorizedTimeoutsRepository timeoutsRepository)
         {
             _repository = repository;
+            _timeoutsRepository = timeoutsRepository;
         }
 
         /// <summary>
@@ -142,6 +151,47 @@ namespace Goliath.Controllers
         public IActionResult SetupApp2FA()
         {
             return View();
+        }
+        /// <summary>
+        /// Sends an sms code to the user and then redirects to a specific controller and
+        /// action. Pass in a serialized model encoded in Base64.
+        /// </summary>
+        /// <param name="m"></param>
+        /// <returns></returns>
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        [Route("request-sms")]
+        public async Task<IActionResult> SendSmsCode(string m)
+        {
+            ResendTwoFactorSmsCodeModel model = null;
+            // Deserialize the resend two factor sms model.
+            try
+            {
+                model = JsonConvert.DeserializeObject<ResendTwoFactorSmsCodeModel>(Encoding.UTF8.GetString(System.Convert.FromBase64String(m)));
+            } catch (Exception)
+            {
+                TempData["Redirect"] = RedirectPurpose.TwoFactorSmsResendFailure;
+                return RedirectToActionPermanent("Index", "Auth");
+            }
+            if (model == null || string.IsNullOrWhiteSpace(model.Username))
+            {
+                TempData["Redirect"] = RedirectPurpose.TwoFactorSmsResendFailure;
+                return RedirectToActionPermanent("Index", "Auth");
+            }
+            var user = await _repository.GetUserByNameAsync(model.Username);
+            if (user == null)
+            {
+                TempData["Redirect"] = RedirectPurpose.TwoFactorSmsResendFailure;
+                return RedirectToAction(model.Action, model.Controller, new { userName = model.Username });
+            }
+            if(!await _timeoutsRepository.CanRequestResendTwoFactorSmsAsync(user.Id))
+            {
+                TempData["Redirect"] = RedirectPurpose.TwoFactorSmsResendFailureTimeout;
+                return RedirectToAction(model.Action, model.Controller, new { userName = model.Username });
+            }
+            await _repository.SendTwoFactorCodeSms(user);
+            await _timeoutsRepository.UpdateRequestAsync(user.Id, UnauthorizedRequest.RequestTwoFactorResendSms);
+            TempData["Redirect"] = RedirectPurpose.TwoFactorSmsResendSuccess;
+            return RedirectToAction(model.Action, model.Controller, new { userName = model.Username });
         }
     }
 }

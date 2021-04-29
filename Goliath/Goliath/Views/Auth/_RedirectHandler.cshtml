@@ -46,6 +46,12 @@ else if (TempData["Redirect"].Equals((int)RedirectPurpose.ResetPasswordFailure))
         GlobalScript.displayNotification("Error", "Could not reset password. Try again later.", GlobalScript.BannerTypes()["alert-danger"], "center-banner");
     </script>
 }
+else if (TempData["Redirect"].Equals((int)RedirectPurpose.TwoFactorSmsResendFailure))
+{
+    <script>
+        GlobalScript.displayNotification("Error", "There was an internal problem with your request.", GlobalScript.BannerTypes()["alert-danger"], "center-banner");
+    </script>
+}
 else if (TempData["Redirect"].Equals((int)RedirectPurpose.Exception))
 {
 

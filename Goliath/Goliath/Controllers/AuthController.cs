@@ -18,6 +18,7 @@ namespace Goliath.Controllers
     /// Manages the Views for Authentication. <br /> ButtonID indicates the radio button to be checked.
     /// </summary>
     [Route("account")]
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public sealed class AuthController : Controller
     {
         /// <summary>
@@ -140,20 +141,23 @@ namespace Goliath.Controllers
             ViewData["ButtonID"] = ButtonID.Login;
             if(string.IsNullOrWhiteSpace(userName))
             {
-                //TODO: Add notification.
+                TempData["Redirect"] = RedirectPurpose.TwoFactorSmsResendFailure;
                 return RedirectToActionPermanent(nameof(Login));
             }
             var user = await _accountRepository.GetUserByNameAsync(userName);
             if(user == null)
             {
-                //TODO: Add notification
+                TempData["Redirect"] = RedirectPurpose.TwoFactorSmsResendFailure;
                 return RedirectToActionPermanent(nameof(Login));
             }
-            if(user.TwoFactorMethod == (int)TwoFactorMethod.SmsVerify)
+            if(user.TwoFactorMethod == (int)TwoFactorMethod.SmsVerify && await _timeoutsRepository.CanRequestTwoFactorSmsAsync(user.Id))
             {
-                await _accountRepository.SendTwoFactorCodeSms(user);
+
+                    await _accountRepository.SendTwoFactorCodeSms(user);
+                    await _timeoutsRepository.UpdateRequestAsync(user.Id, UnauthorizedRequest.InitalTwoFactorRequestSms);
+                
             }
-            
+    
             return View(nameof(TwoFactorValidation), new TwoFactorAuthenticateModel()
             {
                 InputUsername = userName,
@@ -320,7 +324,7 @@ namespace Goliath.Controllers
             ModelState.Clear();
             // Cache Captcha Validation.
             await _captcha.CacheNewCaptchaValidateAsync();
-
+            await _timeoutsRepository.UpdateRequestAsync(user.Id, UnauthorizedRequest.RequestForgotPasswordEmail);
             return View(model);
         }
 
@@ -366,6 +370,7 @@ namespace Goliath.Controllers
             model.IsEmailSent = true;
             ModelState.Clear();
             await _captcha.CacheNewCaptchaValidateAsync();
+            await _timeoutsRepository.UpdateRequestAsync(user.Id, UnauthorizedRequest.RequestUsernameEmail);
             return View(model);
         }
 
