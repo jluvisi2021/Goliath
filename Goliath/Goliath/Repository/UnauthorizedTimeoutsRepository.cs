@@ -3,8 +3,6 @@ using Goliath.Enums;
 using Goliath.Helper;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Goliath.Repository
@@ -51,6 +49,7 @@ namespace Goliath.Repository
                         await _context.SaveChangesAsync();
                     }
                     return;
+
                 case UnauthorizedRequest.RequestUsernameEmail:
                     if (numericId != -1)
                     {
@@ -69,6 +68,7 @@ namespace Goliath.Repository
                         await _context.SaveChangesAsync();
                     }
                     return;
+
                 case UnauthorizedRequest.RequestForgotPasswordEmail:
                     if (numericId != -1)
                     {
@@ -87,6 +87,7 @@ namespace Goliath.Repository
                         await _context.SaveChangesAsync();
                     }
                     return;
+
                 case UnauthorizedRequest.InitalTwoFactorRequestSms:
                     if (numericId != -1)
                     {
@@ -105,6 +106,7 @@ namespace Goliath.Repository
                         await _context.SaveChangesAsync();
                     }
                     return;
+
                 case UnauthorizedRequest.RequestTwoFactorResendSms:
                     if (numericId != -1)
                     {
@@ -123,6 +125,7 @@ namespace Goliath.Repository
                         await _context.SaveChangesAsync();
                     }
                     return;
+
                 default:
                     GoliathHelper.PrintDebugger(GoliathHelper.PrintType.Error, "Invalid Enum for parameter requestType");
                     return;
@@ -132,13 +135,17 @@ namespace Goliath.Repository
         public async Task<bool> CanRequestTwoFactorSmsAsync(string userId)
         {
             int numericId = await GetUserNumericIndex(userId);
-            if(numericId == -1)
+            if (numericId == -1)
             {
                 return true;
             }
             UnauthorizedTimeouts existingUser = await _context.TimeoutsUnauthorizedTable.FirstOrDefaultAsync(u => u.NumericID == numericId);
+            if (string.IsNullOrWhiteSpace(existingUser.RequestTwoFactorSmsInital))
+            {
+                return true;
+            }
             // Over 5 Minutes Old
-            if(DateTime.Parse(existingUser.RequestTwoFactorSmsInital) < DateTime.UtcNow.Subtract(new TimeSpan(0, 5, 0))) 
+            if (DateTime.Parse(existingUser.RequestTwoFactorSmsInital) < DateTime.UtcNow.Subtract(new TimeSpan(0, 5, 0)))
             {
                 return true;
             }
@@ -153,6 +160,10 @@ namespace Goliath.Repository
                 return true;
             }
             UnauthorizedTimeouts existingUser = await _context.TimeoutsUnauthorizedTable.FirstOrDefaultAsync(u => u.NumericID == numericId);
+            if (string.IsNullOrWhiteSpace(existingUser.RequestTwoFactorSmsResend))
+            {
+                return true;
+            }
             // Over 2 Minutes Old
             if (DateTime.Parse(existingUser.RequestTwoFactorSmsResend) < DateTime.UtcNow.Subtract(new TimeSpan(0, 2, 0)))
             {

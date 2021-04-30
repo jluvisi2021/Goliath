@@ -32,8 +32,11 @@ namespace Goliath.Repository
         Task<bool> TwoFactorCodeValidAsync(ApplicationUser user, string token);
 
         Task GenerateTwoFactorCode(ApplicationUser user);
+
         Task<SignInResult> AuthorizeUserTwoFactorAsync(ApplicationUser user, string token);
+
         Task<SignInResult> AuthorizeUserTwoFactorAsync(ApplicationUser user, string token, bool rememberMe);
+
         Task SendTwoFactorCodeSms(ApplicationUser user);
 
         Task<List<string>> GenerateUserRecoveryCodesAsync(ApplicationUser user);

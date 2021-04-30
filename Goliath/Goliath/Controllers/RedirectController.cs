@@ -6,7 +6,7 @@ namespace Goliath.Controllers
 {
     public class RedirectController : Controller
     {
-        [RequireHttps]
+        [HttpGet]
         public IActionResult Index(string redirectUrl, string returnUrl)
         {
             if (!Url.IsLocalUrl(returnUrl))

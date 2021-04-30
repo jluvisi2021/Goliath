@@ -60,7 +60,6 @@ namespace Goliath.Repository
             _config = config;
             _twilio = twilio;
             _context = context;
-
         }
 
         /// <summary>
@@ -387,6 +386,7 @@ namespace Goliath.Repository
                 To = user.PhoneNumber
             });
         }
+
         public async Task<List<string>> GenerateUserRecoveryCodesAsync(ApplicationUser user)
         {
             return (await _userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 10)).ToList();

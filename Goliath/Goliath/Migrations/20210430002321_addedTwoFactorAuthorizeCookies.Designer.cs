@@ -4,14 +4,16 @@ using Goliath.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Goliath.Migrations
 {
     [DbContext(typeof(GoliathContext))]
-    partial class GoliathContextModelSnapshot : ModelSnapshot
+    [Migration("20210430002321_addedTwoFactorAuthorizeCookies")]
+    partial class addedTwoFactorAuthorizeCookies
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -104,6 +104,7 @@ namespace Goliath
             services.AddScoped<IGoliathCaptchaService, GoliathCaptchaService>();
             services.AddScoped<ITwilioService, TwilioService>();
             services.AddScoped<IUnauthorizedTimeoutsRepository, UnauthorizedTimeoutsRepository>();
+            services.AddScoped<ITwoFactorAuthorizeTokenRepository, TwoFactorAuthorizeTokenRepository>();
 
             // Configure secure cookie options for .NET Identity Core.
             services.ConfigureApplicationCookie(options =>

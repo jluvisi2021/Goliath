@@ -1,17 +1,12 @@
 ﻿using Goliath.Attributes;
 using Goliath.Enums;
-using Goliath.Helper;
 using Goliath.Models;
 using Goliath.Repository;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Routing;
 using Newtonsoft.Json;
 using System;
 using System.Text;
-using System.Text.Unicode;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace Goliath.Controllers
 {
@@ -20,16 +15,18 @@ namespace Goliath.Controllers
     /// views are stored in userpanel.
     /// </summary>
     [Route("userpanel/2fa")]
-    //[GoliathAuthorize("Profile")]
+    [GoliathAuthorize("Profile")]
     public class TwoFactorController : Controller
     {
         private readonly IAccountRepository _repository;
         private readonly IUnauthorizedTimeoutsRepository _timeoutsRepository;
+        private readonly ITwoFactorAuthorizeTokenRepository _authorizeTokenRepository;
 
-        public TwoFactorController(IAccountRepository repository, IUnauthorizedTimeoutsRepository timeoutsRepository)
+        public TwoFactorController(IAccountRepository repository, IUnauthorizedTimeoutsRepository timeoutsRepository, ITwoFactorAuthorizeTokenRepository authorizeTokenRepository)
         {
             _repository = repository;
             _timeoutsRepository = timeoutsRepository;
+            _authorizeTokenRepository = authorizeTokenRepository;
         }
 
         /// <summary>
@@ -76,17 +73,16 @@ namespace Goliath.Controllers
         [HttpPost]
         public async Task<IActionResult> Authenticate(TwoFactorAuthenticateRedirectModel model)
         {
-
             // If the model has not been submitted yet.
             if (!model.IsSubmitted)
             {
                 return View(model);
             }
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return View(model);
             }
-            
+
             ApplicationUser user = await _repository.GetUserFromContextAsync(User);
 
             if (model.Action != TwoFactorAction.EnableTwoFactor && !user.TwoFactorEnabled)
@@ -152,22 +148,25 @@ namespace Goliath.Controllers
         {
             return View();
         }
+
         /// <summary>
-        /// Sends an sms code to the user and then redirects to a specific controller and
-        /// action. Pass in a serialized model encoded in Base64.
+        /// Sends an sms code to the user and then redirects to a specific controller and action.
+        /// Pass in a serialized model encoded in Base64.
         /// </summary>
-        /// <param name="m"></param>
-        /// <returns></returns>
+        /// <param name="m"> </param>
+        /// <returns> </returns>
+        [IgnoreGoliathAuthorize]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         [Route("request-sms")]
         public async Task<IActionResult> SendSmsCode(string m)
         {
-            ResendTwoFactorSmsCodeModel model = null;
+            ResendTwoFactorSmsCodeModel model;
             // Deserialize the resend two factor sms model.
             try
             {
-                model = JsonConvert.DeserializeObject<ResendTwoFactorSmsCodeModel>(Encoding.UTF8.GetString(System.Convert.FromBase64String(m)));
-            } catch (Exception)
+                model = JsonConvert.DeserializeObject<ResendTwoFactorSmsCodeModel>(Encoding.UTF8.GetString(Convert.FromBase64String(m)));
+            }
+            catch (Exception)
             {
                 TempData["Redirect"] = RedirectPurpose.TwoFactorSmsResendFailure;
                 return RedirectToActionPermanent("Index", "Auth");
@@ -177,13 +176,19 @@ namespace Goliath.Controllers
                 TempData["Redirect"] = RedirectPurpose.TwoFactorSmsResendFailure;
                 return RedirectToActionPermanent("Index", "Auth");
             }
-            var user = await _repository.GetUserByNameAsync(model.Username);
+            ApplicationUser user = await _repository.GetUserByNameAsync(model.Username);
             if (user == null)
             {
                 TempData["Redirect"] = RedirectPurpose.TwoFactorSmsResendFailure;
                 return RedirectToAction(model.Action, model.Controller, new { userName = model.Username });
             }
-            if(!await _timeoutsRepository.CanRequestResendTwoFactorSmsAsync(user.Id))
+            // Invalid Two-Factor Authorize Cookie
+            if (!await _authorizeTokenRepository.TokenValidAsync(user.Id))
+            {
+                TempData["Redirect"] = RedirectPurpose.TwoFactorSmsResendFailure;
+                return RedirectToAction(model.Action, model.Controller, new { userName = model.Username });
+            }
+            if (!await _timeoutsRepository.CanRequestResendTwoFactorSmsAsync(user.Id))
             {
                 TempData["Redirect"] = RedirectPurpose.TwoFactorSmsResendFailureTimeout;
                 return RedirectToAction(model.Action, model.Controller, new { userName = model.Username });

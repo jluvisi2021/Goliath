@@ -34,17 +34,20 @@ namespace Goliath.Controllers
         private readonly IGoliathCaptchaService _captcha;
 
         private readonly IUnauthorizedTimeoutsRepository _timeoutsRepository;
+        private readonly ITwoFactorAuthorizeTokenRepository _twoFactorTokenRepository;
 
         public AuthController
             (IAccountRepository accountRepository,
             SignInManager<ApplicationUser> signInManager,
             IGoliathCaptchaService captcha,
-            IUnauthorizedTimeoutsRepository timeoutsRepository)
+            IUnauthorizedTimeoutsRepository timeoutsRepository,
+            ITwoFactorAuthorizeTokenRepository twoFactorTokenRepository)
         {
             _accountRepository = accountRepository;
             _signInManager = signInManager;
             _captcha = captcha;
             _timeoutsRepository = timeoutsRepository;
+            _twoFactorTokenRepository = twoFactorTokenRepository;
         }
 
         public IActionResult Index()
@@ -119,7 +122,8 @@ namespace Goliath.Controllers
             }
             else if (result.RequiresTwoFactor)
             {
-                //TODO: Store a hash in tempdata of the user's
+                await _twoFactorTokenRepository.CreateTokenAsync(signInModel.Username, GoliathHelper.GenerateSecureRandomNumber());
+
                 return RedirectToAction(nameof(TwoFactorValidation), new { userName = signInModel.Username });
             }
             else
@@ -133,31 +137,34 @@ namespace Goliath.Controllers
             return View(signInModel);
         }
 
-
         [Route("validate")]
         [HttpGet]
         public async Task<IActionResult> TwoFactorValidation(string userName)
         {
             ViewData["ButtonID"] = ButtonID.Login;
-            if(string.IsNullOrWhiteSpace(userName))
+            if (string.IsNullOrWhiteSpace(userName))
             {
                 TempData["Redirect"] = RedirectPurpose.TwoFactorSmsResendFailure;
                 return RedirectToActionPermanent(nameof(Login));
             }
-            var user = await _accountRepository.GetUserByNameAsync(userName);
-            if(user == null)
+            ApplicationUser user = await _accountRepository.GetUserByNameAsync(userName);
+            if (user == null)
             {
                 TempData["Redirect"] = RedirectPurpose.TwoFactorSmsResendFailure;
                 return RedirectToActionPermanent(nameof(Login));
             }
-            if(user.TwoFactorMethod == (int)TwoFactorMethod.SmsVerify && await _timeoutsRepository.CanRequestTwoFactorSmsAsync(user.Id))
+            // Invalid Authorize Cookie
+            if (!await _twoFactorTokenRepository.TokenValidAsync(user.Id))
             {
+                TempData["Redirect"] = RedirectPurpose.TwoFactorSmsResendFailure;
+                return RedirectToActionPermanent(nameof(Login));
+            }
+            if (user.TwoFactorMethod == (int)TwoFactorMethod.SmsVerify && TempData["Redirect"] == null && await _timeoutsRepository.CanRequestTwoFactorSmsAsync(user.Id))
+            {
+                await _accountRepository.SendTwoFactorCodeSms(user);
+                await _timeoutsRepository.UpdateRequestAsync(user.Id, UnauthorizedRequest.InitalTwoFactorRequestSms);
+            }
 
-                    await _accountRepository.SendTwoFactorCodeSms(user);
-                    await _timeoutsRepository.UpdateRequestAsync(user.Id, UnauthorizedRequest.InitalTwoFactorRequestSms);
-                
-            }
-    
             return View(nameof(TwoFactorValidation), new TwoFactorAuthenticateModel()
             {
                 InputUsername = userName,
@@ -170,16 +177,16 @@ namespace Goliath.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> TwoFactorValidation(TwoFactorAuthenticateModel model)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return View(model);
             }
-            var user = await _accountRepository.GetUserByNameAsync(model.InputUsername);
-            if(model.UserMethod == TwoFactorMethod.SmsVerify)
+            ApplicationUser user = await _accountRepository.GetUserByNameAsync(model.InputUsername);
+            if (model.UserMethod == TwoFactorMethod.SmsVerify)
             {
-                if(await _accountRepository.TwoFactorCodeValidAsync(user, model.InputTwoFactorCode))
+                if (await _accountRepository.TwoFactorCodeValidAsync(user, model.InputTwoFactorCode))
                 {
-                    var result = await _accountRepository.AuthorizeUserTwoFactorAsync(user, model.InputTwoFactorCode, model.RememberMe);
+                    SignInResult result = await _accountRepository.AuthorizeUserTwoFactorAsync(user, model.InputTwoFactorCode, model.RememberMe);
 
                     if (result.Succeeded)
                     {
@@ -249,7 +256,7 @@ namespace Goliath.Controllers
                 // Send the user to the index with register tempdata.
                 TempData["Redirect"] = RedirectPurpose.RegisterSuccess;
                 // Send back to index.
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(Index));
             }
             // Registration Failed
 

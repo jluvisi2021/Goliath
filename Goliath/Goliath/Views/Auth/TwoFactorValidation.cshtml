@@ -8,7 +8,7 @@
 @{
     ViewData["Title"] = "Two-Factor";
 
-    ApplicationUser user = await _repository.GetUserByNameAsync(Model.InputUsername);
+    ApplicationUser user = await _repository.GetUserByNameAsync(Model?.InputUsername);
     ResendTwoFactorSmsCodeModel resendModel = new()
     {
         Action = "TwoFactorValidation",
@@ -21,30 +21,36 @@
     <h3 class="display-4">Two-Factor</h3>
     <p class="text-muted mb-4">Enter the two factor verification code sent to your device or from a two-factor app.</p>
 }
-
+<script>
+    console.log('User @Model.InputUsername');
+</script>
 @if (user?.TwoFactorEnabled == false || user == null)
 {
     <hr /><p class="text-danger">You cannot access this page because two factor authentication is not enabled and/or your account could not be found.</p> }
 else
 {
     <hr />
-    @if (TempData["Redirect"] != null && TempData["Redirect"].Equals((int)RedirectPurpose.TwoFactorSmsResendSuccess))
+    @if (TempData["Redirect"] != null)
     {
-        <div class="alert alert-success" role="alert">
-            <strong><i class="fas fa-check-circle fa-fw mr-1"></i>You have been sent a new token.</strong>
-        </div>
-    }
-    else if (TempData["Redirect"] != null && TempData["Redirect"].Equals((int)RedirectPurpose.TwoFactorSmsResendFailure))
-    {
-        <div class="alert alert-danger" role="alert">
-            <strong><i class="fas fa-times-circle fa-fw mr-1"></i>We could not send you a token right now. Try again later.</strong>
-        </div>
-    }
-    else if (TempData["Redirect"] != null && TempData["Redirect"].Equals((int)RedirectPurpose.TwoFactorSmsResendFailureTimeout))
-    {
-        <div class="alert alert-warning" role="alert">
-            <strong><i class="fas fa-clock fa-fw mr-1"></i>Please wait before requesting another code.</strong>
-        </div>
+        if (TempData["Redirect"].Equals((int)RedirectPurpose.TwoFactorSmsResendSuccess))
+        {
+            <div class="alert alert-success" role="alert">
+                <strong><i class="fas fa-check-circle fa-fw mr-1"></i>You have been sent a new token.</strong>
+            </div>
+        }
+        else if (TempData["Redirect"].Equals((int)RedirectPurpose.TwoFactorSmsResendFailure))
+        {
+            <div class="alert alert-danger" role="alert">
+                <strong><i class="fas fa-times-circle fa-fw mr-1"></i>We could not send you a token right now. Try again later.</strong>
+            </div>
+        }
+        else if (TempData["Redirect"].Equals((int)RedirectPurpose.TwoFactorSmsResendFailureTimeout))
+        {
+            <div class="alert alert-warning" role="alert">
+                <strong><i class="fas fa-clock fa-fw mr-1"></i>Please wait before requesting another code.</strong>
+                <a href="#!" class="alert-link">Learn More</a>
+            </div>
+        }
     }
 
     <div class="text-danger" asp-validation-summary="All"></div>
@@ -77,9 +83,4 @@ else
         <br />
         <a href="#!">Find out what to do next.</a>
     </p>
-    <script>
-
-            console.log('@Model.InputUsername');
-
-    </script>
 }

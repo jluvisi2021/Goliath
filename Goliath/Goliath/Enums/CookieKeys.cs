@@ -8,5 +8,6 @@
         public const string AuthenticationCookie = "GoliathAuthenticate";
         public const string AntiForgeryCookie = "AntiForgeryCSRF";
         public const string ValidateCaptchaCookie = "CaptchaValid";
+        public const string TwoFactorAuthorizeCookie = "TwoFactorAuthorize";
     }
 }

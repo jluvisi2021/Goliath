@@ -23,12 +23,14 @@ namespace Goliath.Controllers
 
         private readonly ISmsVerifyTokensRepository _requestTable;
         private readonly IGoliathCaptchaService _captcha;
+        private readonly ICookieManager _cookies;
 
-        public UserPanelController(IAccountRepository accountRepository, IGoliathCaptchaService captcha, ISmsVerifyTokensRepository requestTable)
+        public UserPanelController(IAccountRepository accountRepository, IGoliathCaptchaService captcha, ISmsVerifyTokensRepository requestTable, ICookieManager cookies)
         {
             _accountRepository = accountRepository;
             _captcha = captcha;
             _requestTable = requestTable;
+            _cookies = cookies;
         }
 
         [HttpPost]
@@ -118,7 +120,7 @@ namespace Goliath.Controllers
             {
                 if (int.TryParse(model.LogoutThreshold, out int num))
                 {
-                    if(num >= 0)
+                    if (num >= 0)
                     {
                         hasChanged = true;
                         goliathUser.LogoutThreshold = num;
@@ -129,7 +131,6 @@ namespace Goliath.Controllers
                         _captcha.DeleteCaptchaCookie();
                         return View(model);
                     }
-                    
                 }
                 else
                 {
@@ -318,6 +319,10 @@ namespace Goliath.Controllers
         public async Task<IActionResult> Logout()
         {
             await _accountRepository.SignOutAsync();
+            if (_cookies.HasCookie(CookieKeys.TwoFactorAuthorizeCookie))
+            {
+                _cookies.DeleteCookie(CookieKeys.TwoFactorAuthorizeCookie);
+            }
 
             // Redirect the user to the main login screen with information that the user has just
             // been logged out.
