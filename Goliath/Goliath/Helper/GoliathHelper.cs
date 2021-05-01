@@ -48,7 +48,7 @@ namespace Goliath.Helper
         }
 
         /// <summary>
-        /// Generates a secure random number using the RNGCryptoServiceProvider.
+        /// Generates a secure random number using the <see cref="RandomNumberGenerator" />.
         /// </summary>
         /// <returns> </returns>
         public static string GenerateSecureRandomNumber()

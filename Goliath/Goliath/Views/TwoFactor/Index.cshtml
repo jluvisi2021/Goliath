@@ -2,7 +2,7 @@
     var user = await _repository.GetUserFromContextAsync(User);
     int method = user.TwoFactorMethod;
     bool accountSecure = user.PhoneNumberConfirmed && string.IsNullOrWhiteSpace(user.UnverifiedNewPhone) && user.EmailConfirmed && string.IsNullOrWhiteSpace(user.UnverifiedNewEmail);
-    object redirectPurpose = TempData["Redirect"];
+    object redirectPurpose = TempData[TempDataKeys.Redirect];
 }
 
 @if (redirectPurpose != null)
@@ -54,6 +54,19 @@
             </div>
         </div>
     }
+    @if (TempData[TempDataKeys.HtmlMessage] != null)
+    {
+        <div class="row text-left">
+            <div class="col-12">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <strong><i class="fas fa-times-circle fa-fw mr-1"></i>@TempData[TempDataKeys.HtmlMessage]</strong>
+                </div>
+            </div>
+        </div>
+    }
     <div class="row justify-content-center">
         <div class="col-6">
             <div class="card text-center">
@@ -74,7 +87,7 @@
                     <hr />
                     @if (method == (int)TwoFactorMethod.SmsVerify)
                     {
-                        <a asp-action="SetupSms2FA" class="btn btn-secondary">
+                        <a asp-action="@nameof(TwoFactorController.SetupSms2FA)" class="btn btn-secondary">
                             <i class="fas fa-cog fa-fw"></i>
                             Configure
                         </a>
@@ -97,7 +110,7 @@
                         }
                         else
                         {
-                            <a asp-action="SetupSms2FA" class="btn btn-primary">
+                            <a asp-action="@nameof(TwoFactorController.SetupSms2FA)" class="btn btn-primary">
                                 <i class="fas fa-plus-square fa-fw"></i>
                                 Setup
                             </a>
@@ -125,7 +138,7 @@
                     <hr />
                     @if (method == (int)TwoFactorMethod.MobileAppVerify)
                     {
-                        <a asp-action="SetupApp2FA" class="btn btn-secondary">
+                        <a asp-action="@nameof(TwoFactorController.SetupApp2FA)" class="btn btn-secondary">
                             <i class="fas fa-cog fa-fw"></i>
                             Configure
                         </a>
@@ -148,7 +161,7 @@
                         }
                         else
                         {
-                            <a asp-action="SetupApp2FA" class="btn btn-primary">
+                            <a asp-action="@nameof(TwoFactorController.SetupApp2FA)" class="btn btn-primary">
                                 <i class="fas fa-plus-square fa-fw"></i>
                                 Setup
                             </a>

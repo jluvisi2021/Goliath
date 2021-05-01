@@ -11,8 +11,8 @@
     ApplicationUser user = await _repository.GetUserByNameAsync(Model?.InputUsername);
     ResendTwoFactorSmsCodeModel resendModel = new()
     {
-        Action = "TwoFactorValidation",
-        Controller = "Auth",
+        Action = nameof(AuthController.TwoFactorValidation),
+        Controller = GoliathControllers.AuthController,
         Username = user?.UserName
     };
 }
@@ -30,21 +30,21 @@
 else
 {
     <hr />
-    @if (TempData["Redirect"] != null)
+    @if (TempData[TempDataKeys.Redirect] != null)
     {
-        if (TempData["Redirect"].Equals((int)RedirectPurpose.TwoFactorSmsResendSuccess))
+        if (TempData[TempDataKeys.Redirect].Equals((int)RedirectPurpose.TwoFactorSmsResendSuccess))
         {
             <div class="alert alert-success" role="alert">
                 <strong><i class="fas fa-check-circle fa-fw mr-1"></i>You have been sent a new token.</strong>
             </div>
         }
-        else if (TempData["Redirect"].Equals((int)RedirectPurpose.TwoFactorSmsResendFailure))
+        else if (TempData[TempDataKeys.Redirect].Equals((int)RedirectPurpose.TwoFactorSmsResendFailure))
         {
             <div class="alert alert-danger" role="alert">
                 <strong><i class="fas fa-times-circle fa-fw mr-1"></i>We could not send you a token right now. Try again later.</strong>
             </div>
         }
-        else if (TempData["Redirect"].Equals((int)RedirectPurpose.TwoFactorSmsResendFailureTimeout))
+        else if (TempData[TempDataKeys.Redirect].Equals((int)RedirectPurpose.TwoFactorSmsResendFailureTimeout))
         {
             <div class="alert alert-warning" role="alert">
                 <strong><i class="fas fa-clock fa-fw mr-1"></i>Please wait before requesting another code.</strong>
@@ -54,7 +54,7 @@ else
     }
 
     <div class="text-danger" asp-validation-summary="All"></div>
-    <form asp-action="TwoFactorValidation" asp-antiforgery="true">
+    <form asp-action="@nameof(AuthController.TwoFactorValidation)" asp-antiforgery="true">
         <input asp-for="InputUsername" type="hidden" value="@Model.InputUsername" />
         <input asp-for="UserMethod" type="hidden" value="@Model.UserMethod" />
 
@@ -76,7 +76,7 @@ else
     <hr />
     <span class="text-muted font-italic">(SMS Only)</span>
     <br />
-    <a asp-controller="TwoFactor" asp-action="SendSmsCode" asp-route-m="@Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(resendModel)))">Resend Code</a>
+    <a asp-controller="@GoliathControllers.TwoFactorController" asp-action="@nameof(TwoFactorController.SendSmsCode)" asp-route-m="@Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(resendModel)))">Resend Code</a>
     <hr />
     <p class="text-muted">
         Cannot access your two-factor authentication code?

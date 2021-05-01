@@ -4,6 +4,7 @@ using Goliath.Helper;
 using Goliath.Models;
 using Goliath.Repository;
 using Goliath.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
@@ -16,11 +17,7 @@ namespace Goliath.Controllers
     /// </summary>
     public sealed class UserPanelController : Controller
     {
-        /// <summary>
-        /// For interfacing with the ApplicationUser.
-        /// </summary>
         private readonly IAccountRepository _accountRepository;
-
         private readonly ISmsVerifyTokensRepository _requestTable;
         private readonly IGoliathCaptchaService _captcha;
         private readonly ICookieManager _cookies;
@@ -49,19 +46,19 @@ namespace Goliath.Controllers
             return View(model);
         }
 
-        [GoliathAuthorize("Profile")]
+        [GoliathAuthorize(nameof(Profile))]
         public IActionResult Index()
         {
-            return View("Profile");
+            return View(nameof(Profile));
         }
 
-        [GoliathAuthorize("Profile")]
+        [GoliathAuthorize(nameof(Profile))]
         public IActionResult Profile()
         {
             return View();
         }
 
-        [GoliathAuthorize("Profile")]
+        [GoliathAuthorize(nameof(Profile))]
         [PreventDuplicateRequest]
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Profile(ProfileSettingsModel model)
@@ -78,128 +75,108 @@ namespace Goliath.Controllers
             }
 
             ApplicationUser goliathUser = await _accountRepository.GetUserFromContextAsync(User);
-            // track if there has been any updates.
-            bool hasChanged = false;
 
-            if (HasValueChanged(model.BackgroundColor, goliathUser.BackgroundColor))
-            {
-                hasChanged = true;
-                goliathUser.BackgroundColor = model.BackgroundColor;
-            }
-            if (HasValueChanged(model.DarkThemeEnabled, goliathUser.DarkTheme))
-            {
-                hasChanged = true;
-                goliathUser.DarkTheme = model.DarkThemeEnabled;
-            }
-            if (HasValueChanged(model.NewEmail, goliathUser.Email))
+            #region Simple value updates
+
+            // ** Values which do not need database checking
+            goliathUser.BackgroundColor = model.BackgroundColor;
+            goliathUser.DarkTheme = model.DarkThemeEnabled;
+            goliathUser.LogoutThreshold = int.Parse(model.LogoutThreshold);
+            // **
+
+            #endregion Simple value updates
+
+            #region Validating email
+
+            if (!string.IsNullOrWhiteSpace(model.NewEmail))
             {
                 if (await _accountRepository.DoesEmailExistAsync(model.NewEmail))
                 {
-                    ModelState.AddModelError(string.Empty, $"The email {model.NewEmail} is already in use.");
-                    return View(model);
-                }
-                hasChanged = true;
-                goliathUser.UnverifiedNewEmail = model.NewEmail;
-                // Send a new verification email.
-                await _accountRepository.GenerateNewEmailConfirmationTokenAsync(goliathUser, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
-            }
-            if (HasValueChanged(model.NewPhoneNumber, goliathUser.PhoneNumber))
-            {
-                if (await _accountRepository.DoesPhoneNumberExistAsync(model.NewPhoneNumber))
-                {
-                    ModelState.AddModelError(string.Empty, $"The phone number (+1) {model.NewPhoneNumber[0..3]}-{model.NewPhoneNumber[3..6]}-{model.NewPhoneNumber[6..]} is already in use.");
-                    return View(model);
-                }
-                hasChanged = true;
-                goliathUser.UnverifiedNewPhone = model.NewPhoneNumber;
-
-                await _accountRepository.GenerateNewPhoneConfirmationTokenAsync(goliathUser, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
-            }
-
-            if (model.LogoutThreshold != null)
-            {
-                if (int.TryParse(model.LogoutThreshold, out int num))
-                {
-                    if (num >= 0)
-                    {
-                        hasChanged = true;
-                        goliathUser.LogoutThreshold = num;
-                    }
-                    else
-                    {
-                        ModelState.AddModelError(string.Empty, "Logout threshold must be greater than one.");
-                        _captcha.DeleteCaptchaCookie();
-                        return View(model);
-                    }
+                    ModelState.AddModelError(string.Empty, $"The email {model.NewEmail} is currently in use.");
+                    return View();
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Logout threshold must be a number.");
-                    _captcha.DeleteCaptchaCookie();
-                    return View(model);
+                    goliathUser.UnverifiedNewEmail = model.NewEmail;
                 }
             }
 
-            // If the new password entered does not match the users current password.
+            #endregion Validating email
+
+            #region Validating phone number
+
+            if (!string.IsNullOrWhiteSpace(model.NewPhoneNumber))
+            {
+                if (await _accountRepository.DoesPhoneNumberExistAsync(model.NewPhoneNumber))
+                {
+                    ModelState.AddModelError(string.Empty, $"The phone number {model.NewPhoneNumber} is currently in use.");
+                    return View();
+                }
+                else
+                {
+                    goliathUser.UnverifiedNewPhone = model.NewPhoneNumber;
+                }
+            }
+
+            #endregion Validating phone number
+
+            #region Validating password
 
             if (!string.IsNullOrWhiteSpace(model.NewPassword))
             {
                 if (await _accountRepository.IsPasswordValidAsync(goliathUser, model.NewPassword))
                 {
-                    ModelState.AddModelError(string.Empty, "Your new password matches your old password.");
-                    _captcha.DeleteCaptchaCookie();
-                    return View(model);
+                    ModelState.AddModelError(string.Empty, "Your new password must be different then your previous password.");
+                    return View();
                 }
-                Microsoft.AspNetCore.Identity.IdentityResult result = await _accountRepository.UpdatePasswordAsync(goliathUser, model.CurrentPassword, model.NewPassword);
-                if (result.Succeeded)
+                IdentityResult result = await _accountRepository.UpdatePasswordAsync(goliathUser, model.CurrentPassword, model.NewPassword);
+                if (!result.Succeeded)
                 {
-                    hasChanged = true;
-                    goliathUser.LastPasswordUpdate = DateTime.UtcNow.ToString();
-                }
-                else
-                {
-                    ModelState.AddModelError(string.Empty, "Your entry in \"Current Password\" field does not match your account password.");
                     _captcha.DeleteCaptchaCookie();
-                    return View(model);
+                    ModelState.AddModelError(string.Empty, "Your entry in \"Current Password\" does not match your current password.");
+                    return View();
                 }
+                goliathUser.LastPasswordUpdate = DateTime.UtcNow.ToString();
             }
 
-            if (hasChanged)
+            #endregion Validating password
+
+            #region Sending potential verification emails
+
+            // If all of the user settings are correct then check if we need to send messages to
+            // update phone/email.
+            if (!string.IsNullOrWhiteSpace(model.NewEmail))
             {
-                await _accountRepository.UpdateUserAsync(goliathUser);
-                await _captcha.CacheNewCaptchaValidateAsync();
+                await _accountRepository.GenerateNewEmailConfirmationTokenAsync(goliathUser, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
             }
+            if (!string.IsNullOrWhiteSpace(model.NewPhoneNumber))
+            {
+                await _accountRepository.GenerateNewPhoneConfirmationTokenAsync(goliathUser, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
+            }
+
+            #endregion Sending potential verification emails
+
+            #region Updating/Caching
+
+            // Update all of the changed values.
+            await _accountRepository.UpdateUserAsync(goliathUser);
+            await _captcha.CacheNewCaptchaValidateAsync();
+
+            #endregion Updating/Caching
 
             ModelState.Clear();
-            TempData["ValuesUpdated"] = RedirectPurpose.SettingsUpdatedSuccess;
+            TempData[TempDataKeys.Redirect] = RedirectPurpose.SettingsUpdatedSuccess;
             return View();
         }
 
-        private static bool HasValueChanged(string model, string user)
-        {
-            if (string.IsNullOrWhiteSpace(model))
-            {
-                return false;
-            }
-            if (string.IsNullOrWhiteSpace(user) || user == "NULL")
-            {
-                return true;
-            }
-            if (!model.Equals(user))
-            {
-                return true;
-            }
-            return false;
-        }
-
-        [GoliathAuthorize("Profile")]
+        [GoliathAuthorize(nameof(Profile))]
         [Route("userpanel/verify-phone")]
         public IActionResult ConfirmPhoneNumber()
         {
             return View();
         }
 
-        [GoliathAuthorize("Profile")]
+        [GoliathAuthorize(nameof(Profile))]
         [Route("userpanel/verify-phone")]
         [PreventDuplicateRequest]
         [HttpPost, ValidateAntiForgeryToken]
@@ -210,6 +187,9 @@ namespace Goliath.Controllers
                 ModelState.Clear();
                 return View();
             }
+
+            #region Validate token data type & captcha
+
             if (!int.TryParse(model.Token, out _))
             {
                 ModelState.AddModelError(string.Empty, "Token must be a number.");
@@ -222,7 +202,11 @@ namespace Goliath.Controllers
                 return View();
             }
 
+            #endregion Validate token data type & captcha
+
             ApplicationUser user = await _accountRepository.GetUserFromContextAsync(User);
+
+            #region Validating password & ensuring token validity
 
             if (!await _accountRepository.IsPasswordValidAsync(user, model.Password))
             {
@@ -240,6 +224,8 @@ namespace Goliath.Controllers
                 return View(model);
             }
 
+            #endregion Validating password & ensuring token validity
+
             ModelState.AddModelError(string.Empty, "Invalid or Expired Token.");
             return View(model);
         }
@@ -248,7 +234,7 @@ namespace Goliath.Controllers
         /// Manages the default view for resending sms verify tokens.
         /// </summary>
         /// <returns> </returns>
-        [GoliathAuthorize("Profile")]
+        [GoliathAuthorize(nameof(Profile))]
         [Route("userpanel/resend-code")]
         public IActionResult ResendSmsVerifyToken()
         {
@@ -262,7 +248,7 @@ namespace Goliath.Controllers
         /// <param name="model"> </param>
         /// <returns> </returns>
         [HttpGet]
-        [GoliathAuthorize("Profile")]
+        [GoliathAuthorize(nameof(Profile))]
         [Route("userpanel/resend-code")]
         public async Task<IActionResult> ResendSmsVerifyToken(ResendSmsVerifyTokenModel model)
         {
@@ -296,7 +282,7 @@ namespace Goliath.Controllers
         /// <param name="username"> </param>
         /// <returns> </returns>
         [HttpPost]
-        [GoliathAuthorize("Profile")]
+        [GoliathAuthorize(nameof(Profile))]
         [Route("userpanel/resend-code")]
         public IActionResult ResendSmsVerifyToken(string username)
         {
@@ -314,7 +300,7 @@ namespace Goliath.Controllers
         /// <returns> </returns>
         public ActionResult GetModule(string partialName) => PartialView($"~/Views/UserPanel/{partialName}.cshtml");
 
-        [GoliathAuthorize("Profile")]
+        [GoliathAuthorize(nameof(Profile))]
         [Route("logout")]
         public async Task<IActionResult> Logout()
         {
@@ -326,14 +312,14 @@ namespace Goliath.Controllers
 
             // Redirect the user to the main login screen with information that the user has just
             // been logged out.
-            TempData["Redirect"] = RedirectPurpose.LogoutSuccess;
-            return RedirectToAction("Index", "Auth");
+            TempData[TempDataKeys.Redirect] = RedirectPurpose.LogoutSuccess;
+            return RedirectToAction(nameof(AuthController.Index), GoliathControllers.AuthController);
         }
 
-        [GoliathAuthorize("Database")]
+        [GoliathAuthorize(nameof(Database))]
         public IActionResult Database() => View();
 
-        [GoliathAuthorize("Utilities")]
+        [GoliathAuthorize(nameof(Utilities))]
         public IActionResult Utilities() => View();
 
         [ResponseCache(Duration = 14400, Location = ResponseCacheLocation.Any, NoStore = false)]

@@ -88,12 +88,12 @@
                                     <!-- Top Radio Buttons -->
                                     <div class=" ht-tm-element btn-group btn-group-toggle" data-toggle="buttons">
 
-                                        <a asp-controller="Auth" asp-action="Index" class="btn btn-outline-primary">
+                                        <a asp-controller="@GoliathControllers.AuthController" asp-action="@nameof(AuthController.Index)" class="btn btn-outline-primary">
 
                                             <input type="radio" name="options" id="login-radio-btn" autocomplete="off">
                                             Login
                                         </a>
-                                        <a asp-controller="Auth" asp-action="RegisterMethod" class="btn btn-outline-primary">
+                                        <a asp-controller="@GoliathControllers.AuthController" asp-action="@nameof(AuthController.RegisterMethod)" class="btn btn-outline-primary">
 
                                             <input type="radio" name="options" id="register-radio-btn" autocomplete="off">
                                             Register
@@ -105,16 +105,16 @@
                                             </a>
                                             <!-- Other Drop Down Start -->
                                             <div class="dropdown-menu drop-down" aria-labelledby="other-dropdown" x-placement="bottom-start" id="dropdown">
-                                                <a asp-controller="Auth" asp-action="ForgotUsername" id="forgot-username" class="dropdown-item">Forgot Username</a>
-                                                <a asp-controller="Auth" asp-action="ForgotPassword" id="forgot-password" class="dropdown-item">Forgot Password</a>
-                                                <a asp-controller="Auth" asp-action="VerifyEmail" id="verify-email" class="dropdown-item">Verify Email</a>
+                                                <a asp-controller="@GoliathControllers.AuthController" asp-action="@nameof(AuthController.ForgotUsername)" id="forgot-username" class="dropdown-item">Forgot Username</a>
+                                                <a asp-controller="@GoliathControllers.AuthController" asp-action="@nameof(AuthController.ForgotPassword)" id="forgot-password" class="dropdown-item">Forgot Password</a>
+                                                <a asp-controller="@GoliathControllers.AuthController" asp-action="@nameof(AuthController.VerifyEmail)" id="verify-email" class="dropdown-item">Verify Email</a>
                                                 <div id="dropdown-divider" class="dropdown-divider"></div>
                                                 @*OAuth Login Methods*@
                                                 <a class="dropdown-item py-xl-1" href="#!"><i id="signin-google-icon" class="fab fa-google px-sm-2 dropdown-bottom-icons"></i>Sign in with Google</a>
                                                 <a class="dropdown-item" href="/idk"><i id="signin-ms-icon" class="fab fa-microsoft px-sm-2 dropdown-bottom-icons"></i>Sign in with Microsoft</a>
                                                 <a class="dropdown-item" href="/idk"><i id="signin-fb-icon" class="fab fa-facebook-square px-sm-2 dropdown-bottom-icons"></i>Sign in with Facebook</a>
-                                                <a asp-controller="Redirect"
-                                                   asp-action="Index"
+                                                <a asp-controller="@GoliathControllers.RedirectController"
+                                                   asp-action="@nameof(RedirectController.Index)"
                                                    asp-route-redirectUrl="https://github.com/jluvisi2021/Goliath"
                                                    asp-route-returnUrl="@Context.Request.Path"
                                                    class="dropdown-item" target="_blank"><i id="dd-git-icon" class="fab fa-github px-sm-2 dropdown-bottom-icons"></i>View GitHub</a>

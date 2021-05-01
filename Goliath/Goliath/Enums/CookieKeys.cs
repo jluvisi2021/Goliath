@@ -9,5 +9,6 @@
         public const string AntiForgeryCookie = "AntiForgeryCSRF";
         public const string ValidateCaptchaCookie = "CaptchaValid";
         public const string TwoFactorAuthorizeCookie = "TwoFactorAuthorize";
+        public const string AspNetSessionCookie = "Session";
     }
 }

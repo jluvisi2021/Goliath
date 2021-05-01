@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace Goliath.Repository
 {
+    /// <inheritdoc cref="ISmsVerifyTokensRepository" />
     public class SmsVerifyTokensRepository : ISmsVerifyTokensRepository
     {
         private readonly GoliathContext _context;
@@ -14,38 +15,24 @@ namespace Goliath.Repository
             _context = context;
         }
 
-        /// <summary>
-        /// Adds a user id to the database with a timestamp.
-        /// </summary>
-        /// <param name="uid"> </param>
-        /// <returns> </returns>
         public async Task AddRequestAsync(string uid)
         {
-            ResendSmsConfirmationToken token = new()
+            ResendSmsConfirmationToken timeStamp = new()
             {
                 UserID = uid,
                 TokenSentTimestamp = DateTime.UtcNow.ToString()
             };
 
-            await _context.SmsVerifyTable.AddAsync(token);
+            await _context.SmsVerifyTable.AddAsync(timeStamp);
             await _context.SaveChangesAsync();
         }
 
-        /// <summary>
-        /// Removes a user id from the database with a timestamp.
-        /// </summary>
-        /// <param name="uid"> </param>
-        /// <returns> </returns>
         public async Task RemoveRequestAsync(string uid)
         {
             _context.SmsVerifyTable.Remove(await _context.SmsVerifyTable.FirstOrDefaultAsync(u => u.UserID.Equals(uid)));
             await _context.SaveChangesAsync();
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="uid"> </param>
-        /// <returns> If the user can send another SMS verify code. </returns>
         public async Task<bool> IsUserResendValidAsync(string uid)
         {
             ResendSmsConfirmationToken user = await _context.SmsVerifyTable.FirstOrDefaultAsync(u => u.UserID.Equals(uid));

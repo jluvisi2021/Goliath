@@ -20,7 +20,7 @@
     <div class="row pt-3">
         <div class="col-12">
             <h2>You must be logged in to view/edit this page.</h2>
-            <a asp-controller="Auth" asp-action="Index" class="btn btn-primary mt-3 w-25">
+            <a asp-controller="@GoliathControllers.AuthController" asp-action="@nameof(AuthController.Index)" class="btn btn-primary mt-3 w-25">
                 <span class="fas fa-sign-in-alt mr-2"></span>Login
             </a>
         </div>

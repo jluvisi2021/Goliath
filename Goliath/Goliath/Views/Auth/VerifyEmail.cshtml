@@ -23,7 +23,7 @@
             <strong>@Model.Email</strong> is already a verified account.
         </div>
         <hr />
-        <a asp-action="Index">Continue to Login.</a>
+        <a asp-action="@nameof(AuthController.VerifyEmail)">Continue to Login.</a>
     }
     if (Model.IsEmailSent)
     {
@@ -35,7 +35,7 @@ else
 {
     @*Accept data for EmailConfirmModel*@
     <hr />
-    <form asp-action="VerifyEmail" asp-antiforgery="true">
+    <form asp-action="@nameof(AuthController.VerifyEmail)" asp-antiforgery="true">
         <div asp-validation-summary="All" class="text-danger"></div>
         <p>Request to Resend Email Verification</p>
         <div class="ht-tm-element input-group mb-3">

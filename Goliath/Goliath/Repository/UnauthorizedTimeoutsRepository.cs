@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Goliath.Repository
 {
+    /// <inheritdoc cref="IUnauthorizedTimeoutsRepository" />
     public class UnauthorizedTimeoutsRepository : IUnauthorizedTimeoutsRepository
     {
         private readonly GoliathContext _context;
@@ -16,6 +17,11 @@ namespace Goliath.Repository
             _context = context;
         }
 
+        /// <summary>
+        /// Gets a user with the specified <paramref name="userId" />.
+        /// </summary>
+        /// <param name="userId"> The userId to query. </param>
+        /// <returns> The NumericID of that user. </returns>
         private async Task<int> GetUserNumericIndex(string userId)
         {
             UnauthorizedTimeouts timeouts = await _context.TimeoutsUnauthorizedTable.FirstOrDefaultAsync(u => u.UserId.Equals(userId));
@@ -36,7 +42,7 @@ namespace Goliath.Repository
                     {
                         UnauthorizedTimeouts existingUser = await _context.TimeoutsUnauthorizedTable.FirstOrDefaultAsync(u => u.NumericID == numericId);
                         existingUser.RequestVerifyEmail = DateTime.UtcNow.ToString();
-                        await _context.SaveChangesAsync();
+                        break;
                     }
                     else
                     {
@@ -46,16 +52,15 @@ namespace Goliath.Repository
                             RequestVerifyEmail = DateTime.UtcNow.ToString()
                         };
                         await _context.AddAsync(newUser);
-                        await _context.SaveChangesAsync();
                     }
-                    return;
+                    break;
 
                 case UnauthorizedRequest.RequestUsernameEmail:
                     if (numericId != -1)
                     {
                         UnauthorizedTimeouts existingUser = await _context.TimeoutsUnauthorizedTable.FirstOrDefaultAsync(u => u.NumericID == numericId);
                         existingUser.RequestForgotUsername = DateTime.UtcNow.ToString();
-                        await _context.SaveChangesAsync();
+                        break;
                     }
                     else
                     {
@@ -65,16 +70,15 @@ namespace Goliath.Repository
                             RequestForgotUsername = DateTime.UtcNow.ToString()
                         };
                         await _context.AddAsync(newUser);
-                        await _context.SaveChangesAsync();
                     }
-                    return;
+                    break;
 
                 case UnauthorizedRequest.RequestForgotPasswordEmail:
                     if (numericId != -1)
                     {
                         UnauthorizedTimeouts existingUser = await _context.TimeoutsUnauthorizedTable.FirstOrDefaultAsync(u => u.NumericID == numericId);
                         existingUser.RequestForgotPassword = DateTime.UtcNow.ToString();
-                        await _context.SaveChangesAsync();
+                        break;
                     }
                     else
                     {
@@ -84,16 +88,15 @@ namespace Goliath.Repository
                             RequestForgotPassword = DateTime.UtcNow.ToString()
                         };
                         await _context.AddAsync(newUser);
-                        await _context.SaveChangesAsync();
                     }
-                    return;
+                    break;
 
                 case UnauthorizedRequest.InitalTwoFactorRequestSms:
                     if (numericId != -1)
                     {
                         UnauthorizedTimeouts existingUser = await _context.TimeoutsUnauthorizedTable.FirstOrDefaultAsync(u => u.NumericID == numericId);
                         existingUser.RequestTwoFactorSmsInital = DateTime.UtcNow.ToString();
-                        await _context.SaveChangesAsync();
+                        break;
                     }
                     else
                     {
@@ -103,16 +106,15 @@ namespace Goliath.Repository
                             RequestTwoFactorSmsInital = DateTime.UtcNow.ToString()
                         };
                         await _context.AddAsync(newUser);
-                        await _context.SaveChangesAsync();
                     }
-                    return;
+                    break;
 
                 case UnauthorizedRequest.RequestTwoFactorResendSms:
                     if (numericId != -1)
                     {
                         UnauthorizedTimeouts existingUser = await _context.TimeoutsUnauthorizedTable.FirstOrDefaultAsync(u => u.NumericID == numericId);
                         existingUser.RequestTwoFactorSmsResend = DateTime.UtcNow.ToString();
-                        await _context.SaveChangesAsync();
+                        break;
                     }
                     else
                     {
@@ -122,14 +124,14 @@ namespace Goliath.Repository
                             RequestTwoFactorSmsResend = DateTime.UtcNow.ToString()
                         };
                         await _context.AddAsync(newUser);
-                        await _context.SaveChangesAsync();
                     }
-                    return;
+                    break;
 
                 default:
                     GoliathHelper.PrintDebugger(GoliathHelper.PrintType.Error, "Invalid Enum for parameter requestType");
                     return;
             }
+            await _context.SaveChangesAsync();
         }
 
         public async Task<bool> CanRequestTwoFactorSmsAsync(string userId)

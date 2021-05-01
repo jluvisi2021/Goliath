@@ -54,8 +54,8 @@
                             </i>
                         </p>
                         <hr />
-                        <a asp-controller="Auth" asp-action="RegisterMethod" class="btn btn-primary w-50 hvr-grow mb-3"> <span class="fas fa-external-link-alt mr-2"></span>Register New Account </a>
-                        <a asp-controller="Auth" asp-action="Login" class="btn btn-primary w-50 hvr-grow mb-3"> <span class="fas fa-sign-in-alt mr-2"></span>Sign In with Existing Account </a>
+                        <a asp-controller="@GoliathControllers.AuthController" asp-action="@nameof(AuthController.RegisterMethod)" class="btn btn-primary w-50 hvr-grow mb-3"> <span class="fas fa-external-link-alt mr-2"></span>Register New Account </a>
+                        <a asp-controller="@GoliathControllers.AuthController" asp-action="@nameof(AuthController.Login)" class="btn btn-primary w-50 hvr-grow mb-3"> <span class="fas fa-sign-in-alt mr-2"></span>Sign In with Existing Account </a>
                         <br />
                         <a href="#!" class="hvr-push"> <i class="fas fa-question-circle"></i> Need help logging in? </a>
                     </div>

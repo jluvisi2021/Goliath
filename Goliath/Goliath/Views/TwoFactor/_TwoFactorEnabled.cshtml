@@ -15,7 +15,7 @@
                     <hr />
                     <strong>Recovery Codes:</strong>
                     @{
-                        List<string> codes = JsonConvert.DeserializeObject<List<string>>((string)TempData["RecoveryCodes"]);
+                        List<string> codes = JsonConvert.DeserializeObject<List<string>>((string)TempData[TempDataKeys.TwoFactorRecoveryCodes]);
                     }
                     @foreach (string s in codes)
                     {

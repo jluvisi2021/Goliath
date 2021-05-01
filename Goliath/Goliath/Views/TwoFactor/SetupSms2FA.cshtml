@@ -30,15 +30,15 @@ else
                         <hr />
                         <p class="text-muted">Last Two-Factor Update: @last2FAUpdate</p>
 
-                        <a asp-action="Authenticate" asp-route-userAction="@TwoFactorAction.DisableTwoFactor" asp-route-requireCode="true" class="btn btn-primary">
+                        <a asp-action="@nameof(TwoFactorController.Authenticate)" asp-route-userAction="@TwoFactorAction.DisableTwoFactor" asp-route-requireCode="true" class="btn btn-primary">
                             <i class="fas fa-lock-open fa-fw mr-1"></i>Disable Two-Factor
                         </a>
                         <div class="pt-3 pb-3" />
-                        <a asp-action="Authenticate" asp-route-userAction="@TwoFactorAction.GetVerificationCodes" asp-route-requireCode="true" class="btn btn-primary">
+                        <a asp-action="@nameof(TwoFactorController.Authenticate)" asp-route-userAction="@TwoFactorAction.GetVerificationCodes" asp-route-requireCode="true" class="btn btn-primary">
                             <i class="fas fa-file fa-fw mr-1"></i>Get Verification Codes
                         </a>
                         <div class="pt-3 pb-3" />
-                        <a asp-action="Index">Go Back</a>
+                        <a asp-action="@nameof(TwoFactorController.Index)">Go Back</a>
                     </div>
                     <hr />
                     <div class="col-12">
@@ -69,7 +69,7 @@ else
                         </p>
                         <hr />
                         <div class="row justify-content-center">
-                            <a class="btn btn-primary" asp-action="Authenticate" asp-route-userAction="@TwoFactorAction.EnableTwoFactor" asp-route-requireCode="false">
+                            <a class="btn btn-primary" asp-action="@nameof(TwoFactorController.Authenticate)" asp-route-userAction="@TwoFactorAction.EnableTwoFactor" asp-route-requireCode="false">
                                 <i class="fas fa-lock fa-fw mr-1"></i>Enable SMS Two-Factor
                             </a>
                         </div>

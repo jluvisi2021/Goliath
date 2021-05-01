@@ -21,18 +21,9 @@ namespace Goliath.Controllers
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public sealed class AuthController : Controller
     {
-        /// <summary>
-        /// For interfacing with the application user.
-        /// </summary>
         private readonly IAccountRepository _accountRepository;
-
-        /// <summary>
-        /// Manage if the user is signed in as well as authentication.
-        /// </summary>
         private readonly SignInManager<ApplicationUser> _signInManager;
-
         private readonly IGoliathCaptchaService _captcha;
-
         private readonly IUnauthorizedTimeoutsRepository _timeoutsRepository;
         private readonly ITwoFactorAuthorizeTokenRepository _twoFactorTokenRepository;
 
@@ -63,11 +54,11 @@ namespace Goliath.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("Index", "UserPanel");
+                    return RedirectToAction(nameof(UserPanelController.Index), GoliathControllers.UserPanelController);
                 }
             }
 
-            return RedirectToAction("Login");
+            return RedirectToAction(nameof(Login));
         }
 
         [Route("login")]
@@ -95,7 +86,7 @@ namespace Goliath.Controllers
             if (!await _captcha.IsCaptchaValidAsync())
             {
                 ModelState.AddModelError(_captcha.CaptchaValidationError().Key, _captcha.CaptchaValidationError().Value);
-                return View(signInModel);
+                return View();
             }
 
             // Attempt to sign the user in.
@@ -108,7 +99,7 @@ namespace Goliath.Controllers
                 // Change the time of last login.
                 await _accountRepository.UpdateLastLoginAsync(signInModel.Username);
                 // Redirect
-                return RedirectToAction("Index", "UserPanel");
+                return RedirectToAction(nameof(UserPanelController.Index), GoliathControllers.UserPanelController);
             }
             // Result failed. Check for reason why.
 
@@ -144,22 +135,22 @@ namespace Goliath.Controllers
             ViewData["ButtonID"] = ButtonID.Login;
             if (string.IsNullOrWhiteSpace(userName))
             {
-                TempData["Redirect"] = RedirectPurpose.TwoFactorSmsResendFailure;
+                TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorSmsResendFailure;
                 return RedirectToActionPermanent(nameof(Login));
             }
             ApplicationUser user = await _accountRepository.GetUserByNameAsync(userName);
             if (user == null)
             {
-                TempData["Redirect"] = RedirectPurpose.TwoFactorSmsResendFailure;
+                TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorSmsResendFailure;
                 return RedirectToActionPermanent(nameof(Login));
             }
             // Invalid Authorize Cookie
             if (!await _twoFactorTokenRepository.TokenValidAsync(user.Id))
             {
-                TempData["Redirect"] = RedirectPurpose.TwoFactorSmsResendFailure;
+                TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorSmsResendFailure;
                 return RedirectToActionPermanent(nameof(Login));
             }
-            if (user.TwoFactorMethod == (int)TwoFactorMethod.SmsVerify && TempData["Redirect"] == null && await _timeoutsRepository.CanRequestTwoFactorSmsAsync(user.Id))
+            if (user.TwoFactorMethod == (int)TwoFactorMethod.SmsVerify && TempData[TempDataKeys.Redirect] == null && await _timeoutsRepository.CanRequestTwoFactorSmsAsync(user.Id))
             {
                 await _accountRepository.SendTwoFactorCodeSms(user);
                 await _timeoutsRepository.UpdateRequestAsync(user.Id, UnauthorizedRequest.InitalTwoFactorRequestSms);
@@ -195,7 +186,7 @@ namespace Goliath.Controllers
                         // Change the time of last login.
                         await _accountRepository.UpdateLastLoginAsync(user);
                         // Redirect
-                        return RedirectToAction("Index", "UserPanel");
+                        return RedirectToAction(nameof(UserPanelController.Index), GoliathControllers.UserPanelController);
                     }
                     else
                     {
@@ -254,7 +245,7 @@ namespace Goliath.Controllers
                 ModelState.Clear();
                 await _captcha.CacheNewCaptchaValidateAsync();
                 // Send the user to the index with register tempdata.
-                TempData["Redirect"] = RedirectPurpose.RegisterSuccess;
+                TempData[TempDataKeys.Redirect] = RedirectPurpose.RegisterSuccess;
                 // Send back to index.
                 return RedirectToAction(nameof(Index));
             }
@@ -382,7 +373,7 @@ namespace Goliath.Controllers
         }
 
         [Route("verify")]
-        public IActionResult VerifyEmailAsync()
+        public IActionResult VerifyEmail()
         {
             ViewData["ButtonID"] = ButtonID.VerifyEmail;
             return View();
@@ -391,7 +382,7 @@ namespace Goliath.Controllers
         [Route("verify")]
         [PreventDuplicateRequest]
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> VerifyEmailAsync(EmailConfirmModel model)
+        public async Task<IActionResult> VerifyEmail(EmailConfirmModel model)
         {
             ViewData["ButtonID"] = ButtonID.VerifyEmail;
 
@@ -453,14 +444,14 @@ namespace Goliath.Controllers
         /// <param name="token"> </param>
         /// <returns> </returns>
         [HttpGet("verify-email")]
-        public async Task<IActionResult> VerifyEmailAsync(string uid, string token)
+        public async Task<IActionResult> VerifyEmail(string uid, string token)
         {
             // Check for blanks in URL query.
             if (string.IsNullOrWhiteSpace(uid) || string.IsNullOrWhiteSpace(token))
             {
                 // Alert to the view that the verification failed.
-                TempData["Redirect"] = RedirectPurpose.VerifiedEmailFailure;
-                return RedirectToAction("Index");
+                TempData[TempDataKeys.Redirect] = RedirectPurpose.VerifiedEmailFailure;
+                return RedirectToAction(nameof(Index));
             }
 
             token = token.Replace(' ', '+');
@@ -470,12 +461,12 @@ namespace Goliath.Controllers
             if (result.Succeeded)
             {
                 // If the email confirmation is a success then we can pass that info into the view.
-                TempData["Redirect"] = RedirectPurpose.VerifiedEmailSuccess;
-                return RedirectToAction("Index");
+                TempData[TempDataKeys.Redirect] = RedirectPurpose.VerifiedEmailSuccess;
+                return RedirectToAction(nameof(Index));
             }
             // Alert to the view that the verification failed.
-            TempData["Redirect"] = RedirectPurpose.VerifiedEmailFailure;
-            return RedirectToAction("Index");
+            TempData[TempDataKeys.Redirect] = RedirectPurpose.VerifiedEmailFailure;
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpGet("forgot-password")]
@@ -485,8 +476,8 @@ namespace Goliath.Controllers
 
             if (string.IsNullOrWhiteSpace(uid) || string.IsNullOrWhiteSpace(token))
             {
-                TempData["Redirect"] = RedirectPurpose.ResetPasswordFailure;
-                return RedirectToAction("Index");
+                TempData[TempDataKeys.Redirect] = RedirectPurpose.ResetPasswordFailure;
+                return RedirectToAction(nameof(Index));
             }
             // Add the userID and token from the url.
             ResetPasswordModel model = new()
@@ -495,11 +486,11 @@ namespace Goliath.Controllers
                 Token = token
             };
             // Tell the view we are redirecting to make a new password.
-            TempData["Redirect"] = RedirectPurpose.ResetPasswordModal;
+            TempData[TempDataKeys.Redirect] = RedirectPurpose.ResetPasswordModal;
             // Serialize the model and pass it.
-            TempData["Model"] = JsonConvert.SerializeObject(model);
+            TempData[TempDataKeys.Model] = JsonConvert.SerializeObject(model);
 
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
 
         [PreventDuplicateRequest]
@@ -518,8 +509,8 @@ namespace Goliath.Controllers
                     ModelState.Clear();
                     model.IsCompleted = true;
                     // Completed Successfully
-                    TempData["Redirect"] = RedirectPurpose.ResetPasswordSuccess;
-                    return RedirectToAction("Index");
+                    TempData[TempDataKeys.Redirect] = RedirectPurpose.ResetPasswordSuccess;
+                    return RedirectToAction(nameof(Index));
                 }
 
                 // Go through all errors and add them to the view.
@@ -539,10 +530,10 @@ namespace Goliath.Controllers
                 }
             }
 
-            TempData["Redirect"] = RedirectPurpose.ResetPasswordModal;
-            TempData["Model"] = JsonConvert.SerializeObject(model); // Pass the model to the view.
-            TempData["Errors"] = errors.ToArray();
-            return RedirectToAction("Index");
+            TempData[TempDataKeys.Redirect] = RedirectPurpose.ResetPasswordModal;
+            TempData[TempDataKeys.Model] = JsonConvert.SerializeObject(model); // Pass the model to the view.
+            TempData[TempDataKeys.ModelErrors] = errors.ToArray();
+            return RedirectToAction(nameof(Index));
         }
 
         private string GetClientUserAgent() => Request.Headers["User-Agent"].ToString();

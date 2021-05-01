@@ -1,5 +1,4 @@
-﻿@using Goliath.Helper
-@model Goliath.Models.ProfileSettingsModel
+﻿@model Goliath.Models.ProfileSettingsModel
 @{
     // Check if settings have been changed.
 }
@@ -16,7 +15,7 @@
 
 <hr />
 
-<form id="settings" asp-action="Profile" asp-antiforgery="true" novalidate>
+<form id="settings" asp-action="@nameof(UserPanelController.Profile)" asp-antiforgery="true" novalidate>
 
     <div id="confirm-modal"></div>
     <div class="container">

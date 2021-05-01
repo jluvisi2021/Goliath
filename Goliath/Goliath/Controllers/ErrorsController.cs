@@ -46,7 +46,7 @@ namespace Goliath.Controllers
               .Get<IExceptionHandlerPathFeature>();
             ExceptionHandlerModel model = new()
             {
-                DateTime = DateTime.UtcNow.ToString() + " (UTC)",
+                DateTime = $"{DateTime.UtcNow} (UTC)",
                 OriginalPath = feature?.Path ?? "Unknown",
                 ExceptionSource = feature?.Error.Source ?? "Unknown",
                 ExceptionTargetSite = feature?.Error.TargetSite.Name ?? "Unknown",
@@ -60,9 +60,9 @@ namespace Goliath.Controllers
             {
                 await _repository.SignOutAsync();
             }
-            TempData["Redirect"] = RedirectPurpose.Exception;
-            TempData["ErrorInformation"] = JsonConvert.SerializeObject(model);
-            return RedirectToActionPermanent("Index", "Auth");
+            TempData[TempDataKeys.Redirect] = RedirectPurpose.Exception;
+            TempData[TempDataKeys.ErrorInformation] = JsonConvert.SerializeObject(model);
+            return RedirectToActionPermanent(nameof(AuthController.Index), GoliathControllers.AuthController);
         }
 
         public IActionResult NoJS() => View();

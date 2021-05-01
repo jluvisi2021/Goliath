@@ -16,32 +16,15 @@ using System.Web;
 
 namespace Goliath.Repository
 {
+    /// <inheritdoc cref="IAccountRepository" />
     public class AccountRepository : IAccountRepository
     {
-        /// <summary>
-        /// The object which manages interacting directly with the Identity core methods for the user.
-        /// </summary>
         private readonly UserManager<ApplicationUser> _userManager;
-
-        /// <summary>
-        /// Manages the sign in process for the user and can check the state of the user.
-        /// </summary>
         private readonly SignInManager<ApplicationUser> _signInManager;
-
         private readonly RoleManager<ApplicationRole> _roleManager;
-
-        /// <summary>
-        /// The object which can send direct emails to clients using HTML templates.
-        /// </summary>
         private readonly IEmailService _emailService;
-
-        /// <summary>
-        /// The configuration for <b> appsettings.json </b>
-        /// </summary>
         private readonly IConfiguration _config;
-
         private readonly ITwilioService _twilio;
-
         private readonly GoliathContext _context;
 
         /// <summary>
@@ -62,26 +45,33 @@ namespace Goliath.Repository
             _context = context;
         }
 
-        /// <summary>
-        /// Creates a "Super User" which can manage all roles in the panel for all users. Also
-        /// creates the default roles.
-        /// </summary>
-        /// <returns> </returns>
         public async Task LoadDefaultsAsync()
         {
             if (!(await _roleManager.RoleExistsAsync(GoliathRoles.Administrator)))
             {
+                #region Create admin role
+
                 await _roleManager.CreateAsync(new ApplicationRole()
                 {
                     Name = GoliathRoles.Administrator,
                     Icon = HttpUtility.HtmlEncode("<span class='badge badge-pill badge-danger ml-1'>ADMIN</span>"),
                     IsAdministrator = true
                 });
+
+                #endregion Create admin role
+
+                #region Create default role
+
                 await _roleManager.CreateAsync(new ApplicationRole()
                 {
                     Name = GoliathRoles.Default,
-                    Icon = ""
+                    Icon = string.Empty
                 });
+
+                #endregion Create default role
+
+                #region Create super user account
+
                 IdentityResult result = await _userManager.CreateAsync(new ApplicationUser()
                 {
                     UserName = _config["SuperUser:Username"],
@@ -89,8 +79,8 @@ namespace Goliath.Repository
                     EmailConfirmed = true,
                     BackgroundColor = "#FFFFFF",
                     DarkTheme = "false",
-                    UserData = "",
-                    PendingNotifications = "",
+                    UserData = string.Empty,
+                    PendingNotifications = string.Empty,
                     LogoutThreshold = 0,
                     AccountCreationDate = DateTime.UtcNow.ToString(),
                     LastPasswordUpdate = DateTime.UtcNow.ToString()
@@ -109,17 +99,17 @@ namespace Goliath.Repository
                     return;
                 }
                 GoliathHelper.PrintDebugger("Created Super User.");
+
+                #endregion Create super user account
             }
         }
 
-        /// <summary>
-        /// Returns whether or not the user has the admin role.
-        /// </summary>
-        /// <param name="user"> </param>
-        /// <returns> If the user is admin. </returns>
         public async Task<bool> IsAdminAsync(ApplicationUser user)
         {
             IList<string> roles = await _userManager.GetRolesAsync(user);
+
+            #region Goes through the users role and checks if any of them are admin.
+
             foreach (string role in roles)
             {
                 if ((await _roleManager.FindByNameAsync(role)).IsAdministrator)
@@ -127,6 +117,9 @@ namespace Goliath.Repository
                     return true;
                 }
             }
+
+            #endregion Goes through the users role and checks if any of them are admin.
+
             return false;
         }
 
@@ -134,6 +127,9 @@ namespace Goliath.Repository
         {
             ApplicationUser user = await _userManager.FindByNameAsync(username);
             IList<string> roles = await _userManager.GetRolesAsync(user);
+
+            #region Goes through the users role and checks if any of them are admin.
+
             foreach (string role in roles)
             {
                 if ((await _roleManager.FindByNameAsync(role)).IsAdministrator)
@@ -141,6 +137,9 @@ namespace Goliath.Repository
                     return true;
                 }
             }
+
+            #endregion Goes through the users role and checks if any of them are admin.
+
             return false;
         }
 
@@ -153,11 +152,6 @@ namespace Goliath.Repository
             return string.Empty;
         }
 
-        /// <summary>
-        /// Removes all roles from a user and makes them an admin.
-        /// </summary>
-        /// <param name="user"> </param>
-        /// <returns> </returns>
         public async Task MoveUserToAdminRoleAsync(ApplicationUser user)
         {
             if (!await _userManager.IsInRoleAsync(user, GoliathRoles.Administrator))
@@ -169,11 +163,6 @@ namespace Goliath.Repository
             }
         }
 
-        /// <summary>
-        /// Removes all roles from a user and makes them default.
-        /// </summary>
-        /// <param name="user"> </param>
-        /// <returns> </returns>
         public async Task MoveUserToDefaultRoleAsync(ApplicationUser user)
         {
             if (!await _userManager.IsInRoleAsync(user, GoliathRoles.Default))
@@ -239,11 +228,6 @@ namespace Goliath.Repository
             return "Error";
         }
 
-        /// <summary>
-        /// Get the icon for a specific role using a user claim.
-        /// </summary>
-        /// <param name="claims"> </param>
-        /// <returns> </returns>
         public async Task<string> GetRoleIconAsync(ClaimsPrincipal claims)
         {
             return (await _roleManager.FindByNameAsync(await GetPrimaryRoleAsync(await GetUserFromContextAsync(claims)))).Icon;
@@ -267,45 +251,34 @@ namespace Goliath.Repository
             return null;
         }
 
-        /// <summary>
-        /// Move a user to a specified role.
-        /// </summary>
-        /// <param name="user"> </param>
-        /// <param name="name"> </param>
-        /// <returns> </returns>
         public async Task MoveUserToRoleByNameAsync(ApplicationUser user, string name)
         {
-            if (await _roleManager.RoleExistsAsync(name))
+            if (await _roleManager.RoleExistsAsync(name) && !await _userManager.IsInRoleAsync(user, name))
             {
-                if (!await _userManager.IsInRoleAsync(user, name))
-                {
-                    await _userManager.RemoveFromRolesAsync(user, await _userManager.GetRolesAsync(user));
-                    await _userManager.AddToRoleAsync(user, name);
-                    IList<string> s = await _userManager.GetRolesAsync(user);
-                    await SendRoleMovedEmailAsync(user, s[0].ToString(), GoliathRoles.Administrator);
-                }
+                await _userManager.RemoveFromRolesAsync(user, await _userManager.GetRolesAsync(user));
+                await _userManager.AddToRoleAsync(user, name);
+                IList<string> s = await _userManager.GetRolesAsync(user);
+                await SendRoleMovedEmailAsync(user, s[0].ToString(), GoliathRoles.Administrator);
             }
         }
+
+        /////////////////////////////////////////////
 
         public async Task<ApplicationUser> GetUserByNameAsync(string name)
         {
             return await _userManager.FindByNameAsync(name);
         }
 
-        /////////////////////////////////////////////
+        public async Task<ApplicationUser> FindUserById(string userId)
+        {
+            return await _userManager.FindByIdAsync(userId);
+        }
 
-        /// <summary>
-        /// Returns an application user from a claims principal.
-        /// </summary>
-        /// <param name="claimsPrincipal"> </param>
-        /// <returns> </returns>
         public async Task<ApplicationUser> GetFromUserClaimAsync(ClaimsPrincipal claimsPrincipal)
         {
             return await _userManager.FindByNameAsync(claimsPrincipal.Identity.Name);
         }
 
-        /// <summary> The correct way to get a user from a view. </summary> <param
-        /// name="claims">@User.<></param> <returns>Get a user from a view.</returns>
         public async Task<ApplicationUser> GetUserFromContextAsync(ClaimsPrincipal claims)
         {
             return await _userManager.GetUserAsync(claims);
@@ -426,29 +399,27 @@ namespace Goliath.Repository
             return true;
         }
 
-        /// <summary>
-        /// Creates the user and adds them to the database using Identity core.
-        /// </summary>
-        /// <param name="userModel"> </param>
-        /// <param name="data"> Contains some data that should be presented in the email. </param>
-        /// <returns> </returns>
         public async Task<IdentityResult> CreateUserAsync(SignUpUserModel userModel, DeviceParser device)
         {
             try
             {
+                #region Create a user with some default values.
+
                 // Create a new application user.
                 ApplicationUser user = new()
                 {
                     BackgroundColor = "#FFFFFF",
                     DarkTheme = "false",
-                    UserData = "",
-                    PendingNotifications = "",
+                    UserData = string.Empty,
+                    PendingNotifications = string.Empty,
                     UserName = userModel.Username,
                     Email = userModel.Email,
                     LogoutThreshold = 0,
                     AccountCreationDate = DateTime.UtcNow.ToString(),
                     LastPasswordUpdate = DateTime.UtcNow.ToString()
                 };
+
+                #endregion Create a user with some default values.
 
                 // Use Identity Core to create the user.
                 IdentityResult result = await (_userManager.CreateAsync(user, userModel.Password));
@@ -474,20 +445,12 @@ namespace Goliath.Repository
             }
         }
 
-        /// <summary>
-        /// Updates the "LastUserLogin" with DateTime.UtcNow.ToString()
-        /// </summary>
-        /// <returns> </returns>
         public async Task UpdateLastLoginAsync(ApplicationUser user)
         {
             user.LastUserLogin = DateTime.UtcNow.ToString();
             await UpdateUserAsync(user);
         }
 
-        /// <summary>
-        /// Updates the "LastUserLogin" with DateTime.UtcNow.ToString()
-        /// </summary>
-        /// <returns> </returns>
         public async Task UpdateLastLoginAsync(string userName)
         {
             ApplicationUser user = await _userManager.FindByNameAsync(userName);
@@ -495,14 +458,6 @@ namespace Goliath.Repository
             await UpdateUserAsync(user);
         }
 
-        /// <summary>
-        /// Sends an email to a client with a generated token. <br /> This version of the method
-        /// should only be used at registration due to its dependency of SignUpUserModel
-        /// </summary>
-        /// <param name="signUpModel"> </param>
-        /// <param name="userModel"> </param>
-        /// <param name="data"> </param>
-        /// <returns> </returns>
         public async Task GenerateEmailConfirmationTokenAsync(SignUpUserModel signUpModel, ApplicationUser userModel, DeviceParser device)
         {
             // Generate a token using Identity Core.
@@ -514,11 +469,6 @@ namespace Goliath.Repository
             }
         }
 
-        /// <summary>
-        /// Sends an email to the user with a token.
-        /// </summary>
-        /// <param name="user"> </param>
-        /// <returns> </returns>
         public async Task GenerateEmailConfirmationTokenAsync(ApplicationUser userModel, DeviceParser device)
         {
             // Generate a token using Identity Core.
@@ -530,13 +480,6 @@ namespace Goliath.Repository
             }
         }
 
-        /// <summary>
-        /// Sends an email to a user notifying them to verify their new email. Also sends an email
-        /// to the user's old email notifying them of the change.
-        /// </summary>
-        /// <param name="userModel"> </param>
-        /// <param name="device"> </param>
-        /// <returns> </returns>
         public async Task GenerateNewEmailConfirmationTokenAsync(ApplicationUser userModel, DeviceParser device)
         {
             // Generate a token using Identity Core.
@@ -549,12 +492,6 @@ namespace Goliath.Repository
             }
         }
 
-        /// <summary>
-        /// Generate a new token for a user's phone and send it to them. Also alerts the user's email.
-        /// </summary>
-        /// <param name="userModel"> </param>
-        /// <param name="device"> </param>
-        /// <returns> </returns>
         public async Task GenerateNewPhoneConfirmationTokenAsync(ApplicationUser userModel, DeviceParser device)
         {
             string token = await _userManager.GenerateChangePhoneNumberTokenAsync(userModel, userModel.UnverifiedNewPhone);
@@ -569,11 +506,6 @@ namespace Goliath.Repository
             }
         }
 
-        /// <summary>
-        /// Generates a token to a user's phone. Does not send an email alerting the user of the resend.
-        /// </summary>
-        /// <param name="userModel"> </param>
-        /// <returns> </returns>
         public async Task GenerateNewPhoneConfirmationTokenAsync(ApplicationUser userModel)
         {
             string token = await _userManager.GenerateChangePhoneNumberTokenAsync(userModel, userModel.UnverifiedNewPhone);
@@ -587,12 +519,6 @@ namespace Goliath.Repository
             }
         }
 
-        /// <summary>
-        /// Sends an email to a client with their username.
-        /// </summary>
-        /// <param name="model"> </param>
-        /// <param name="device"> </param>
-        /// <returns> </returns>
         public async Task GenerateUsernameAsync(ApplicationUser user, DeviceParser device)
         {
             if (!(string.IsNullOrWhiteSpace(user?.UserName)))
@@ -601,12 +527,6 @@ namespace Goliath.Repository
             }
         }
 
-        /// <summary>
-        /// Sends an email to the user with a token to reset password.
-        /// </summary>
-        /// <param name="userModel"> </param>
-        /// <param name="data"> </param>
-        /// <returns> </returns>
         public async Task GenerateForgotPasswordTokenAsync(ApplicationUser userModel, DeviceParser device)
         {
             // Generate a token using Identity Core.
@@ -618,21 +538,11 @@ namespace Goliath.Repository
             }
         }
 
-        /// <summary>
-        /// Returns the application user which is found from a specified email address.
-        /// </summary>
-        /// <param name="email"> Email Address </param>
-        /// <returns> Application User (async) </returns>
         public async Task<ApplicationUser> FindByEmailAsync(string email)
         {
             return await _userManager.FindByEmailAsync(email);
         }
 
-        /// <summary>
-        /// Sign in to the application using the sign in model.
-        /// </summary>
-        /// <param name="signInModel"> </param>
-        /// <returns> </returns>
         public async Task<SignInResult> PasswordSignInAsync(SignInModel signInModel)
         {
             SignInResult result = await _signInManager.PasswordSignInAsync(signInModel.Username, signInModel.Password, signInModel.RememberMe, false);
@@ -640,10 +550,6 @@ namespace Goliath.Repository
             return result;
         }
 
-        /// <summary>
-        /// Manage signing out of the application.
-        /// </summary>
-        /// <returns> </returns>
         public async Task SignOutAsync()
         {
             await _signInManager.SignOutAsync();

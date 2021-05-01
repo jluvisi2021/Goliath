@@ -9,9 +9,7 @@ using System.Threading.Tasks;
 
 namespace Goliath.Services
 {
-    /// <summary>
-    /// Manages all CAPTCHAs and validations on Goliath.
-    /// </summary>
+    /// <inheritdoc cref="IGoliathCaptchaService" />
     public class GoliathCaptchaService : IGoliathCaptchaService
     {
         private readonly IDNTCaptchaValidatorService _validatorService;
@@ -31,10 +29,6 @@ namespace Goliath.Services
             _validTokens = validTokens;
         }
 
-        /// <summary>
-        /// Returns whether or not the captcha is valid and the user can perform a task.
-        /// </summary>
-        /// <returns> </returns>
         public async Task<bool> IsCaptchaValidAsync()
         {
             if (!(_validatorService.HasRequestValidCaptchaEntry(Language.English, DisplayMode.ShowDigits)))
@@ -62,11 +56,6 @@ namespace Goliath.Services
             return true;
         }
 
-        /// <summary>
-        /// Returns whether or not the captcha is valid and the user can perform a task.
-        /// </summary>
-        /// <param name="useCookies"> Should the captcha check look for a cached cookie? </param>
-        /// <returns> </returns>
         public async Task<bool> IsCaptchaValidAsync(bool useCookies)
         {
             if (!(_validatorService.HasRequestValidCaptchaEntry(Language.English, DisplayMode.ShowDigits)))
@@ -97,11 +86,6 @@ namespace Goliath.Services
             return true;
         }
 
-        /// <summary>
-        /// A method which instructs Goliath to cache a successful captcha completion <br /> result
-        /// in the database and add a cookie to the user's browser.
-        /// </summary>
-        /// <returns> </returns>
         public async Task CacheNewCaptchaValidateAsync()
         {
             string token = GoliathHelper.GenerateSecureRandomNumber();
@@ -114,18 +98,11 @@ namespace Goliath.Services
             await _validTokens.AddTokenAsync(key: token);
         }
 
-        /// <summary>
-        /// Removes a captcha cookie from the browser.
-        /// </summary>
         public void DeleteCaptchaCookie()
         {
             _cookieManager.DeleteCookie(CookieKeys.ValidateCaptchaCookie);
         }
 
-        /// <summary>
-        /// A model error for views which have asp-validation.
-        /// </summary>
-        /// <returns> </returns>
         public KeyValuePair<string, string> CaptchaValidationError()
         {
             return new KeyValuePair<string, string>(

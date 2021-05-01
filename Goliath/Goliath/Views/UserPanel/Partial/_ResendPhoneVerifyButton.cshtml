@@ -7,7 +7,7 @@
 *@
 @if (await _requestTable.IsUserResendValidAsync((await _repository.GetUserFromContextAsync(User)).Id))
 {
-    <a asp-action="ResendSmsVerifyToken" asp-route-username="@User.Identity.Name" class="btn btn-primary align-self-center"
+    <a asp-action="@nameof(UserPanelController.ResendSmsVerifyToken)" asp-route-username="@User.Identity.Name" class="btn btn-primary align-self-center"
        data-toggle="tooltip" data-placement="right" title="Request a new code. This can only be done once every 2 hours.">
         <i class="fas fa-redo mr-2"></i>
         Resend

@@ -23,8 +23,6 @@ namespace Goliath
         /// </summary>
         private readonly IConfiguration _config;
 
-        private IAccountRepository _accountRepository;
-
         public Startup(IConfiguration config)
         {
             _config = config;
@@ -45,6 +43,9 @@ namespace Goliath
 
             // Setup the SMTPConfig model to use values directly from the appsettings.
             services.Configure<SMTPConfigModel>(_config.GetSection("SMTPConfig"));
+
+            #region Configuring password settings
+
             // General Identity Core settings.
             services.Configure<IdentityOptions>(options =>
             {
@@ -58,6 +59,16 @@ namespace Goliath
                 options.SignIn.RequireConfirmedEmail = true; // Require activated accounts.
             });
 
+            // Change password hash iteration count.
+            services.Configure<PasswordHasherOptions>(option =>
+            {
+                option.IterationCount = int.Parse(_config["Application:PasswordHashIterations"]);
+            });
+
+            #endregion Configuring password settings
+
+            #region Global cookie policy
+
             // Guarantee all cookies are secure.
             services.AddCookiePolicy(options =>
             {
@@ -66,14 +77,22 @@ namespace Goliath
                 options.HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.Always;
             });
 
+            #endregion Global cookie policy
+
+            #region Token lifespans
+
             // All tokens expire within 5 minutes.
             services.Configure<DataProtectionTokenProviderOptions>(options =>
             {
                 options.TokenLifespan = TimeSpan.FromMinutes(5);
             });
 
+            #endregion Token lifespans
+
             // Enable MVC Design
             services.AddControllersWithViews();
+
+            #region Routing settings
 
             // Change URL Settings.
             // Note: options.LowercaseQuery won't work and will interfere with DNT Captcha.
@@ -83,6 +102,10 @@ namespace Goliath
                 options.AppendTrailingSlash = true;
             });
 
+            #endregion Routing settings
+
+            #region Captcha options
+
             // DNT Captchas
             services.AddDNTCaptcha(options =>
                options.UseCookieStorageProvider()
@@ -91,10 +114,15 @@ namespace Goliath
                    .WithEncryptionKey(_config["Application:CaptchaEncryptionKey"])
             );
 
+            #endregion Captcha options
+
 #if DEBUG
             // Allow Razor pages to update upon browser refresh.
             services.AddRazorPages().AddRazorRuntimeCompilation();
 #endif
+
+            #region Custom Goliath services
+
             // Enable services to use in Controllers through DI.
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IAccountRepository, AccountRepository>();
@@ -105,6 +133,10 @@ namespace Goliath
             services.AddScoped<ITwilioService, TwilioService>();
             services.AddScoped<IUnauthorizedTimeoutsRepository, UnauthorizedTimeoutsRepository>();
             services.AddScoped<ITwoFactorAuthorizeTokenRepository, TwoFactorAuthorizeTokenRepository>();
+
+            #endregion Custom Goliath services
+
+            #region Additional cookie policy
 
             // Configure secure cookie options for .NET Identity Core.
             services.ConfigureApplicationCookie(options =>
@@ -128,20 +160,22 @@ namespace Goliath
                 options.SuppressXFrameOptionsHeader = true;
             });
 
-            // Change password hash iteration count.
-            services.Configure<PasswordHasherOptions>(option =>
+            services.AddSession(options =>
             {
-                option.IterationCount = int.Parse(_config["Application:PasswordHashIterations"]);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.Name = CookieKeys.AspNetSessionCookie;
+                options.Cookie.SameSite = SameSiteMode.Strict;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             });
-            services.AddSession();
+
+            #endregion Additional cookie policy
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IAccountRepository accountRepository)
         {
-            _accountRepository = accountRepository;
             // Create roles and super user if not created.
-            _accountRepository.LoadDefaultsAsync().Wait();
+            accountRepository.LoadDefaultsAsync().Wait();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -166,6 +200,8 @@ namespace Goliath
                 app.UseHttpsRedirection();
             }
 
+            #region Static file caching
+
             // Use wwwroot folder. Store cached files for 7 days.
             app.UseStaticFiles(new StaticFileOptions()
             {
@@ -176,10 +212,12 @@ namespace Goliath
             if (path.EndsWith(".css") || path.EndsWith(".js") || path.EndsWith(".gif") || path.EndsWith(".jpg") || path.EndsWith(".png") || path.EndsWith(".svg"))
             {
                 TimeSpan maxAge = new(0, 4, 0, 0); // 5 minutes 45 seconds for storing statics.
-                r.Context.Response.Headers.Add("Cache-Control", "public, max-age=" + maxAge.TotalSeconds.ToString("0"));
+                r.Context.Response.Headers.Add("Cache-Control", $"public, max-age={maxAge.TotalSeconds:0}");
             }
         }
             });
+
+            #endregion Static file caching
 
             // Enable URL routing.
             app.UseRouting();
@@ -190,8 +228,10 @@ namespace Goliath
             // Require user accounts
             app.UseAuthorization();
 
+            // Caching web pages that do not use forms.
             app.UseResponseCaching();
 
+            // For session storage like TempData
             app.UseSession();
 
             /* Starts at ~/Views/Auth/Login.cshtml */

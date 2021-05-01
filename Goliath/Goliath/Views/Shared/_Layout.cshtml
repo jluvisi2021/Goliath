@@ -40,7 +40,7 @@
     {
         <noscript>
             @*If javascript is not enabled then redirect them to the NoJS error page.*@
-            <meta HTTP-EQUIV="REFRESH" content="0; url=@Url.ActionLink("NoJS", "Errors")">
+            <meta HTTP-EQUIV="REFRESH" content="0; url=@Url.ActionLink(nameof(ErrorsController.NoJS), GoliathControllers.ErrorsController)">
         </noscript>
     }
 

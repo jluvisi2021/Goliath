@@ -26,7 +26,7 @@
             <hr />
             <div class="col-12">
 
-                <form asp-action="Authenticate" asp-antiforgery="true">
+                <form asp-action="@nameof(TwoFactorController.Authenticate)" asp-antiforgery="true">
                     <input type="hidden" asp-for="Action" value="@Model?.Action" />
                     <input type="hidden" asp-for="IsSubmitted" value="@true" />
                     <input type="hidden" asp-for="TwoFactorCodeRequired" value="@Model?.TwoFactorCodeRequired" />

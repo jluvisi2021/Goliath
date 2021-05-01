@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace Goliath.Repository
 {
+    /// <inheritdoc cref="ITwoFactorAuthorizeTokenRepository" />
     public class TwoFactorAuthorizeTokenRepository : ITwoFactorAuthorizeTokenRepository
     {
         private readonly GoliathContext _context;
@@ -26,8 +27,10 @@ namespace Goliath.Repository
             string userId = (await _repository.GetUserByNameAsync(userName)).Id;
             if (await _context.TwoFactorTokens.FirstOrDefaultAsync(u => u.UserId.Equals(userId)) != null)
             {
+                // Destroy the old token.
                 await DisposeTokenAsync(userId);
             }
+            // Add a new authorize token.
             await _context.TwoFactorTokens.AddAsync(new TwoFactorAuthorizeToken()
             {
                 UserId = userId,

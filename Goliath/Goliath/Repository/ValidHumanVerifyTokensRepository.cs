@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace Goliath.Repository
 {
+    /// <inheritdoc cref="IValidHumanVerifyTokensRepository" />
     public class ValidHumanVerifyTokensRepository : IValidHumanVerifyTokensRepository
     {
         private readonly GoliathContext _context;
@@ -39,8 +40,10 @@ namespace Goliath.Repository
             // Remove old tokens before searching database.
             await CleanUpUnusedTokensAsync();
 
+            // Get all tokens in the database.
             List<string> result = await _context.ValidTokens.Select(u => u.Token).ToListAsync();
 
+            // Compare Them
             for (int i = 0; i < result.Count; i++)
             {
                 if (GoliathHash.HashStringSHA256(result[i]).Equals(hashCode))
@@ -51,16 +54,13 @@ namespace Goliath.Repository
             return false;
         }
 
-        /// <summary>
-        /// Moves throughout the database and removes all tokens over 5 minutes old.
-        /// </summary>
-        /// <returns> </returns>
         public async Task CleanUpUnusedTokensAsync()
         {
             List<int> primaryKeys = await _context.ValidTokens.Select(u => u.NumericID).ToListAsync();
             foreach (int keyIndex in primaryKeys)
             {
                 ValidHumanVerifyTokens key = await _context.ValidTokens.FindAsync(keyIndex);
+                // Check if token is over 5 minutes old.
                 if (DateTime.Parse(key.GeneratedDateTime) < DateTime.UtcNow.Subtract(new TimeSpan(0, 5, 0)))
                 {
                     _context.Remove(key);

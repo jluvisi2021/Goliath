@@ -21,6 +21,7 @@ namespace Goliath.Attributes
 
                 if (lastToken == currentToken)
                 {
+                    context.ModelState.Clear();
                     context.ModelState.AddModelError(string.Empty, "You already submitted this form.");
                 }
                 else

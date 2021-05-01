@@ -25,7 +25,7 @@ else
 {
     @*Accept data for ForgotPasswordModel*@
     <hr />
-    <form asp-action="ForgotUsername" asp-antiforgery="true" id="test">
+    <form asp-action="@nameof(AuthController.ForgotUsername)" asp-antiforgery="true" id="test">
         <div asp-validation-summary="All" class="text-danger"></div>
         <p>Request to find a username.</p>
         <div class="ht-tm-element input-group mb-3">

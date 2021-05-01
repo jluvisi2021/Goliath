@@ -1,6 +1,4 @@
-﻿@using Goliath.Models
-@inject Microsoft.AspNetCore.Identity.SignInManager<ApplicationUser> _signInManager
-@{
+﻿@{
     ViewData["Title"] = "Profile";
 
     string query = Context.Request.QueryString.Value;
@@ -22,7 +20,7 @@
 <!------------------->
 @*Display a modal if the values were updated.*@
 
-@if (TempData["ValuesUpdated"] != null && TempData["ValuesUpdated"].Equals(RedirectPurpose.SettingsUpdatedSuccess))
+@if (TempData[TempDataKeys.Redirect] != null && TempData[TempDataKeys.Redirect].Equals(RedirectPurpose.SettingsUpdatedSuccess))
 {
     <partial name="~/Views/UserPanel/Profile/_SettingsUpdatedModal.cshtml" />
 }
@@ -37,24 +35,24 @@
 
             <div id="nav-buttons" class="list-group text-left">
                 @*Each of the following <div> are handled by jQuery and render different partial views.*@
-                <a id="profile-nav-general" asp-action="Profile" asp-route-tab="@ProfileTab.General" class="list-group-item list-group-item-action @result(ProfileTab.General)">
+                <a id="profile-nav-general" asp-action="@nameof(UserPanelController.Profile)" asp-route-tab="@ProfileTab.General" class="list-group-item list-group-item-action @result(ProfileTab.General)">
                     General
                     <i class="fas fa-sliders-h block-pointer"></i>
                 </a>
 
-                <a id="profile-nav-colors" asp-action="Profile" asp-route-tab="@ProfileTab.Colors" class="list-group-item list-group-item-action @result(ProfileTab.Colors)">
+                <a id="profile-nav-colors" asp-action="@nameof(UserPanelController.Profile)" asp-route-tab="@ProfileTab.Colors" class="list-group-item list-group-item-action @result(ProfileTab.Colors)">
                     Colors
                     <i class="fas fa-palette block-pointer"></i>
                 </a>
-                <a id="profile-nav-security" asp-action="Profile" asp-route-tab="@ProfileTab.Security" class="list-group-item list-group-item-action @result(ProfileTab.Security)">
+                <a id="profile-nav-security" asp-action="@nameof(UserPanelController.Profile)" asp-route-tab="@ProfileTab.Security" class="list-group-item list-group-item-action @result(ProfileTab.Security)">
                     Security
                     <i class="fas fa-shield-alt block-pointer"></i>
                 </a>
-                <a id="profile-nav-manage-data" asp-action="Profile" asp-route-tab="@ProfileTab.ManageData" class="list-group-item list-group-item-action @result(ProfileTab.ManageData)">
+                <a id="profile-nav-manage-data" asp-action="@nameof(UserPanelController.Profile)" asp-route-tab="@ProfileTab.ManageData" class="list-group-item list-group-item-action @result(ProfileTab.ManageData)">
                     Manage Data
                     <i class="fas fa-server block-pointer"></i>
                 </a>
-                <a id="profile-nav-other" asp-action="Profile" asp-route-tab="@ProfileTab.Other" class="list-group-item list-group-item-action @result(ProfileTab.Other)">
+                <a id="profile-nav-other" asp-action="@nameof(UserPanelController.Profile)" asp-route-tab="@ProfileTab.Other" class="list-group-item list-group-item-action @result(ProfileTab.Other)">
                     Other
                     <i class="fas fa-wrench block-pointer"></i>
                 </a>

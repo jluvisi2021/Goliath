@@ -15,7 +15,7 @@
                         <span class="text-muted">Each two-factor code can be used only one time.</span>
                         <hr />
                         @{
-                            List<string> codes = JsonConvert.DeserializeObject<List<string>>((string)TempData["RecoveryCodes"]);
+                            List<string> codes = JsonConvert.DeserializeObject<List<string>>((string)TempData[TempDataKeys.TwoFactorRecoveryCodes]);
                         }
                         @foreach (string s in codes)
                         {

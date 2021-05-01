@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using System;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Goliath.Controllers
 {
@@ -55,7 +56,8 @@ namespace Goliath.Controllers
         {
             if (userAction == TwoFactorAction.Error || !bool.TryParse(requireCode, out _))
             {
-                return Content("We encountered an error. Please try again.");
+                TempData[TempDataKeys.HtmlMessage] = HttpUtility.HtmlEncode("We encountered a problem processing this request.");
+                return RedirectToAction(nameof(Index));
             }
             else
             {
@@ -85,6 +87,8 @@ namespace Goliath.Controllers
 
             ApplicationUser user = await _repository.GetUserFromContextAsync(User);
 
+            #region Ensure Two-Factor enabled; Verify token
+
             if (model.Action != TwoFactorAction.EnableTwoFactor && !user.TwoFactorEnabled)
             {
                 ModelState.AddModelError(string.Empty, "You must have two factor enabled to do this.");
@@ -95,9 +99,12 @@ namespace Goliath.Controllers
             bool twoFactorValid = false;
             if (model.TwoFactorCodeRequired)
             {
-                twoFactorValid = model.TwoFactorCode == "12345";
+                twoFactorValid = model.TwoFactorCode == "12345"; // Testing Value
             }
 
+            #endregion Ensure Two-Factor enabled; Verify token
+
+            // Perform actions accordingly
             switch (model.Action)
             {
                 case TwoFactorAction.EnableTwoFactor:
@@ -108,9 +115,9 @@ namespace Goliath.Controllers
                     }
                     await _repository.SetTwoFactorEnabledAsync(user, TwoFactorMethod.SmsVerify);
 
-                    TempData["Redirect"] = RedirectPurpose.TwoFactorEnabled;
-                    TempData["RecoveryCodes"] = JsonConvert.SerializeObject(await _repository.GenerateUserRecoveryCodesAsync(user));
-                    return RedirectToAction("Index");
+                    TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorEnabled;
+                    TempData[TempDataKeys.TwoFactorRecoveryCodes] = JsonConvert.SerializeObject(await _repository.GenerateUserRecoveryCodesAsync(user));
+                    return RedirectToAction(nameof(Index));
 
                 case TwoFactorAction.DisableTwoFactor:
                     if (!passwordValid || !twoFactorValid)
@@ -121,8 +128,8 @@ namespace Goliath.Controllers
 
                     await _repository.SetTwoFactorDisabledAsync(user);
 
-                    TempData["Redirect"] = RedirectPurpose.TwoFactorDisabled;
-                    return RedirectToAction("Index");
+                    TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorDisabled;
+                    return RedirectToAction(nameof(Index));
 
                 case TwoFactorAction.GetVerificationCodes:
                     if (!passwordValid || !twoFactorValid)
@@ -131,9 +138,9 @@ namespace Goliath.Controllers
                         return View(model);
                     }
 
-                    TempData["Redirect"] = RedirectPurpose.VerificationCodes;
-                    TempData["RecoveryCodes"] = JsonConvert.SerializeObject(await _repository.GenerateUserRecoveryCodesAsync(user));
-                    return RedirectToAction("Index");
+                    TempData[TempDataKeys.Redirect] = RedirectPurpose.VerificationCodes;
+                    TempData[TempDataKeys.TwoFactorRecoveryCodes] = JsonConvert.SerializeObject(await _repository.GenerateUserRecoveryCodesAsync(user));
+                    return RedirectToAction(nameof(Index));
             }
 
             return View(model);
@@ -168,34 +175,45 @@ namespace Goliath.Controllers
             }
             catch (Exception)
             {
-                TempData["Redirect"] = RedirectPurpose.TwoFactorSmsResendFailure;
-                return RedirectToActionPermanent("Index", "Auth");
+                TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorSmsResendFailure;
+                return RedirectToActionPermanent(nameof(AuthController.Index), GoliathControllers.AuthController);
             }
+
+            #region Validate object data
+
             if (model == null || string.IsNullOrWhiteSpace(model.Username))
             {
-                TempData["Redirect"] = RedirectPurpose.TwoFactorSmsResendFailure;
-                return RedirectToActionPermanent("Index", "Auth");
+                TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorSmsResendFailure;
+                return RedirectToActionPermanent(nameof(AuthController.Index), GoliathControllers.AuthController);
             }
             ApplicationUser user = await _repository.GetUserByNameAsync(model.Username);
             if (user == null)
             {
-                TempData["Redirect"] = RedirectPurpose.TwoFactorSmsResendFailure;
+                TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorSmsResendFailure;
                 return RedirectToAction(model.Action, model.Controller, new { userName = model.Username });
             }
+
+            #endregion Validate object data
+
+            #region Ensure user can request token
+
             // Invalid Two-Factor Authorize Cookie
             if (!await _authorizeTokenRepository.TokenValidAsync(user.Id))
             {
-                TempData["Redirect"] = RedirectPurpose.TwoFactorSmsResendFailure;
+                TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorSmsResendFailure;
                 return RedirectToAction(model.Action, model.Controller, new { userName = model.Username });
             }
             if (!await _timeoutsRepository.CanRequestResendTwoFactorSmsAsync(user.Id))
             {
-                TempData["Redirect"] = RedirectPurpose.TwoFactorSmsResendFailureTimeout;
+                TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorSmsResendFailureTimeout;
                 return RedirectToAction(model.Action, model.Controller, new { userName = model.Username });
             }
+
+            #endregion Ensure user can request token
+
             await _repository.SendTwoFactorCodeSms(user);
             await _timeoutsRepository.UpdateRequestAsync(user.Id, UnauthorizedRequest.RequestTwoFactorResendSms);
-            TempData["Redirect"] = RedirectPurpose.TwoFactorSmsResendSuccess;
+            TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorSmsResendSuccess;
             return RedirectToAction(model.Action, model.Controller, new { userName = model.Username });
         }
     }

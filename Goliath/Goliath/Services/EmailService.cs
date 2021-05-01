@@ -9,15 +9,9 @@ using System.Threading.Tasks;
 
 namespace Goliath.Services
 {
-    /// <summary>
-    /// The service for sending emails to clients through Goliath. <br /> Uses the <strong> MailKit
-    /// </strong> NuGet package for sending emails.
-    /// </summary>
+    /// <inheritdoc cref="IEmailService" />
     public class EmailService : IEmailService
     {
-        /// <summary>
-        /// Configure the settings of the email such as the subject.
-        /// </summary>
         private readonly SMTPConfigModel _smtpConfig;
 
         // For email templates
@@ -30,11 +24,6 @@ namespace Goliath.Services
             _smtpConfig = options.Value;
         }
 
-        /// <summary>
-        /// Send a test email.
-        /// </summary>
-        /// <param name="options"> </param>
-        /// <returns> </returns>
         public async Task<bool> SendTestEmailAsync(UserEmailOptions options)
         {
             options.Subject = "Test Email";
@@ -43,11 +32,6 @@ namespace Goliath.Services
             return await SendEmailAsync(options);
         }
 
-        /// <summary>
-        /// Sends an email to a user indicating that there role has been changed.
-        /// </summary>
-        /// <param name="options"> </param>
-        /// <returns> </returns>
         public async Task<bool> SendRoleMovedEmailAsync(UserEmailOptions options)
         {
             options.Subject = "Goliath Notification";
@@ -56,11 +40,6 @@ namespace Goliath.Services
             return await SendEmailAsync(options);
         }
 
-        /// <summary>
-        /// Send a confirmation link to a user.
-        /// </summary>
-        /// <param name="options"> </param>
-        /// <returns> If the email was sent. </returns>
         public async Task<bool> SendConfirmationEmailAsync(UserEmailOptions options)
         {
             options.Subject = "Confirm Your Account";
@@ -69,11 +48,6 @@ namespace Goliath.Services
             return await SendEmailAsync(options);
         }
 
-        /// <summary>
-        /// Send email to a user to verify their phone.
-        /// </summary>
-        /// <param name="options"> </param>
-        /// <returns> </returns>
         public async Task<bool> SendVerifyPhoneEmailAsync(UserEmailOptions options)
         {
             options.Subject = "Confirm your Phone";
@@ -82,11 +56,6 @@ namespace Goliath.Services
             return await SendEmailAsync(options);
         }
 
-        /// <summary>
-        /// Sends a resend verification email to a user.
-        /// </summary>
-        /// <param name="options"> </param>
-        /// <returns> </returns>
         public async Task<bool> ResendConfirmationEmailAsync(UserEmailOptions options)
         {
             options.Subject = "Confirm Your Account";
@@ -95,11 +64,6 @@ namespace Goliath.Services
             return await SendEmailAsync(options);
         }
 
-        /// <summary>
-        /// Sends a forgot password email to the user.
-        /// </summary>
-        /// <param name="options"> </param>
-        /// <returns> </returns>
         public async Task<bool> SendForgotPasswordEmailAsync(UserEmailOptions options)
         {
             options.Subject = "Reset Password";

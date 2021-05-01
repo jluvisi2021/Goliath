@@ -28,7 +28,7 @@
     <link href="~/css/Shared/Interact.css" rel="stylesheet" asp-append-version="true" />
 
     <script>
-            window.location.replace("@Url.Action("Index", "Auth")");
+            window.location.replace("@Url.Action(nameof(AuthController.Index), GoliathControllers.AuthController)");
     </script>
 </head>
 
@@ -49,8 +49,8 @@
                     </p>
                     <hr />
                     <div id="buttons">
-                        <a asp-controller="Redirect"
-                           asp-action="Index"
+                        <a asp-controller="@GoliathControllers.RedirectController"
+                           asp-action="@nameof(RedirectController.Index)"
                            asp-route-redirectUrl="https://www.enable-javascript.com/"
                            asp-route-returnUrl="@Context.Request.Path"
                            target="_blank" class="btn btn-primary hvr-float">
@@ -63,8 +63,8 @@
                             Learn More
                         </a>
                         <br id="spacer" />
-                        <a asp-controller="Redirect"
-                           asp-action="Index"
+                        <a asp-controller="@GoliathControllers.RedirectController"
+                           asp-action="@nameof(RedirectController.Index)"
                            asp-route-redirectUrl="https://github.com/jluvisi2021/Goliath"
                            asp-route-returnUrl="@Context.Request.Path"
                            target="_blank" class="btn btn-primary hvr-float">
@@ -86,8 +86,8 @@
             <article class="content">
                 <hr />
                 <p>
-                    <a asp-controller="Redirect"
-                       asp-action="Index"
+                    <a asp-controller="@GoliathControllers.RedirectController"
+                       asp-action="@nameof(RedirectController.Index)"
                        asp-route-redirectUrl="https://en.wikipedia.org/wiki/JavaScript"
                        asp-route-returnUrl="@Context.Request.Path"
                        target="_blank">JavaScript</a>
@@ -95,8 +95,8 @@
                     allows for the creation of interactive web pages.
                     <br />
                     Goliath uses JavaScript to prompt
-                    <a asp-controller="Redirect"
-                       asp-action="Index"
+                    <a asp-controller="@GoliathControllers.RedirectController"
+                       asp-action="@nameof(RedirectController.Index)"
                        asp-route-redirectUrl="https://www.cloudflare.com/learning/bots/how-captchas-work/"
                        asp-route-returnUrl="@Context.Request.Path"
                        target="_blank">
@@ -107,23 +107,23 @@
                     <br />
                     If JavaScript is not enabled then Goliath cannot perform critical functionality.
                     <br />
-                    JavaScript can be used for running <a asp-controller="Redirect"
-                                                          asp-action="Index"
+                    JavaScript can be used for running <a asp-controller="@GoliathControllers.RedirectController"
+                                                          asp-action="@nameof(RedirectController.Index)"
                                                           asp-route-redirectUrl="https://snyk.io/learn/javascript-security/"
                                                           asp-route-returnUrl="@Context.Request.Path"
                                                           target="_blank">nefarious code</a> but all of Goliath is <b>
-                        <a asp-controller="Redirect"
-                           asp-action="Index"
+                        <a asp-controller="@GoliathControllers.RedirectController"
+                           asp-action="@nameof(RedirectController.Index)"
                            asp-route-redirectUrl="https://github.com/jluvisi2021/Goliath"
-                           asp-route-returnUrl="@Url.Action("NoJS", "Errors")"
+                           asp-route-returnUrl="@Url.Action(nameof(ErrorsController.NoJS), GoliathControllers.ErrorsController)"
                            target="_blank">open-source</a>
                     </b> so you do
                     not have to worry about anything malicious being ran in the background.
                     <br />
                     Goliath also uses multiple security protocols to ensure data is protected. <a href="#!" , target="_blank">Learn how Goliath protects data.</a>
                     <hr />
-                    <a asp-controller="Redirect"
-                       asp-action="Index"
+                    <a asp-controller="@GoliathControllers.RedirectController"
+                       asp-action="@nameof(RedirectController.Index)"
                        asp-route-redirectUrl="https://www.enable-javascript.com/"
                        asp-route-returnUrl="@Context.Request.Path"
                        target="_blank" class="btn btn-warning hvr-icon-bob">

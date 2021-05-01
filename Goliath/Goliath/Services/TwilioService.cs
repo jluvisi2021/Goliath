@@ -6,6 +6,7 @@ using Twilio.Rest.Api.V2010.Account;
 
 namespace Goliath.Services
 {
+    /// <inheritdoc cref="ITwilioService" />
     public class TwilioService : ITwilioService
     {
         private readonly IConfiguration _config;
@@ -15,16 +16,10 @@ namespace Goliath.Services
         public TwilioService(IConfiguration config)
         {
             _config = config;
-
             _accountSid = _config["Twilio:AccountSID"];
             _authToken = _config["Twilio:AuthToken"];
         }
 
-        /// <summary>
-        /// Sends an Async message to an SMS using Twilio SMS service.
-        /// </summary>
-        /// <param name="model"> Data for the message. </param>
-        /// <returns> If the message was sent. </returns>
         public async Task<bool> SendSmsAsync(SMSTextModel model)
         {
             if (string.IsNullOrWhiteSpace(model.From))

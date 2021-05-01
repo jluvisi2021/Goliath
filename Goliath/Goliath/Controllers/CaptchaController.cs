@@ -7,10 +7,12 @@ namespace Goliath.Controllers
     /// </summary>
     public sealed class CaptchaController : Controller
     {
+        private const string CaptchaModalPath = "~/Views/Captcha/_ValidateCaptcha.cshtml";
+
         public IActionResult LoadCaptcha(string formID)
         {
             ViewData["FormID"] = formID;
-            return PartialView("~/Views/Captcha/_ValidateCaptcha.cshtml");
+            return PartialView(CaptchaModalPath);
         }
     }
 }

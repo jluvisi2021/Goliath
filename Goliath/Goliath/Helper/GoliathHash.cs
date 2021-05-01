@@ -9,12 +9,16 @@ namespace Goliath.Helper
     /// </summary>
     public static class GoliathHash
     {
+        /// <param name="plain"> Plain Text. </param>
+        /// <returns> A <b> SHA-256 </b> hash of <paramref name="plain" />. </returns>
         public static string HashStringSHA256(string plain)
         {
             using SHA256 sha256hash = SHA256.Create();
             return GetHash(sha256hash, plain);
         }
 
+        /// <param name="plain"> Plain Text. </param>
+        /// <returns> If <paramref name="plain" /> is a valid <b> SHA-256 </b> hash. </returns>
         public static bool ValidateStringSHA256(string plain)
         {
             using SHA256 sha256hash = SHA256.Create();

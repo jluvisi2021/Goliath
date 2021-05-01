@@ -1,61 +1,61 @@
 ﻿@using Newtonsoft.Json;
 @using Goliath.Models;
 
-@if (TempData["Redirect"].Equals((int)RedirectPurpose.RegisterSuccess))
+@if (TempData[TempDataKeys.Redirect].Equals((int)RedirectPurpose.RegisterSuccess))
 {
     @*User has been redirected; They have just made an account.*@
     <script>
         GlobalScript.displayModal('<strong><span style="color: green;">Success!</span></strong>', "Your account has been created.<br />Please check your email and verify your account! If you cannot find a verification email then <a href=\"/verify\" class=\"alert-link\">request a resend.</a>");
     </script>
 }
-else if (TempData["Redirect"].Equals((int)RedirectPurpose.LogoutSuccess))
+else if (TempData[TempDataKeys.Redirect].Equals((int)RedirectPurpose.LogoutSuccess))
 {
     @*User has been redirected; They just logged out.*@
     <script>
             GlobalScript.displayNotification("Success", "You have been logged out at @DateTime.UtcNow (UTC)", GlobalScript.BannerTypes()["alert-success"], "center-banner");
     </script>
 }
-else if (TempData["Redirect"].Equals((int)RedirectPurpose.VerifiedEmailSuccess))
+else if (TempData[TempDataKeys.Redirect].Equals((int)RedirectPurpose.VerifiedEmailSuccess))
 {
     @*User has been redirected; They just activated their account.*@
     <script>
         GlobalScript.displayNotification("Success", "Your account has been verified. You may now log in!", GlobalScript.BannerTypes()["alert-success"], "center-banner");
     </script>
 }
-else if (TempData["Redirect"].Equals((int)RedirectPurpose.VerifiedEmailFailure))
+else if (TempData[TempDataKeys.Redirect].Equals((int)RedirectPurpose.VerifiedEmailFailure))
 {
     @*User has been redirected; They attempted to activate their account and failed.*@
     <script>
         GlobalScript.displayNotification("Error", "Your account could not be verified. Try again later.", GlobalScript.BannerTypes()["alert-danger"], "center-banner");
     </script>
 }
-else if (TempData["Redirect"].Equals((int)RedirectPurpose.ResetPasswordModal))
+else if (TempData[TempDataKeys.Redirect].Equals((int)RedirectPurpose.ResetPasswordModal))
 {
 
-    <partial name="ResetPassword" model="@(JsonConvert.DeserializeObject<ResetPasswordModel>((string)TempData["Model"]));" />
+    <partial name="ResetPassword" model="@(JsonConvert.DeserializeObject<ResetPasswordModel>((string)TempData[TempDataKeys.Model]));" />
 }
-else if (TempData["Redirect"].Equals((int)RedirectPurpose.ResetPasswordSuccess))
+else if (TempData[TempDataKeys.Redirect].Equals((int)RedirectPurpose.ResetPasswordSuccess))
 {
     <script>
         GlobalScript.displayNotification("Success", "Your password has been updated.", GlobalScript.BannerTypes()["alert-success"], "center-banner");
     </script>
 }
-else if (TempData["Redirect"].Equals((int)RedirectPurpose.ResetPasswordFailure))
+else if (TempData[TempDataKeys.Redirect].Equals((int)RedirectPurpose.ResetPasswordFailure))
 {
     <script>
         GlobalScript.displayNotification("Error", "Could not reset password. Try again later.", GlobalScript.BannerTypes()["alert-danger"], "center-banner");
     </script>
 }
-else if (TempData["Redirect"].Equals((int)RedirectPurpose.TwoFactorSmsResendFailure))
+else if (TempData[TempDataKeys.Redirect].Equals((int)RedirectPurpose.TwoFactorSmsResendFailure))
 {
     <script>
         GlobalScript.displayNotification("Error", "There was an internal problem with your request.", GlobalScript.BannerTypes()["alert-danger"], "center-banner");
     </script>
 }
-else if (TempData["Redirect"].Equals((int)RedirectPurpose.Exception))
+else if (TempData[TempDataKeys.Redirect].Equals((int)RedirectPurpose.Exception))
 {
 
-    var exceptionModel = JsonConvert.DeserializeObject<ExceptionHandlerModel>((string)TempData["ErrorInformation"]);
+    var exceptionModel = JsonConvert.DeserializeObject<ExceptionHandlerModel>((string)TempData[TempDataKeys.ErrorInformation]);
 
     if (exceptionModel.ExceptionTargetHelpLink.Equals("Unknown"))
     {

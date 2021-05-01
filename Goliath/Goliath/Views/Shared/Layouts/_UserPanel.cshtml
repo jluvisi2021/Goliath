@@ -27,7 +27,7 @@
                 <i class="navbar-toggler-icon"></i>
             </button>
             <!-- Navbar Icon Start -->
-            <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+            <a class="navbar-brand" asp-controller="@GoliathControllers.HomeController" asp-action="@nameof(HomeController.Index)">
                 <i class="fas fa-shield-alt"></i>
                 Goliath
             </a>
@@ -35,28 +35,28 @@
             <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
                 <ul class="navbar-nav mr-auto mt-2 mt-md-0">
                     <li class="nav-item" id="profile-nav">
-                        <a class="nav-link" asp-controller="UserPanel" asp-action="Index">Profile</a>
+                        <a class="nav-link" asp-controller="@GoliathControllers.UserPanelController" asp-action="@nameof(UserPanelController.Index)">Profile</a>
                     </li>
                     <li class="nav-item" id="database-nav">
-                        <a class="nav-link" asp-controller="UserPanel" asp-action="Database">Database</a>
+                        <a class="nav-link" asp-controller="@GoliathControllers.UserPanelController" asp-action="@nameof(UserPanelController.Database)">Database</a>
                     </li>
                     <li class="nav-item" id="utilities-nav">
-                        <a class="nav-link" asp-controller="UserPanel" asp-action="Utilities">Utilities</a>
+                        <a class="nav-link" asp-controller="@GoliathControllers.UserPanelController" asp-action="@nameof(UserPanelController.Utilities)">Utilities</a>
                     </li>
                     <li class="nav-item" id="help-nav">
-                        <a class="nav-link" asp-controller="UserPanel" asp-action="Help">Help (FAQ)</a>
+                        <a class="nav-link" asp-controller="@GoliathControllers.UserPanelController" asp-action="@nameof(UserPanelController.Help)">Help (FAQ)</a>
                     </li>
                     <li class="nav-item" id="about-nav">
-                        <a class="nav-link" asp-controller="UserPanel" asp-action="About">About Goliath</a>
+                        <a class="nav-link" asp-controller="@GoliathControllers.UserPanelController" asp-action="@nameof(UserPanelController.About)">About Goliath</a>
                     </li>
                     <li class="nav-item" id="build-nav">
-                        <a class="nav-link" asp-controller="UserPanel" asp-action="BuildInfo">Build Info</a>
+                        <a class="nav-link" asp-controller="@GoliathControllers.UserPanelController" asp-action="@nameof(UserPanelController.BuildInfo)">Build Info</a>
                     </li>
                     @*If the user is signed in and is an admin then load admin tab.*@
                     @if (_signInManager.IsSignedIn(User) && await _accountRepository.IsAdminAsync(User.Identity.Name))
                     {
                         <li class="nav-item" id="admin-nav">
-                            <a class="nav-link" asp-controller="AdminPanel" asp-action="Index">Admin Panel</a>
+                            <a class="nav-link" asp-controller="@GoliathControllers.AdminPanelController" asp-action="@nameof(AdminPanelController.Index)">Admin Panel</a>
                         </li>
                     }
 
@@ -66,24 +66,24 @@
                             Other
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a asp-controller="Redirect"
-                               asp-action="Index"
+                            <a asp-controller="@GoliathControllers.RedirectController"
+                               asp-action="@nameof(RedirectController.Index)"
                                asp-route-redirectUrl="https://github.com/jluvisi2021/Goliath"
                                asp-route-returnUrl="@Context.Request.Path"
                                class="dropdown-item">Go to GitHub</a>
 
-                            <a asp-controller="Redirect"
-                               asp-action="Index"
+                            <a asp-controller="@GoliathControllers.RedirectController"
+                               asp-action="@nameof(RedirectController.Index)"
                                asp-route-redirectUrl="https://github.com/jluvisi2021/Goliath/wiki"
                                asp-route-returnUrl="@Context.Request.Path"
                                class="dropdown-item">Go to Wiki</a>
-                            <a asp-controller="Redirect"
-                               asp-action="Index"
+                            <a asp-controller="@GoliathControllers.RedirectController"
+                               asp-action="@nameof(RedirectController.Index)"
                                asp-route-redirectUrl="#!"
                                asp-route-returnUrl="@Context.Request.Path"
                                class="dropdown-item">Suggest Feature</a>
-                            <a asp-controller="Redirect"
-                               asp-action="Index"
+                            <a asp-controller="@GoliathControllers.RedirectController"
+                               asp-action="@nameof(RedirectController.Index)"
                                asp-route-redirectUrl="https://github.com/jluvisi2021/Goliath/issues/new"
                                asp-route-returnUrl="@Context.Request.Path"
                                class="dropdown-item">Report Issue</a>

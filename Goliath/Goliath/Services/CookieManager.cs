@@ -3,9 +3,7 @@ using System;
 
 namespace Goliath.Services
 {
-    /// <summary>
-    /// Manages custom cookies by Goliath.
-    /// </summary>
+    /// <inheritdoc cref="ICookieManager" />
     public class CookieManager : ICookieManager
     {
         private readonly IHttpContextAccessor _context;
@@ -15,12 +13,6 @@ namespace Goliath.Services
             _context = context;
         }
 
-        /// <summary>
-        /// Adds a secure cookie to the browser. All cookies should be UTC Expire Time.
-        /// </summary>
-        /// <param name="key"> </param>
-        /// <param name="value"> </param>
-        /// <param name="expireTime"> </param>
         public void AddCookie(string key, string value, DateTime expireTime)
         {
             CookieOptions cookieOptions = new();

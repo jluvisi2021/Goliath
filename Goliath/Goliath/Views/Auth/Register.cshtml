@@ -12,7 +12,7 @@
 }
 
 <!-- Register Form -->
-<form asp-action="Register" asp-antiforgery="true" id="register-form">
+<form asp-action="@nameof(AuthController.Register)" asp-antiforgery="true" id="register-form">
     @if (!ViewData.ModelState.IsValid)
     {
 
@@ -72,7 +72,7 @@
     @*Render the partial view for the captcha when the sign in button is clicked.*@
     <div id="captcha-view"></div>
     <div class="text-center">
-        <p><a asp-controller="Auth" asp-action="RegisterMethod">Go Back</a></p>
+        <p><a asp-controller="@GoliathControllers.AuthController" asp-action="@nameof(AuthController.RegisterMethod)">Go Back</a></p>
     </div>
 </form>
 <partial name="_JQueryValidation" />

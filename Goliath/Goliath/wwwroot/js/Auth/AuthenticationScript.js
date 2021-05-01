@@ -52,7 +52,7 @@ const AuthScript = (() => {
          * values in the localStorage.
          * */
         changeTheme: () => {
-            if (!(localStorage.getItem("darkTheme") === null || localStorage.getItem("darkTheme") === "enabled")) {
+            if (localStorage.getItem("darkTheme") != null && localStorage.getItem("darkTheme") === "enabled") {
                 return;
             }
             $("body").removeClass("gradient-light")

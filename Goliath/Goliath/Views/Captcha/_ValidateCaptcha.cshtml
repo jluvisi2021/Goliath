@@ -28,10 +28,10 @@
                 <p>
                     Please complete the
 
-                    <a asp-controller="Redirect"
-                       asp-action="Index"
+                    <a asp-controller="@GoliathControllers.RedirectController"
+                       asp-action="@nameof(RedirectController.Index)"
                        asp-route-redirectUrl="https://www.cloudflare.com/learning/bots/how-captchas-work/"
-                       asp-route-returnUrl="@Url.Action("Index", "Auth")"
+                       asp-route-returnUrl="@Url.Action(nameof(AuthController.Index), GoliathControllers.AuthController)"
                        target="_blank">CAPTCHA </a>
 
                     prompt below to sign in.

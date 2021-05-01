@@ -1,6 +1,5 @@
 ﻿using Goliath.Models;
 using System.ComponentModel.DataAnnotations;
-using System.Text.RegularExpressions;
 
 namespace Goliath.Validators
 {
@@ -14,25 +13,28 @@ namespace Goliath.Validators
             ProfileSettingsModel settings = (ProfileSettingsModel)validationContext.ObjectInstance;
             if (!BackgroundColorValid(settings.BackgroundColor))
             {
-                if (string.IsNullOrWhiteSpace(settings.BackgroundColor))
-                {
-                    return ValidationResult.Success;
-                }
                 return new ValidationResult("Input a valid background color.");
             }
             if (string.IsNullOrWhiteSpace(settings.DarkThemeEnabled))
             {
                 return new ValidationResult("Invalid theme selection.");
             }
-
+            if (string.IsNullOrWhiteSpace(settings.LogoutThreshold))
+            {
+                return new ValidationResult("Logout threshold must be a number.");
+            }
+            if (!int.TryParse(settings.LogoutThreshold, out int a))
+            {
+                return new ValidationResult("Logout threshold must be a number.");
+            }
+            else
+            {
+                if (a <= 0)
+                {
+                    return new ValidationResult("Logout threshold must be greater than one.");
+                }
+            }
             return ValidationResult.Success;
-        }
-
-        private static bool EmailValid(string email)
-        {
-            return string.IsNullOrWhiteSpace(email) || (Regex.IsMatch(email, @"^[\w!#$%&'*+\-/=?\^_`{|}~]+(\.[\w!#$%&'*+\-/=?\^_`{|}~]+)*"
-+ "@"
-+ @"((([\-\w]+\.)+[a-zA-Z]{2,4})|(([0-9]{1,3}\.){3}[0-9]{1,3}))$") && email.Length <= 40 && email.Length >= 3);
         }
 
         /// <param name="value"> Value to be checked. </param>

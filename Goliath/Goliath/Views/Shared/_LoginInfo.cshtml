@@ -5,7 +5,7 @@
 @if (_signInManager.IsSignedIn(User))
 {
     <form class="form-inline my-2 my-lg-0">
-        <a asp-controller="UserPanel" asp-action="Index" class="nav-item text-white">Welcome Back, @User.Identity.Name</a>
+        <a asp-controller="@GoliathControllers.UserPanelController" asp-action="@nameof(UserPanelController.Index)" class="nav-item text-white">Welcome Back, @User.Identity.Name</a>
 
         @*Display the role badge.*@
 
@@ -13,14 +13,14 @@
      await _accoutRepository.GetRoleIconAsync(User)))
 
         <span class="pl-1" style="color: white; opacity: 0.5;">|</span>
-        <a asp-controller="UserPanel" asp-action="Logout" class="btn btn-secondary ml-2 px-3">Logout</a>
+        <a asp-controller="@GoliathControllers.UserPanelController" asp-action="@nameof(UserPanelController.Logout)" class="btn btn-secondary ml-2 px-3">Logout</a>
     </form>
 }
 else
 {
     <form class="form-inline my-2 my-lg-0">
-        <a asp-controller="Auth" asp-action="RegisterMethod" class="btn btn-secondary px-3">Register</a>
-        <a asp-controller="Auth" asp-action="Index" class="btn btn-secondary ml-2 px-3">Login</a>
+        <a asp-controller="@GoliathControllers.AuthController" asp-action="@nameof(AuthController.RegisterMethod)" class="btn btn-secondary px-3">Register</a>
+        <a asp-controller="@GoliathControllers.AuthController" asp-action="@nameof(AuthController.Login)" class="btn btn-secondary ml-2 px-3">Login</a>
     </form>
 }
 <!--Login Greeting End -->

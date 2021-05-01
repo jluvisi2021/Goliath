@@ -11,7 +11,7 @@
 <form>
     <article>
         <hr />
-        <a id="signup-goliath" asp-controller="Auth" asp-action="Register" class="btn btn-block btn-success btn-block font-weight-bolder" data-toggle="tooltip" data-placement="top" data-html="true" title="<h6 class='text-danger font-weight-bold'>Recommended</h6>">
+        <a id="signup-goliath" asp-controller="@GoliathControllers.AuthController" asp-action="@nameof(AuthController.Register)" class="btn btn-block btn-success btn-block font-weight-bolder" data-toggle="tooltip" data-placement="top" data-html="true" title="<h6 class='text-danger font-weight-bold'>Recommended</h6>">
             <span class="fas fa-shield-alt mr-1 fa-lg"></span> Sign Up using Goliath
         </a>
         <hr />

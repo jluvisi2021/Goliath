@@ -74,8 +74,8 @@
                     <div class="card card-body">
                         <p>
 
-                            <a asp-controller="Redirect"
-                               asp-action="Index"
+                            <a asp-controller="@GoliathControllers.RedirectController"
+                               asp-action="@nameof(RedirectController.Index)"
                                asp-route-redirectUrl="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/@Model.StatusCode"
                                asp-route-returnUrl="@Context.Request.Path@Context.Request.QueryString"
                                target="_blank">
@@ -105,18 +105,18 @@
                         <br id="spacer" />
                         @if (_signInManager.IsSignedIn(User))
                         {
-                            <a asp-controller="UserPanel" asp-action="Logout" class="btn btn-primary hvr-icon-forward" role="button">
+                            <a asp-controller="@GoliathControllers.UserPanelController" asp-action="@nameof(UserPanelController.Logout)" class="btn btn-primary hvr-icon-forward" role="button">
                                 <i class="fas fa-sign-in-alt mr-2 hvr-icon"></i>Go to Login
                             </a>
                         }
                         else
                         {
-                            <a asp-controller="Auth" asp-action="Index" class="btn btn-primary hvr-icon-forward" role="button">
+                            <a asp-controller="@GoliathControllers.AuthController" asp-action="@nameof(UserPanelController.Index)" class="btn btn-primary hvr-icon-forward" role="button">
                                 <i class="fas fa-sign-in-alt mr-2 hvr-icon"></i>Go to Login
                             </a>
                         }
                         <br id="spacer" />
-                        <a asp-controller="UserPanel" asp-action="Index" class="btn btn-primary hvr-icon-drop" role="button">
+                        <a asp-controller="@GoliathControllers.UserPanelController" asp-action="Index" class="btn btn-primary hvr-icon-drop" role="button">
                             <i class="fas fa-database hvr-icon"></i>
                             Go to UserPanel
                         </a>
@@ -152,7 +152,7 @@ else
     </script>
 
 }
-@if (TempData["Redirect"] != null)
+@if (TempData[TempDataKeys.Redirect] != null)
 {
     <script>
         ErrorScript.updateText("#is-redirect", true);
