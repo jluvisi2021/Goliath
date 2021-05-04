@@ -29,7 +29,7 @@ namespace Goliath.Validators
             }
             else
             {
-                if (a <= 0)
+                if (a < 0)
                 {
                     return new ValidationResult("Logout threshold must be greater than one.");
                 }

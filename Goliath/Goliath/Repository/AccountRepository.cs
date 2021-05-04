@@ -44,6 +44,8 @@ namespace Goliath.Repository
             _twilio = twilio;
             _context = context;
         }
+        // FOR DEBUGGING ONLY.
+        public bool stressTestDatabase = true;
 
         public async Task LoadDefaultsAsync()
         {
@@ -99,6 +101,41 @@ namespace Goliath.Repository
                     return;
                 }
                 GoliathHelper.PrintDebugger("Created Super User.");
+
+                #region Debug Testing
+                if (stressTestDatabase)
+                {
+                    GoliathHelper.PrintDebugger("Stress testing database. Adding user accounts please wait...");
+                    //
+                    Random rand = new();
+                    const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ_";
+                    //
+                    for (int i = 0; i < 350; i++)
+                    {
+
+                        string userName = new(Enumerable.Repeat(chars, 12)
+                          .Select(s => s[rand.Next(s.Length)]).ToArray());
+
+                        await _userManager.CreateAsync(new ApplicationUser()
+                        {
+                            UserName = userName,
+                            Email = $"{rand.Next(100000, 9999999)}@email.com",
+                            EmailConfirmed = true,
+                            BackgroundColor = "#FFFFFF",
+                            DarkTheme = "false",
+                            UserData = string.Empty,
+                            PendingNotifications = string.Empty,
+                            LogoutThreshold = 0,
+                            AccountCreationDate = DateTime.UtcNow.ToString(),
+                            LastPasswordUpdate = DateTime.UtcNow.ToString()
+                        },
+                password: $"HelloWorld123!"
+                );
+                        await _userManager.AddToRoleAsync(await GetUserByNameAsync(userName), GoliathRoles.Default);
+                    }
+                    GoliathHelper.PrintDebugger("Finished database account adding");
+                }
+                #endregion
 
                 #endregion Create super user account
             }

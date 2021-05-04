@@ -160,7 +160,7 @@ namespace Goliath.Controllers
         /// Sends an sms code to the user and then redirects to a specific controller and action.
         /// Pass in a serialized model encoded in Base64.
         /// </summary>
-        /// <param name="m"> </param>
+        /// <param name="m">A serialized model.</param>
         /// <returns> </returns>
         [IgnoreGoliathAuthorize]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -181,15 +181,25 @@ namespace Goliath.Controllers
 
             #region Validate object data
 
-            if (model == null || string.IsNullOrWhiteSpace(model.Username))
+            if (model == null || string.IsNullOrWhiteSpace(model.Username) || string.IsNullOrWhiteSpace(model.Controller) || string.IsNullOrWhiteSpace(model.Action))
             {
                 TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorSmsResendFailure;
+                TempData[TempDataKeys.HtmlMessage] = "Internal Error. Try again later.";
+                if (model.IsUrnRedirect)
+                {
+                    return RedirectToAction(model.Action, model.Controller);
+                }
                 return RedirectToActionPermanent(nameof(AuthController.Index), GoliathControllers.AuthController);
             }
             ApplicationUser user = await _repository.GetUserByNameAsync(model.Username);
-            if (user == null)
+            if (user == null || user.TwoFactorMethod != (int)TwoFactorMethod.SmsVerify)
             {
                 TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorSmsResendFailure;
+                TempData[TempDataKeys.HtmlMessage] = "Internal Error. Try again later.";
+                if (model.IsUrnRedirect)
+                {
+                    return RedirectToAction(model.Action, model.Controller);
+                }
                 return RedirectToAction(model.Action, model.Controller, new { userName = model.Username });
             }
 
@@ -197,15 +207,37 @@ namespace Goliath.Controllers
 
             #region Ensure user can request token
 
-            // Invalid Two-Factor Authorize Cookie
-            if (!await _authorizeTokenRepository.TokenValidAsync(user.Id))
+            // Invalid Two-Factor Authorize Cookie + User not logged in
+            if (!await _authorizeTokenRepository.TokenValidAsync(user.Id) && !User.Identity.IsAuthenticated)
             {
                 TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorSmsResendFailure;
+                TempData[TempDataKeys.HtmlMessage] = "Invalid account session.";
+                if (model.IsUrnRedirect)
+                {
+                    return RedirectToAction(model.Action, model.Controller);
+                }
                 return RedirectToAction(model.Action, model.Controller, new { userName = model.Username });
             }
+            // If the user is logged in and they are requesting a username that is not theirs.
+            if(User.Identity.IsAuthenticated && User.Identity.Name != model.Username)
+            {
+                TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorSmsResendFailure;
+                TempData[TempDataKeys.HtmlMessage] = "Invalid account session.";
+                if (model.IsUrnRedirect)
+                {
+                    return RedirectToAction(model.Action, model.Controller);
+                }
+                return RedirectToAction(model.Action, model.Controller, new { userName = model.Username });
+            }
+            // If the user has waited the timeout and is allowed to request another token.
             if (!await _timeoutsRepository.CanRequestResendTwoFactorSmsAsync(user.Id))
             {
                 TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorSmsResendFailureTimeout;
+                TempData[TempDataKeys.HtmlMessage] = "Please wait before requesting another code.";
+                if(model.IsUrnRedirect)
+                {
+                    return RedirectToAction(model.Action, model.Controller);
+                }
                 return RedirectToAction(model.Action, model.Controller, new { userName = model.Username });
             }
 
@@ -214,6 +246,11 @@ namespace Goliath.Controllers
             await _repository.SendTwoFactorCodeSms(user);
             await _timeoutsRepository.UpdateRequestAsync(user.Id, UnauthorizedRequest.RequestTwoFactorResendSms);
             TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorSmsResendSuccess;
+            // If the redirect is a url with query parameters.
+            if(model.IsUrnRedirect)
+            {
+                return LocalRedirect(model.ReturnPath);
+            }
             return RedirectToAction(model.Action, model.Controller, new { userName = model.Username });
         }
     }

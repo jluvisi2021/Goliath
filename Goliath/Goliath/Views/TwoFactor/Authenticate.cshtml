@@ -1,4 +1,16 @@
 ﻿@model Goliath.Models.TwoFactorAuthenticateRedirectModel
+@using Newtonsoft.Json 
+@{ 
+        ResendTwoFactorSmsCodeModel resendModel = new()
+        {
+            Username = User.Identity.Name,
+            Controller = GoliathControllers.TwoFactorController,
+            Action = nameof(TwoFactorController.Index),
+            IsUrnRedirect = true,
+            ReturnPath = $"{Context.Request.Path}{Context.Request.QueryString}"
+     };
+   
+}
 
 <style type="text/css">
     #background {
@@ -30,12 +42,7 @@
                     <input type="hidden" asp-for="Action" value="@Model?.Action" />
                     <input type="hidden" asp-for="IsSubmitted" value="@true" />
                     <input type="hidden" asp-for="TwoFactorCodeRequired" value="@Model?.TwoFactorCodeRequired" />
-                    @if(Model?.Action == TwoFactorAction.EnableTwoFactor)
-            {
-                        <br />
-                <a href="#!" class="btn btn-secondary">Test SMS TwoFactor</a>
-                <br />
-            }
+
                     @if (Model?.TwoFactorCodeRequired == true)
                     {
                         <div class="ht-tm-element input-group mb-3">
@@ -60,9 +67,21 @@
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-upload fa-fw mr-1"></i> Submit
                     </button>
-                    <a href="javascript:history.go(-1);" class="btn btn-primary">
-                        <i class="fas fa-chevron-circle-left fa-fw"></i> Go Back
-                    </a>
+                    @if (Model?.TwoFactorCodeRequired == true)
+                    {
+                        <a asp-action="SendSmsCode" asp-route-m="@Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(resendModel)))"  class="btn btn-primary">
+                            <i class="fas fa-redo fa-fw"></i> Send Code
+                        </a>
+                        <br class="pt-2 pb-2" />
+                        <a href="javascript:history.go(-1);">Go Back</a>
+                    }
+                    else
+                    {
+                        <a href="javascript:history.go(-1);" class="btn btn-primary">
+                            <i class="fas fa-chevron-circle-left fa-fw"></i> Go Back
+                        </a>
+                    }
+
                 </form>
             </div>
         </div>
