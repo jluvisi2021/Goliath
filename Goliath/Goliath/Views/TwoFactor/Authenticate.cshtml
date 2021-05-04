@@ -30,6 +30,12 @@
                     <input type="hidden" asp-for="Action" value="@Model?.Action" />
                     <input type="hidden" asp-for="IsSubmitted" value="@true" />
                     <input type="hidden" asp-for="TwoFactorCodeRequired" value="@Model?.TwoFactorCodeRequired" />
+                    @if(Model?.Action == TwoFactorAction.EnableTwoFactor)
+            {
+                        <br />
+                <a href="#!" class="btn btn-secondary">Test SMS TwoFactor</a>
+                <br />
+            }
                     @if (Model?.TwoFactorCodeRequired == true)
                     {
                         <div class="ht-tm-element input-group mb-3">

@@ -154,6 +154,67 @@ namespace Goliath.Repository
             return false;
         }
 
+
+        public async Task<bool> CanRequestEmailResendVerifyAsync(string userId)
+        {
+            int numericId = await GetUserNumericIndex(userId);
+            if (numericId == -1)
+            {
+                return true;
+            }
+            UnauthorizedTimeouts existingUser = await _context.TimeoutsUnauthorizedTable.FirstOrDefaultAsync(u => u.NumericID == numericId);
+            if (string.IsNullOrWhiteSpace(existingUser.RequestVerifyEmail))
+            {
+                return true;
+            }
+            // Over 5 Minutes Old
+            if (DateTime.Parse(existingUser.RequestVerifyEmail) < DateTime.UtcNow.Subtract(new TimeSpan(0, 5, 0)))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public async Task<bool> CanRequestForgotPasswordAsync(string userId)
+        {
+            int numericId = await GetUserNumericIndex(userId);
+            if (numericId == -1)
+            {
+                return true;
+            }
+            UnauthorizedTimeouts existingUser = await _context.TimeoutsUnauthorizedTable.FirstOrDefaultAsync(u => u.NumericID == numericId);
+            if (string.IsNullOrWhiteSpace(existingUser.RequestForgotPassword))
+            {
+                return true;
+            }
+            // Over 5 Minutes Old
+            if (DateTime.Parse(existingUser.RequestForgotPassword) < DateTime.UtcNow.Subtract(new TimeSpan(0, 15, 0)))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public async Task<bool> CanRequestUsernameAsync(string userId)
+        {
+            int numericId = await GetUserNumericIndex(userId);
+            if (numericId == -1)
+            {
+                return true;
+            }
+            UnauthorizedTimeouts existingUser = await _context.TimeoutsUnauthorizedTable.FirstOrDefaultAsync(u => u.NumericID == numericId);
+            if (string.IsNullOrWhiteSpace(existingUser.RequestForgotUsername))
+            {
+                return true;
+            }
+            // Over 5 Minutes Old
+            if (DateTime.Parse(existingUser.RequestForgotUsername) < DateTime.UtcNow.Subtract(new TimeSpan(0, 15, 0)))
+            {
+                return true;
+            }
+            return false;
+        }
+
         public async Task<bool> CanRequestResendTwoFactorSmsAsync(string userId)
         {
             int numericId = await GetUserNumericIndex(userId);

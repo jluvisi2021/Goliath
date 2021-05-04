@@ -34,5 +34,17 @@ namespace Goliath.Repository
         /// <param name="userId"> The ID of the user. </param>
         /// <returns> Returns whether or not the user can request a new two factor code. </returns>
         Task<bool> CanRequestResendTwoFactorSmsAsync(string userId);
+
+        /// <param name="userId">The ID of the user. </param>
+        /// <returns>If the user is allowed to request a verification email.</returns>
+        Task<bool> CanRequestEmailResendVerifyAsync(string userId);
+
+        /// <param name="userId">The ID of the user. </param>
+        /// <returns>If the user is allowed to request a forgot password email.</returns>
+        Task<bool> CanRequestForgotPasswordAsync(string userId);
+
+        /// <param name="userId">The ID of the user. </param>
+        /// <returns>If the user is allowed to request a forgot username email.</returns>
+        Task<bool> CanRequestUsernameAsync(string userId);
     }
 }

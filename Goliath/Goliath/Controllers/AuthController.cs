@@ -314,6 +314,12 @@ namespace Goliath.Controllers
                 return View();
             }
 
+            if (!await _timeoutsRepository.CanRequestForgotPasswordAsync(user.Id))
+            {
+                ModelState.AddModelError(string.Empty, "Please wait some time before requesting a new password email.");
+                return View();
+            }
+
             // Generate a token as well as a user agent.
             await _accountRepository.GenerateForgotPasswordTokenAsync(user, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
             // Indicate to the View that the email was sent.
@@ -361,6 +367,12 @@ namespace Goliath.Controllers
             if (!await _captcha.IsCaptchaValidAsync())
             {
                 ModelState.AddModelError(_captcha.CaptchaValidationError().Key, _captcha.CaptchaValidationError().Value);
+                return View();
+            }
+
+            if (!await _timeoutsRepository.CanRequestUsernameAsync(user.Id))
+            {
+                ModelState.AddModelError(string.Empty, "Please wait some time before requesting a forgot username email.");
                 return View();
             }
 
@@ -414,6 +426,12 @@ namespace Goliath.Controllers
             if (!await _captcha.IsCaptchaValidAsync())
             {
                 ModelState.AddModelError(_captcha.CaptchaValidationError().Key, _captcha.CaptchaValidationError().Value);
+                return View();
+            }
+
+            if(!await _timeoutsRepository.CanRequestEmailResendVerifyAsync(user.Id))
+            {
+                ModelState.AddModelError(string.Empty, "Please wait some time before requesting an email resend.");
                 return View();
             }
 
