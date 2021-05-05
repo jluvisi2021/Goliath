@@ -1,0 +1,73 @@
+﻿@using Newtonsoft.Json
+@{
+    TwoFactorVerificationCodesModel model = null;
+    if (TempData[TempDataKeys.Model] != null)
+    {
+        model = JsonConvert.DeserializeObject<TwoFactorVerificationCodesModel>(System.Text.Encoding.UTF8.GetString(Convert.FromBase64String((string)TempData[TempDataKeys.Model])));
+    }
+    Layout = "_Layout";
+}
+<style type="text/css">
+    body {
+        background-color: #f2f2f2;
+    }
+    #footer {
+        background-color: #424242;
+        color: white;
+    }
+</style>
+@if (model != null)
+{
+    <main id="outer" class="text-center">
+        <section id="inner">
+            <article class="container p-5 bg-white">
+                <span class="h4">Verification Codes</span>
+                <hr />
+                <p class="text-muted">
+                    Each of these codes can be used only once.
+                    <br />
+                    These codes should only be used to login when you do not have
+                    access to your two-factor device.
+                    <br />
+                    Goliath will not restore any lost recovery codes and will not reset any two-factor device.
+                </p>
+                <hr />
+                <p>
+                    @foreach (string s in model.Codes)
+                    {
+                        <span>@s</span>
+                        <br />
+                    }
+
+
+
+                </p>
+                <hr />
+                <a href="javascript:window.close();">Close this page.</a>
+            </article>
+            
+
+
+            
+        </section>
+    </main>
+    
+            }
+            else
+            {
+<div class="alert alert-danger" role="alert">
+    <h4 class="alert-heading"><i class="fas fa-times-circle fa-fw mr-1"></i>We encountered a problem.<i class="fas fa-times-circle fa-fw ml-1"></i></h4>
+    <p>
+        We could not find any verification codes to give you. 
+        <br />
+        For security reasons, each verification codes page only last for one request.
+        <br />
+        Try requesting your verification codes again.
+        <br />
+        <hr />
+        <a asp-action="Index" class="alert-link">Return to Two-Factor settings.</a>
+    </p>
+    
+
+</div>
+            }

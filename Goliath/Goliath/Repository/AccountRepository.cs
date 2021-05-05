@@ -25,6 +25,7 @@ namespace Goliath.Repository
         private readonly IEmailService _emailService;
         private readonly IConfiguration _config;
         private readonly ITwilioService _twilio;
+        private readonly ICookieManager _cookieManager;
         private readonly GoliathContext _context;
 
         /// <summary>
@@ -34,18 +35,17 @@ namespace Goliath.Repository
         /// <param name="signInManager"> </param>
         /// <param name="emailService"> </param>
         /// <param name="config"> </param>
-        public AccountRepository(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<ApplicationRole> roleManager, IEmailService emailService, IConfiguration config, ITwilioService twilio, GoliathContext context)
+        public AccountRepository(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<ApplicationRole> roleManager, IEmailService emailService, IConfiguration config, ITwilioService twilio, ICookieManager cookieManager, GoliathContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
             _emailService = emailService;
+            _cookieManager = cookieManager;
             _config = config;
             _twilio = twilio;
             _context = context;
         }
-        // FOR DEBUGGING ONLY.
-        public bool stressTestDatabase = true;
 
         public async Task LoadDefaultsAsync()
         {
@@ -102,43 +102,42 @@ namespace Goliath.Repository
                 }
                 GoliathHelper.PrintDebugger("Created Super User.");
 
-                #region Debug Testing
-                if (stressTestDatabase)
-                {
-                    GoliathHelper.PrintDebugger("Stress testing database. Adding user accounts please wait...");
-                    //
-                    Random rand = new();
-                    const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ_";
-                    //
-                    for (int i = 0; i < 350; i++)
-                    {
-
-                        string userName = new(Enumerable.Repeat(chars, 12)
-                          .Select(s => s[rand.Next(s.Length)]).ToArray());
-
-                        await _userManager.CreateAsync(new ApplicationUser()
-                        {
-                            UserName = userName,
-                            Email = $"{rand.Next(100000, 9999999)}@email.com",
-                            EmailConfirmed = true,
-                            BackgroundColor = "#FFFFFF",
-                            DarkTheme = "false",
-                            UserData = string.Empty,
-                            PendingNotifications = string.Empty,
-                            LogoutThreshold = 0,
-                            AccountCreationDate = DateTime.UtcNow.ToString(),
-                            LastPasswordUpdate = DateTime.UtcNow.ToString()
-                        },
-                password: $"HelloWorld123!"
-                );
-                        await _userManager.AddToRoleAsync(await GetUserByNameAsync(userName), GoliathRoles.Default);
-                    }
-                    GoliathHelper.PrintDebugger("Finished database account adding");
-                }
-                #endregion
-
                 #endregion Create super user account
             }
+        }
+
+        public async Task AddTestingDataAsync(int amount)
+        {
+                GoliathHelper.PrintDebugger("Stress testing database. Adding user accounts please wait...");
+                //
+                Random rand = new();
+                const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ_";
+                //
+                for (int i = 0; i < amount; i++)
+                {
+
+                    string userName = new(Enumerable.Repeat(chars, 12)
+                      .Select(s => s[rand.Next(s.Length)]).ToArray());
+
+                    await _userManager.CreateAsync(new ApplicationUser()
+                    {
+                        UserName = userName,
+                        Email = $"{rand.Next(100000, 9999999)}@email.com",
+                        EmailConfirmed = true,
+                        BackgroundColor = "#FFFFFF",
+                        DarkTheme = "false",
+                        UserData = string.Empty,
+                        PendingNotifications = string.Empty,
+                        LogoutThreshold = 0,
+                        AccountCreationDate = DateTime.UtcNow.ToString(),
+                        LastPasswordUpdate = DateTime.UtcNow.ToString()
+                    },
+            password: $"HelloWorld123!"
+            );
+                    await _userManager.AddToRoleAsync(await GetUserByNameAsync(userName), GoliathRoles.Default);
+                }
+                GoliathHelper.PrintDebugger("Finished database account adding");
+            
         }
 
         public async Task<bool> IsAdminAsync(ApplicationUser user)
@@ -379,11 +378,13 @@ namespace Goliath.Repository
 
         public async Task<SignInResult> AuthorizeUserTwoFactorAsync(ApplicationUser user, string token)
         {
+            _cookieManager.DeleteCookie(CookieKeys.TwoFactorAuthorizeCookie);
             return await _signInManager.TwoFactorSignInAsync(TokenOptions.DefaultPhoneProvider, token, false, false);
         }
 
         public async Task<SignInResult> AuthorizeUserTwoFactorAsync(ApplicationUser user, string token, bool rememberMe)
         {
+            _cookieManager.DeleteCookie(CookieKeys.TwoFactorAuthorizeCookie);
             return await _signInManager.TwoFactorSignInAsync(TokenOptions.DefaultPhoneProvider, token, rememberMe, false);
         }
 

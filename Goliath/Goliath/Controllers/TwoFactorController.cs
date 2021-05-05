@@ -1,5 +1,6 @@
 ﻿using Goliath.Attributes;
 using Goliath.Enums;
+using Goliath.Helper;
 using Goliath.Models;
 using Goliath.Repository;
 using Microsoft.AspNetCore.Mvc;
@@ -57,6 +58,7 @@ namespace Goliath.Controllers
             if (userAction == TwoFactorAction.Error || !bool.TryParse(requireCode, out _))
             {
                 TempData[TempDataKeys.HtmlMessage] = HttpUtility.HtmlEncode("We encountered a problem processing this request.");
+                GoliathHelper.PrintDebugger($"\n\nuserAction = {userAction}\nrequireCode = {requireCode}\n\n");
                 return RedirectToAction(nameof(Index));
             }
             else
@@ -99,7 +101,7 @@ namespace Goliath.Controllers
             bool twoFactorValid = false;
             if (model.TwoFactorCodeRequired)
             {
-                twoFactorValid = model.TwoFactorCode == "12345"; // Testing Value
+                twoFactorValid = await _repository.TwoFactorCodeValidAsync(user, model.TwoFactorCode);
             }
 
             #endregion Ensure Two-Factor enabled; Verify token
@@ -155,6 +157,13 @@ namespace Goliath.Controllers
         {
             return View();
         }
+
+        [Route("get-verification-codes")]
+        public IActionResult TwoFactorCodes()
+        {
+            return View();
+        }
+
         // How this method works:
         /// <summary>
         /// <para>

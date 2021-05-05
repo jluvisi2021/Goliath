@@ -35,8 +35,17 @@
                 {
                     <div class="text-danger text-left" asp-validation-summary="All"></div>
                 }
+
             </div>
             <hr />
+            @if (TempData[TempDataKeys.Redirect] != null && TempData[TempDataKeys.Redirect].Equals((int)RedirectPurpose.TwoFactorSmsResendSuccess))
+            {
+                <div class="alert alert-success" role="alert">
+                    <strong><i class="fas fa-check-circle fa-fw mr-1"></i>Two-Factor codes have been sent.</strong>
+                </div>
+                <hr />
+            }
+
             <div class="col-12">
 
                 <form asp-action="@nameof(TwoFactorController.Authenticate)" asp-antiforgery="true">
@@ -70,9 +79,19 @@
                     </button>
                     @if (Model?.TwoFactorCodeRequired == true)
                     {
-                        <a asp-action="SendSmsCode" asp-route-m="@Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(requestModel)))"  class="btn btn-primary">
-                            <i class="fas fa-redo fa-fw"></i> Send Code
-                        </a>
+                        if (await _timeouts.CanRequestResendTwoFactorSmsAsync((await _repository.GetUserByNameAsync(User.Identity.Name)).Id))
+                        {
+                            <a asp-action="SendSmsCode" asp-route-m="@Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(requestModel)))" class="btn btn-primary">
+                                <i class="fas fa-sms fa-fw"></i> Send Code
+                            </a>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-primary" disabled>
+                                <i class="fas fa-sms fa-fw"></i> Send Code
+                            </button>
+                        }
+
                         <br class="pt-2 pb-2" />
                         <a href="javascript:history.go(-1);">Go Back</a>
                     }

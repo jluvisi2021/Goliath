@@ -4,6 +4,7 @@ using Goliath.Enums;
 using Goliath.Models;
 using Goliath.Repository;
 using Goliath.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -19,7 +20,7 @@ namespace Goliath
     public class Startup
     {
         /// <summary>
-        /// <b> appsettings.json </b> object.
+        /// For managing the Goliath configuration files.
         /// </summary>
         private readonly IConfiguration _config;
 
@@ -57,6 +58,7 @@ namespace Goliath
                 options.Password.RequireDigit = true; // Password must have digit
                 options.User.RequireUniqueEmail = true; // All emails unique
                 options.SignIn.RequireConfirmedEmail = true; // Require activated accounts.
+                
             });
 
             // Change password hash iteration count.
@@ -76,6 +78,7 @@ namespace Goliath
                 options.MinimumSameSitePolicy = SameSiteMode.Strict;
                 options.HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.Always;
             });
+
 
             #endregion Global cookie policy
 
@@ -101,7 +104,7 @@ namespace Goliath
                 options.LowercaseUrls = true;
                 options.AppendTrailingSlash = true;
             });
-
+       
             #endregion Routing settings
 
             #region Captcha options
@@ -128,7 +131,7 @@ namespace Goliath
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IValidHumanVerifyTokensRepository, ValidHumanVerifyTokensRepository>();
             services.AddScoped<ISmsVerifyTokensRepository, SmsVerifyTokensRepository>();
-            services.AddScoped<ICookieManager, CookieManager>();
+            services.AddScoped<Services.ICookieManager, CookieManager>();
             services.AddScoped<IGoliathCaptchaService, GoliathCaptchaService>();
             services.AddScoped<ITwilioService, TwilioService>();
             services.AddScoped<IUnauthorizedTimeoutsRepository, UnauthorizedTimeoutsRepository>();
@@ -149,6 +152,24 @@ namespace Goliath
                 options.ExpireTimeSpan = TimeSpan.FromDays(2); // Token expires every 2 days unless renewed.
             });
 
+            services.Configure<CookieAuthenticationOptions>(
+               IdentityConstants.TwoFactorUserIdScheme,
+               options =>
+               {
+                   options.Cookie.Name = CookieKeys.IdentityTwoFactorCookie;
+                   options.Cookie.HttpOnly = true;
+                   options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                   options.Cookie.SameSite = SameSiteMode.Strict;
+               });
+            services.Configure<CookieAuthenticationOptions>(
+               IdentityConstants.TwoFactorRememberMeScheme,
+               options =>
+               {
+                   options.Cookie.Name = CookieKeys.IdentityTwoFactorRememberMeCookie;
+                   options.Cookie.HttpOnly = true;
+                   options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                   options.Cookie.SameSite = SameSiteMode.Strict;
+               });
             // Add AntiForgery and its respective options.
             services.AddAntiforgery(options =>
             {
@@ -176,6 +197,7 @@ namespace Goliath
         {
             // Create roles and super user if not created.
             accountRepository.LoadDefaultsAsync().Wait();
+            //accountRepository.AddTestingDataAsync(350).Wait();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

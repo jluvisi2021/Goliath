@@ -10,5 +10,7 @@
         public const string ValidateCaptchaCookie = "CaptchaValid";
         public const string TwoFactorAuthorizeCookie = "TwoFactorAuthorize";
         public const string AspNetSessionCookie = "Session";
+        public const string IdentityTwoFactorCookie = "TwoFactorIdentity";
+        public const string IdentityTwoFactorRememberMeCookie = "TwoFactorIdentityStore";
     }
 }

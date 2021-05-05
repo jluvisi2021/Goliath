@@ -17,12 +17,16 @@
                     @{
                         List<string> codes = JsonConvert.DeserializeObject<List<string>>((string)TempData[TempDataKeys.TwoFactorRecoveryCodes]);
                     }
-                    @foreach (string s in codes)
-                    {
-                        <br />
-                        @s
-                        <br />
-                    }
+                    <hr />
+                    <a class="btn btn-primary" href="#!">
+                        <i class="fas fa-file-pdf fa-fw mr-1"></i>
+                        Download PDF
+                    </a>
+                    <a class="btn btn-primary" href="#!">
+                        <i class="fas fa-window-restore fa-fw mr-1"></i>
+                        View Codes in Browser
+                    </a>
+                  
                 </div>
             </div>
             <div class="modal-footer">

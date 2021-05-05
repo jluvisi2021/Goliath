@@ -229,6 +229,15 @@ namespace Goliath.Repository
         /// <returns> </returns>
         Task LoadDefaultsAsync();
 
+        /// <summary>
+        /// Creates a set <paramref name="amount"/> of dummy accounts and adds
+        /// them into the database with default role.
+        /// This should only be used for debugging and testing the
+        /// speed of EF Core.
+        /// </summary>
+        /// <returns></returns>
+        Task AddTestingDataAsync(int amount);
+
         /// <param name="user"> The user to check. </param>
         /// <returns> If a <paramref name="user" /> is an administrator. </returns>
         Task<bool> IsAdminAsync(ApplicationUser user);
