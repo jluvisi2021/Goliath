@@ -54,7 +54,7 @@
             </div>
         </div>
     }
-    @if (TempData[TempDataKeys.HtmlMessage] != null)
+    @if (TempData[TempDataKeys.HtmlMessage] != null && TempData[TempDataKeys.Redirect] != null)
     {
         <div class="row text-left">
             <div class="col-12">

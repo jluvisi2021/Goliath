@@ -1,5 +1,6 @@
 ﻿using Goliath.Repository;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Goliath.Controllers
 {
@@ -19,14 +20,17 @@ namespace Goliath.Controllers
     public sealed class HomeController : Controller
     {
         private readonly IAccountRepository _accountRepository;
+        private readonly ILogger _logger;
 
-        public HomeController(IAccountRepository accountRepository)
+        public HomeController(IAccountRepository accountRepository, ILogger<HomeController> logger)
         {
             _accountRepository = accountRepository;
+            _logger = logger;
         }
 
         public IActionResult Index()
         {
+            _logger.LogInformation("Arrived at Home Controller.");
             return View();
         }
     }

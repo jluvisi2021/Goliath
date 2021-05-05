@@ -9,11 +9,14 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System;
+using System.IO;
 
 namespace Goliath
 {
@@ -34,7 +37,6 @@ namespace Goliath
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddResponseCaching();
-
             services.AddDbContext<GoliathContext>(
                 options => options.UseSqlServer(_config.GetConnectionString("DefaultConnection"))
             );
@@ -58,7 +60,6 @@ namespace Goliath
                 options.Password.RequireDigit = true; // Password must have digit
                 options.User.RequireUniqueEmail = true; // All emails unique
                 options.SignIn.RequireConfirmedEmail = true; // Require activated accounts.
-                
             });
 
             // Change password hash iteration count.
@@ -78,7 +79,6 @@ namespace Goliath
                 options.MinimumSameSitePolicy = SameSiteMode.Strict;
                 options.HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.Always;
             });
-
 
             #endregion Global cookie policy
 
@@ -104,18 +104,20 @@ namespace Goliath
                 options.LowercaseUrls = true;
                 options.AppendTrailingSlash = true;
             });
-       
+
             #endregion Routing settings
 
             #region Captcha options
 
             // DNT Captchas
             services.AddDNTCaptcha(options =>
-               options.UseCookieStorageProvider()
+               options
+                   .UseCookieStorageProvider()
                    .ShowThousandsSeparators(false)
                    .AbsoluteExpiration(minutes: 5)
                    .WithEncryptionKey(_config["Application:CaptchaEncryptionKey"])
-            );
+                   .CaptchaClass = "GoliathCaptcha"
+                   );
 
             #endregion Captcha options
 
@@ -170,6 +172,15 @@ namespace Goliath
                    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                    options.Cookie.SameSite = SameSiteMode.Strict;
                });
+
+            services.Configure<CookieTempDataProviderOptions>(options =>
+            {
+                options.Cookie.HttpOnly = true;
+                options.Cookie.Name = CookieKeys.AspNetTempDataCookie;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.Cookie.SameSite = SameSiteMode.Strict;
+            });
+
             // Add AntiForgery and its respective options.
             services.AddAntiforgery(options =>
             {
@@ -193,8 +204,11 @@ namespace Goliath
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IAccountRepository accountRepository)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IAccountRepository accountRepository, ILoggerFactory loggerFactory)
         {
+            // Logging information
+            string path = Directory.GetCurrentDirectory();
+            loggerFactory.AddFile($"{path}\\Logs\\Log.txt");
             // Create roles and super user if not created.
             accountRepository.LoadDefaultsAsync().Wait();
             //accountRepository.AddTestingDataAsync(350).Wait();

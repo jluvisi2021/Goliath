@@ -108,36 +108,34 @@ namespace Goliath.Repository
 
         public async Task AddTestingDataAsync(int amount)
         {
-                GoliathHelper.PrintDebugger("Stress testing database. Adding user accounts please wait...");
-                //
-                Random rand = new();
-                const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ_";
-                //
-                for (int i = 0; i < amount; i++)
+            GoliathHelper.PrintDebugger("Stress testing database. Adding user accounts please wait...");
+
+            Random rand = new();
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ_";
+
+            for (int i = 0; i < amount; i++)
+            {
+                string userName = new(Enumerable.Repeat(chars, 12)
+                  .Select(s => s[rand.Next(s.Length)]).ToArray());
+
+                await _userManager.CreateAsync(new ApplicationUser()
                 {
-
-                    string userName = new(Enumerable.Repeat(chars, 12)
-                      .Select(s => s[rand.Next(s.Length)]).ToArray());
-
-                    await _userManager.CreateAsync(new ApplicationUser()
-                    {
-                        UserName = userName,
-                        Email = $"{rand.Next(100000, 9999999)}@email.com",
-                        EmailConfirmed = true,
-                        BackgroundColor = "#FFFFFF",
-                        DarkTheme = "false",
-                        UserData = string.Empty,
-                        PendingNotifications = string.Empty,
-                        LogoutThreshold = 0,
-                        AccountCreationDate = DateTime.UtcNow.ToString(),
-                        LastPasswordUpdate = DateTime.UtcNow.ToString()
-                    },
-            password: $"HelloWorld123!"
-            );
-                    await _userManager.AddToRoleAsync(await GetUserByNameAsync(userName), GoliathRoles.Default);
-                }
-                GoliathHelper.PrintDebugger("Finished database account adding");
-            
+                    UserName = userName,
+                    Email = $"{rand.Next(100000, 9999999)}@email.com",
+                    EmailConfirmed = true,
+                    BackgroundColor = "#FFFFFF",
+                    DarkTheme = "false",
+                    UserData = string.Empty,
+                    PendingNotifications = string.Empty,
+                    LogoutThreshold = 0,
+                    AccountCreationDate = DateTime.UtcNow.ToString(),
+                    LastPasswordUpdate = DateTime.UtcNow.ToString()
+                },
+        password: $"HelloWorld123!"
+        );
+                await _userManager.AddToRoleAsync(await GetUserByNameAsync(userName), GoliathRoles.Default);
+            }
+            GoliathHelper.PrintDebugger("Finished database account adding");
         }
 
         public async Task<bool> IsAdminAsync(ApplicationUser user)

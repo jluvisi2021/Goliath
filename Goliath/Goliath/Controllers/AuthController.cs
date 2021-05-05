@@ -7,6 +7,7 @@ using Goliath.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -21,6 +22,7 @@ namespace Goliath.Controllers
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public sealed class AuthController : Controller
     {
+        private readonly ILogger<AuthController> _logger;
         private readonly IAccountRepository _accountRepository;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IGoliathCaptchaService _captcha;
@@ -32,13 +34,15 @@ namespace Goliath.Controllers
             SignInManager<ApplicationUser> signInManager,
             IGoliathCaptchaService captcha,
             IUnauthorizedTimeoutsRepository timeoutsRepository,
-            ITwoFactorAuthorizeTokenRepository twoFactorTokenRepository)
+            ITwoFactorAuthorizeTokenRepository twoFactorTokenRepository,
+            ILogger<AuthController> logger)
         {
             _accountRepository = accountRepository;
             _signInManager = signInManager;
             _captcha = captcha;
             _timeoutsRepository = timeoutsRepository;
             _twoFactorTokenRepository = twoFactorTokenRepository;
+            _logger = logger;
         }
 
         public IActionResult Index()
@@ -94,6 +98,7 @@ namespace Goliath.Controllers
 
             if (result.Succeeded)
             {
+                _logger.LogInformation($"USER {signInModel.Username} has logged in.");
                 // Store the fact that the CAPTCHA was completed successfully.
                 await _captcha.CacheNewCaptchaValidateAsync();
                 // Change the time of last login.
@@ -147,6 +152,7 @@ namespace Goliath.Controllers
             // Invalid Authorize Cookie
             if (!await _twoFactorTokenRepository.TokenValidAsync(user.Id))
             {
+                _logger.LogInformation($"USER {user.Id} was rejected two-factor sign in due to invalid authorize cookie.");
                 TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorSmsResendFailure;
                 return RedirectToActionPermanent(nameof(Login));
             }
@@ -246,6 +252,7 @@ namespace Goliath.Controllers
                 await _captcha.CacheNewCaptchaValidateAsync();
                 // Send the user to the index with register tempdata.
                 TempData[TempDataKeys.Redirect] = RedirectPurpose.RegisterSuccess;
+                _logger.LogInformation($"USER {model.Username} was created.");
                 // Send back to index.
                 return RedirectToAction(nameof(Index));
             }
@@ -327,6 +334,7 @@ namespace Goliath.Controllers
             // Clear all fields.
             ModelState.Clear();
             // Cache Captcha Validation.
+            _logger.LogInformation($"{user.Id} ({user.UserName}) has requested a password reset email.");
             await _captcha.CacheNewCaptchaValidateAsync();
             await _timeoutsRepository.UpdateRequestAsync(user.Id, UnauthorizedRequest.RequestForgotPasswordEmail);
             return View(model);
@@ -381,6 +389,7 @@ namespace Goliath.Controllers
             ModelState.Clear();
             await _captcha.CacheNewCaptchaValidateAsync();
             await _timeoutsRepository.UpdateRequestAsync(user.Id, UnauthorizedRequest.RequestUsernameEmail);
+            _logger.LogInformation($"{user.Id} ({user.UserName}) has requested a forgot username email.");
             return View(model);
         }
 
@@ -429,7 +438,7 @@ namespace Goliath.Controllers
                 return View();
             }
 
-            if(!await _timeoutsRepository.CanRequestEmailResendVerifyAsync(user.Id))
+            if (!await _timeoutsRepository.CanRequestEmailResendVerifyAsync(user.Id))
             {
                 ModelState.AddModelError(string.Empty, "Please wait some time before requesting an email resend.");
                 return View();
@@ -437,10 +446,12 @@ namespace Goliath.Controllers
 
             if (newEmail)
             {
+                _logger.LogInformation($"{user.Id} ({user.UserName}) - Generated a new email confirmation token.");
                 await _accountRepository.GenerateNewEmailConfirmationTokenAsync(user, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
             }
             else
             {
+                _logger.LogInformation($"{user.Id} ({user.UserName}) - Generated a email confirmation token.");
                 // Generate a token as well as a user agent.
                 await _accountRepository.GenerateEmailConfirmationTokenAsync(user, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()));
             }
@@ -478,6 +489,7 @@ namespace Goliath.Controllers
             IdentityResult result = await _accountRepository.ConfirmEmailAsync(uid, token);
             if (result.Succeeded)
             {
+                _logger.LogInformation($"{uid} -> Email has been verified.");
                 // If the email confirmation is a success then we can pass that info into the view.
                 TempData[TempDataKeys.Redirect] = RedirectPurpose.VerifiedEmailSuccess;
                 return RedirectToAction(nameof(Index));
@@ -524,6 +536,7 @@ namespace Goliath.Controllers
                 IdentityResult result = await _accountRepository.ResetPasswordAsync(model);
                 if (result.Succeeded)
                 {
+                    _logger.LogInformation($"{model.UserId} has changed their password.");
                     ModelState.Clear();
                     model.IsCompleted = true;
                     // Completed Successfully

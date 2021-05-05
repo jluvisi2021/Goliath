@@ -1,18 +1,27 @@
 ﻿using Goliath.Enums;
 using Goliath.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System.Net;
 
 namespace Goliath.Controllers
 {
     public class RedirectController : Controller
     {
+        private readonly ILogger _logger;
+
+        public RedirectController(ILogger<RedirectController> logger)
+        {
+            _logger = logger;
+        }
+
         [HttpGet]
         public IActionResult Index(string redirectUrl, string returnUrl)
         {
             if (!Url.IsLocalUrl(returnUrl))
             {
                 string link = Url.ActionLink(nameof(HomeController.Index), GoliathControllers.HomeController);
+                _logger.LogInformation($"Prevented malicious link {returnUrl} has been blocked. [redirectUrl = {redirectUrl}]");
                 return new ContentResult
                 {
                     ContentType = "text/html",

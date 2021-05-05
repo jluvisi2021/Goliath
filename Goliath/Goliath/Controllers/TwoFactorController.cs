@@ -1,9 +1,9 @@
 ﻿using Goliath.Attributes;
 using Goliath.Enums;
-using Goliath.Helper;
 using Goliath.Models;
 using Goliath.Repository;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Text;
@@ -20,15 +20,17 @@ namespace Goliath.Controllers
     [GoliathAuthorize("Profile")]
     public class TwoFactorController : Controller
     {
+        private readonly ILogger _logger;
         private readonly IAccountRepository _repository;
         private readonly IUnauthorizedTimeoutsRepository _timeoutsRepository;
         private readonly ITwoFactorAuthorizeTokenRepository _authorizeTokenRepository;
 
-        public TwoFactorController(IAccountRepository repository, IUnauthorizedTimeoutsRepository timeoutsRepository, ITwoFactorAuthorizeTokenRepository authorizeTokenRepository)
+        public TwoFactorController(IAccountRepository repository, IUnauthorizedTimeoutsRepository timeoutsRepository, ITwoFactorAuthorizeTokenRepository authorizeTokenRepository, ILogger<TwoFactorController> logger)
         {
             _repository = repository;
             _timeoutsRepository = timeoutsRepository;
             _authorizeTokenRepository = authorizeTokenRepository;
+            _logger = logger;
         }
 
         /// <summary>
@@ -58,7 +60,7 @@ namespace Goliath.Controllers
             if (userAction == TwoFactorAction.Error || !bool.TryParse(requireCode, out _))
             {
                 TempData[TempDataKeys.HtmlMessage] = HttpUtility.HtmlEncode("We encountered a problem processing this request.");
-                GoliathHelper.PrintDebugger($"\n\nuserAction = {userAction}\nrequireCode = {requireCode}\n\n");
+                _logger.LogInformation($"Failure in attempting to redirect to Authenticate method. METHOD VALUES: [userAction = {userAction}, requireCode = {requireCode}]");
                 return RedirectToAction(nameof(Index));
             }
             else
@@ -119,6 +121,7 @@ namespace Goliath.Controllers
 
                     TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorEnabled;
                     TempData[TempDataKeys.TwoFactorRecoveryCodes] = JsonConvert.SerializeObject(await _repository.GenerateUserRecoveryCodesAsync(user));
+                    _logger.LogInformation($"User {user.Id} ({user.UserName}) - Enabled two-factor authentication.");
                     return RedirectToAction(nameof(Index));
 
                 case TwoFactorAction.DisableTwoFactor:
@@ -131,6 +134,7 @@ namespace Goliath.Controllers
                     await _repository.SetTwoFactorDisabledAsync(user);
 
                     TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorDisabled;
+                    _logger.LogInformation($"User {user.Id} ({user.UserName}) - Disabled two-factor authentication.");
                     return RedirectToAction(nameof(Index));
 
                 case TwoFactorAction.GetVerificationCodes:
@@ -142,6 +146,7 @@ namespace Goliath.Controllers
 
                     TempData[TempDataKeys.Redirect] = RedirectPurpose.VerificationCodes;
                     TempData[TempDataKeys.TwoFactorRecoveryCodes] = JsonConvert.SerializeObject(await _repository.GenerateUserRecoveryCodesAsync(user));
+                    _logger.LogInformation($"User {user.Id} ({user.UserName}) - Requested two-factor verification codes.");
                     return RedirectToAction(nameof(Index));
             }
 
@@ -166,32 +171,29 @@ namespace Goliath.Controllers
 
         // How this method works:
         /// <summary>
+        /// <para> Sends an Sms two-factor code to a user and then redirects to a specified action. </para>
         /// <para>
-        /// Sends an Sms two-factor code to a user and then redirects to
-        /// a specified action.
+        /// This method takes a Base64 serialized <see cref="ResendTwoFactorSmsCodeModel" /> model
+        /// <paramref name="m" /> and attempts to decode it and then validate its attributes.
         /// </para>
         /// <para>
-        /// This method takes a Base64 serialized <see cref="ResendTwoFactorSmsCodeModel"/> model <paramref name="m"/>
-        /// and attempts to decode it and then validate its attributes.
+        /// This method REQUIRES a <b> "Action" </b> and a <b> "Controller" </b> to be passed
+        /// through the model. This "Action" and "Controller" should reference a real action method
+        /// path that this <see cref="IActionResult" /> returns to regardless of the outcome.
         /// </para>
         /// <para>
-        /// This method REQUIRES a <b>"Action"</b> and a <b>"Controller"</b> to be passed through the model.
-        /// This "Action" and "Controller" should reference a real action method path that
-        /// this <see cref="IActionResult"/> returns to regardless of the outcome.
-        /// </para>
-        /// <para>
-        /// The <see cref="ResendTwoFactorSmsCodeModel"/> can also be equipped with a "ReturnPath"
-        /// which is optional but can request that if the process has completed successfully,
-        /// send the user to this specific LocalUrl with Query arguments. In this case the user will not
+        /// The <see cref="ResendTwoFactorSmsCodeModel" /> can also be equipped with a "ReturnPath"
+        /// which is optional but can request that if the process has completed successfully, send
+        /// the user to this specific LocalUrl with Query arguments. In this case the user will not
         /// be sent to the "Action" and "Controller" but will be directly redirected to the ReturnPath.
         /// </para>
         /// <para>
-        /// If the user is already signed in then we compare the username that is being
-        /// requested to the current user which is signed in.<br />
-        /// Otherwise we check if the user has a valid Authorize cookie.
+        /// If the user is already signed in then we compare the username that is being requested to
+        /// the current user which is signed in. <br /> Otherwise we check if the user has a valid
+        /// Authorize cookie.
         /// </para>
         /// </summary>
-        /// <param name="m">A serialized model.</param>
+        /// <param name="m"> A serialized model. </param>
         /// <returns> </returns>
         [IgnoreGoliathAuthorize]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -200,32 +202,39 @@ namespace Goliath.Controllers
         {
             ResendTwoFactorSmsCodeModel model;
             // Deserialize the resend two factor sms model.
+
             #region Parse & deserialize the parameter.
+
             try
             {
                 model = JsonConvert.DeserializeObject<ResendTwoFactorSmsCodeModel>(Encoding.UTF8.GetString(Convert.FromBase64String(m)));
             }
             catch (Exception)
             {
+                _logger.LogInformation($"[CHECK-1] Received invalid serialization for SendSmsCode(m). Model Data = [{m}]");
                 TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorSmsResendFailure;
                 return RedirectToActionPermanent(nameof(AuthController.Index), GoliathControllers.AuthController);
             }
-            #endregion
+
+            #endregion Parse & deserialize the parameter.
 
             #region Validate object data (Non-Null + Valid Two-Factor method)
+
             // Check if the model exists and the username is not null.
             if (model == null || string.IsNullOrWhiteSpace(model.Username) || string.IsNullOrWhiteSpace(model.Controller) || string.IsNullOrWhiteSpace(model.Action))
             {
+                _logger.LogInformation($"[CHECK-2] Received invalid serialization for SendSmsCode(m). Model Data = [{m}]");
                 TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorSmsResendFailure;
                 TempData[TempDataKeys.HtmlMessage] = "Internal Error. Try again later.";
                 return RedirectToActionPermanent(nameof(AuthController.Index), GoliathControllers.AuthController);
             }
             // Query for the user.
             ApplicationUser user = await _repository.GetUserByNameAsync(model.Username);
-            
+
             // Check if the user exists and there two-factor method is SMS.
             if (user == null || user.TwoFactorMethod != (int)TwoFactorMethod.SmsVerify)
             {
+                _logger.LogInformation($"[CHECK-3] Received invalid serialization for SendSmsCode(m). Model Data = [{m}]");
                 TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorSmsResendFailure;
                 TempData[TempDataKeys.HtmlMessage] = "Internal Error. Try again later.";
                 if (model.IsUrnRedirect)
@@ -235,13 +244,14 @@ namespace Goliath.Controllers
                 return RedirectToActionPermanent(model.Action, model.Controller, new { userName = model.Username });
             }
 
-            #endregion Validate object data
+            #endregion Validate object data (Non-Null + Valid Two-Factor method)
 
             #region Ensure a unauthorized user can request token
 
             // Check for Invalid Two-Factor Authorize Cookie + User not logged in
             if (!await _authorizeTokenRepository.TokenValidAsync(user.Id) && !User.Identity.IsAuthenticated)
             {
+                _logger.LogInformation($"[CHECK-4A] Unauthorized request for user {user.Id} ({user.UserName} was rejected (Invalid Authorization Token). Model Data = [{m}]");
                 TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorSmsResendFailure;
                 TempData[TempDataKeys.HtmlMessage] = "Invalid account session.";
                 if (model.IsUrnRedirect)
@@ -250,12 +260,15 @@ namespace Goliath.Controllers
                 }
                 return RedirectToAction(model.Action, model.Controller, new { userName = model.Username });
             }
-            #endregion
+
+            #endregion Ensure a unauthorized user can request token
 
             #region Ensure that a authorized user can request a token.
+
             // If the user is logged in and they are requesting a username that is not theirs.
             if (User.Identity.IsAuthenticated && (User.Identity.Name != model.Username))
             {
+                _logger.LogInformation($"[CHECK-4B] Authorized request for user {user.Id} ({user.UserName} was rejected (Invalid Session). Model Data = [{m}]");
                 TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorSmsResendFailure;
                 TempData[TempDataKeys.HtmlMessage] = "Invalid account session.";
                 if (model.IsUrnRedirect)
@@ -264,22 +277,25 @@ namespace Goliath.Controllers
                 }
                 return RedirectToAction(model.Action, model.Controller, new { userName = model.Username });
             }
-            #endregion
+
+            #endregion Ensure that a authorized user can request a token.
 
             #region Check if the user is on timeout
+
             // If the user has waited the timeout and is allowed to request another token.
             if (!await _timeoutsRepository.CanRequestResendTwoFactorSmsAsync(user.Id))
             {
+                _logger.LogInformation($"[CHECK-5] Unauthorized request for user {user.Id} ({user.UserName} was rejected (Bad Timeout). Model Data = [{m}]");
                 TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorSmsResendFailureTimeout;
                 TempData[TempDataKeys.HtmlMessage] = "Please wait before requesting another code.";
-                if(model.IsUrnRedirect)
+                if (model.IsUrnRedirect)
                 {
                     return RedirectToAction(model.Action, model.Controller);
                 }
                 return RedirectToAction(model.Action, model.Controller, new { userName = model.Username });
             }
 
-            #endregion Ensure user can request token
+            #endregion Check if the user is on timeout
 
             // Send the user their code.
             await _repository.SendTwoFactorCodeSms(user);
@@ -288,7 +304,8 @@ namespace Goliath.Controllers
             // Send the success information back.
             TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorSmsResendSuccess;
             // If the redirect is a url with query parameters.
-            if(model.IsUrnRedirect)
+            _logger.LogInformation($"USER {user.Id} ({user.UserName}) - Received two-factor resend successfully. Model Data = [{m}]");
+            if (model.IsUrnRedirect)
             {
                 return LocalRedirect(model.ReturnPath);
             }

@@ -12,5 +12,6 @@
         public const string AspNetSessionCookie = "Session";
         public const string IdentityTwoFactorCookie = "TwoFactorIdentity";
         public const string IdentityTwoFactorRememberMeCookie = "TwoFactorIdentityStore";
+        public const string AspNetTempDataCookie = "GoliathTemporary";
     }
 }

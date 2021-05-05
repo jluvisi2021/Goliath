@@ -6,6 +6,7 @@ using Goliath.Repository;
 using Goliath.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
@@ -17,17 +18,19 @@ namespace Goliath.Controllers
     /// </summary>
     public sealed class UserPanelController : Controller
     {
+        private readonly ILogger _logger;
         private readonly IAccountRepository _accountRepository;
         private readonly ISmsVerifyTokensRepository _requestTable;
         private readonly IGoliathCaptchaService _captcha;
         private readonly ICookieManager _cookies;
 
-        public UserPanelController(IAccountRepository accountRepository, IGoliathCaptchaService captcha, ISmsVerifyTokensRepository requestTable, ICookieManager cookies)
+        public UserPanelController(IAccountRepository accountRepository, IGoliathCaptchaService captcha, ISmsVerifyTokensRepository requestTable, ICookieManager cookies, ILogger<AuthController> logger)
         {
             _accountRepository = accountRepository;
             _captcha = captcha;
             _requestTable = requestTable;
             _cookies = cookies;
+            _logger = logger;
         }
 
         [HttpPost]
@@ -165,6 +168,7 @@ namespace Goliath.Controllers
             #endregion Updating/Caching
 
             ModelState.Clear();
+            _logger.LogInformation($"{goliathUser.Id} ({goliathUser.UserName}) - Updated profile settings successfully.");
             TempData[TempDataKeys.Redirect] = RedirectPurpose.SettingsUpdatedSuccess;
             return View();
         }
@@ -221,6 +225,7 @@ namespace Goliath.Controllers
                 user.UnverifiedNewPhone = string.Empty;
                 await _captcha.CacheNewCaptchaValidateAsync();
                 await _accountRepository.UpdateUserAsync(user);
+                _logger.LogInformation($"{user.Id} ({user.UserName}) - Confirmed phone number successfully.");
                 return View(model);
             }
 
@@ -270,6 +275,7 @@ namespace Goliath.Controllers
                 model.IsSuccess = true;
                 await _requestTable.AddRequestAsync(user.Id);
                 await _accountRepository.GenerateNewPhoneConfirmationTokenAsync(user);
+                _logger.LogInformation($"{user.Id} ({user.UserName}) - Requested an SMS verification resend successfully.");
                 return View(model);
             }
             model.IsSuccess = false;
@@ -305,6 +311,10 @@ namespace Goliath.Controllers
         public async Task<IActionResult> Logout()
         {
             await _accountRepository.SignOutAsync();
+            if (User != null)
+            {
+                _logger.LogInformation($"{User.Identity.Name}) - Logged out.");
+            }
             if (_cookies.HasCookie(CookieKeys.TwoFactorAuthorizeCookie))
             {
                 _cookies.DeleteCookie(CookieKeys.TwoFactorAuthorizeCookie);

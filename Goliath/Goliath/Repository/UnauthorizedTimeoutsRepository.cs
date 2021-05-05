@@ -154,7 +154,6 @@ namespace Goliath.Repository
             return false;
         }
 
-
         public async Task<bool> CanRequestEmailResendVerifyAsync(string userId)
         {
             int numericId = await GetUserNumericIndex(userId);

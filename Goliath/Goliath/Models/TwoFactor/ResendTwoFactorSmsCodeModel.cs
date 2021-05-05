@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Goliath.Models
+﻿namespace Goliath.Models
 {
     public class ResendTwoFactorSmsCodeModel
     {
@@ -8,10 +6,10 @@ namespace Goliath.Models
         public string Action { get; set; }
         public string Username { get; set; }
         public bool IsUrnRedirect { get; set; }
+
         /// <summary>
-        /// Use the ReturnPath when you need to redirect to a local URL
-        /// with query parameters. IsUrnRedirect must also be true to read the
-        /// returnPath.
+        /// Use the ReturnPath when you need to redirect to a local URL with query parameters.
+        /// IsUrnRedirect must also be true to read the returnPath.
         /// </summary>
         public string ReturnPath { get; set; }
     }

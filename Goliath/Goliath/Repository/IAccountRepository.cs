@@ -154,7 +154,9 @@ namespace Goliath.Repository
         Task SetTwoFactorEnabledAsync(ApplicationUser user, TwoFactorMethod method);
 
         /// <param name="user"> The <paramref name="user" /> to query. </param>
-        /// <returns> The amount of two-factor recovery codes the <paramref name="user" /> has. </returns>
+        /// <returns>
+        /// The amount of two-factor recovery codes the <paramref name="user" /> has.
+        /// </returns>
         Task<int> GetUserRecoveryCodeAmountAsync(ApplicationUser user);
 
         /// <summary>
@@ -204,7 +206,9 @@ namespace Goliath.Repository
         Task<bool> DoesPhoneNumberExistAsync(string phone);
 
         /// <param name="email"> A string representing a email address. </param>
-        /// <returns> If the <paramref name="email" /> is a valid email address that is in use. </returns>
+        /// <returns>
+        /// If the <paramref name="email" /> is a valid email address that is in use.
+        /// </returns>
         Task<bool> DoesEmailExistAsync(string email);
 
         /// <summary>
@@ -230,12 +234,11 @@ namespace Goliath.Repository
         Task LoadDefaultsAsync();
 
         /// <summary>
-        /// Creates a set <paramref name="amount"/> of dummy accounts and adds
-        /// them into the database with default role.
-        /// This should only be used for debugging and testing the
-        /// speed of EF Core.
+        /// Creates a set <paramref name="amount" /> of dummy accounts and adds them into the
+        /// database with default role. This should only be used for debugging and testing the speed
+        /// of EF Core.
         /// </summary>
-        /// <returns></returns>
+        /// <returns> </returns>
         Task AddTestingDataAsync(int amount);
 
         /// <param name="user"> The user to check. </param>

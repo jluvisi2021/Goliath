@@ -1,6 +1,6 @@
 ﻿@model Goliath.Models.TwoFactorAuthenticateRedirectModel
-@using Newtonsoft.Json 
-@{ 
+@using Newtonsoft.Json
+@{
     // Create a request model for sending the two-factor code.
         ResendTwoFactorSmsCodeModel requestModel = new()
         {
@@ -10,7 +10,7 @@
             IsUrnRedirect = true,
             ReturnPath = $"{Context.Request.Path}{Context.Request.QueryString}"
      };
-   
+
 }
 
 <style type="text/css">
@@ -35,7 +35,6 @@
                 {
                     <div class="text-danger text-left" asp-validation-summary="All"></div>
                 }
-
             </div>
             <hr />
             @if (TempData[TempDataKeys.Redirect] != null && TempData[TempDataKeys.Redirect].Equals((int)RedirectPurpose.TwoFactorSmsResendSuccess))
@@ -101,7 +100,6 @@
                             <i class="fas fa-chevron-circle-left fa-fw"></i> Go Back
                         </a>
                     }
-
                 </form>
             </div>
         </div>
