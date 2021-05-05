@@ -155,10 +155,32 @@ namespace Goliath.Controllers
         {
             return View();
         }
-
+        // How this method works:
         /// <summary>
-        /// Sends an sms code to the user and then redirects to a specific controller and action.
-        /// Pass in a serialized model encoded in Base64.
+        /// <para>
+        /// Sends an Sms two-factor code to a user and then redirects to
+        /// a specified action.
+        /// </para>
+        /// <para>
+        /// This method takes a Base64 serialized <see cref="ResendTwoFactorSmsCodeModel"/> model <paramref name="m"/>
+        /// and attempts to decode it and then validate its attributes.
+        /// </para>
+        /// <para>
+        /// This method REQUIRES a <b>"Action"</b> and a <b>"Controller"</b> to be passed through the model.
+        /// This "Action" and "Controller" should reference a real action method path that
+        /// this <see cref="IActionResult"/> returns to regardless of the outcome.
+        /// </para>
+        /// <para>
+        /// The <see cref="ResendTwoFactorSmsCodeModel"/> can also be equipped with a "ReturnPath"
+        /// which is optional but can request that if the process has completed successfully,
+        /// send the user to this specific LocalUrl with Query arguments. In this case the user will not
+        /// be sent to the "Action" and "Controller" but will be directly redirected to the ReturnPath.
+        /// </para>
+        /// <para>
+        /// If the user is already signed in then we compare the username that is being
+        /// requested to the current user which is signed in.<br />
+        /// Otherwise we check if the user has a valid Authorize cookie.
+        /// </para>
         /// </summary>
         /// <param name="m">A serialized model.</param>
         /// <returns> </returns>
@@ -169,6 +191,7 @@ namespace Goliath.Controllers
         {
             ResendTwoFactorSmsCodeModel model;
             // Deserialize the resend two factor sms model.
+            #region Parse & deserialize the parameter.
             try
             {
                 model = JsonConvert.DeserializeObject<ResendTwoFactorSmsCodeModel>(Encoding.UTF8.GetString(Convert.FromBase64String(m)));
@@ -178,36 +201,36 @@ namespace Goliath.Controllers
                 TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorSmsResendFailure;
                 return RedirectToActionPermanent(nameof(AuthController.Index), GoliathControllers.AuthController);
             }
+            #endregion
 
-            #region Validate object data
-
+            #region Validate object data (Non-Null + Valid Two-Factor method)
+            // Check if the model exists and the username is not null.
             if (model == null || string.IsNullOrWhiteSpace(model.Username) || string.IsNullOrWhiteSpace(model.Controller) || string.IsNullOrWhiteSpace(model.Action))
             {
                 TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorSmsResendFailure;
                 TempData[TempDataKeys.HtmlMessage] = "Internal Error. Try again later.";
-                if (model.IsUrnRedirect)
-                {
-                    return RedirectToAction(model.Action, model.Controller);
-                }
                 return RedirectToActionPermanent(nameof(AuthController.Index), GoliathControllers.AuthController);
             }
+            // Query for the user.
             ApplicationUser user = await _repository.GetUserByNameAsync(model.Username);
+            
+            // Check if the user exists and there two-factor method is SMS.
             if (user == null || user.TwoFactorMethod != (int)TwoFactorMethod.SmsVerify)
             {
                 TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorSmsResendFailure;
                 TempData[TempDataKeys.HtmlMessage] = "Internal Error. Try again later.";
                 if (model.IsUrnRedirect)
                 {
-                    return RedirectToAction(model.Action, model.Controller);
+                    return RedirectToActionPermanent(model.Action, model.Controller);
                 }
-                return RedirectToAction(model.Action, model.Controller, new { userName = model.Username });
+                return RedirectToActionPermanent(model.Action, model.Controller, new { userName = model.Username });
             }
 
             #endregion Validate object data
 
-            #region Ensure user can request token
+            #region Ensure a unauthorized user can request token
 
-            // Invalid Two-Factor Authorize Cookie + User not logged in
+            // Check for Invalid Two-Factor Authorize Cookie + User not logged in
             if (!await _authorizeTokenRepository.TokenValidAsync(user.Id) && !User.Identity.IsAuthenticated)
             {
                 TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorSmsResendFailure;
@@ -218,8 +241,11 @@ namespace Goliath.Controllers
                 }
                 return RedirectToAction(model.Action, model.Controller, new { userName = model.Username });
             }
+            #endregion
+
+            #region Ensure that a authorized user can request a token.
             // If the user is logged in and they are requesting a username that is not theirs.
-            if(User.Identity.IsAuthenticated && User.Identity.Name != model.Username)
+            if (User.Identity.IsAuthenticated && (User.Identity.Name != model.Username))
             {
                 TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorSmsResendFailure;
                 TempData[TempDataKeys.HtmlMessage] = "Invalid account session.";
@@ -229,6 +255,9 @@ namespace Goliath.Controllers
                 }
                 return RedirectToAction(model.Action, model.Controller, new { userName = model.Username });
             }
+            #endregion
+
+            #region Check if the user is on timeout
             // If the user has waited the timeout and is allowed to request another token.
             if (!await _timeoutsRepository.CanRequestResendTwoFactorSmsAsync(user.Id))
             {
@@ -243,8 +272,11 @@ namespace Goliath.Controllers
 
             #endregion Ensure user can request token
 
+            // Send the user their code.
             await _repository.SendTwoFactorCodeSms(user);
+            // Register the fact that they requested a two-factor code.
             await _timeoutsRepository.UpdateRequestAsync(user.Id, UnauthorizedRequest.RequestTwoFactorResendSms);
+            // Send the success information back.
             TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorSmsResendSuccess;
             // If the redirect is a url with query parameters.
             if(model.IsUrnRedirect)

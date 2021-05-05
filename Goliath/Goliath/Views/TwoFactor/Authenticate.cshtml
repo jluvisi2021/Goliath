@@ -1,7 +1,8 @@
 ﻿@model Goliath.Models.TwoFactorAuthenticateRedirectModel
 @using Newtonsoft.Json 
 @{ 
-        ResendTwoFactorSmsCodeModel resendModel = new()
+    // Create a request model for sending the two-factor code.
+        ResendTwoFactorSmsCodeModel requestModel = new()
         {
             Username = User.Identity.Name,
             Controller = GoliathControllers.TwoFactorController,
@@ -69,7 +70,7 @@
                     </button>
                     @if (Model?.TwoFactorCodeRequired == true)
                     {
-                        <a asp-action="SendSmsCode" asp-route-m="@Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(resendModel)))"  class="btn btn-primary">
+                        <a asp-action="SendSmsCode" asp-route-m="@Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(requestModel)))"  class="btn btn-primary">
                             <i class="fas fa-redo fa-fw"></i> Send Code
                         </a>
                         <br class="pt-2 pb-2" />
