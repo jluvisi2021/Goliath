@@ -14,9 +14,11 @@ const AuthScript = (() => {
                 e.stopImmediatePropagation();
             }
         });
+
         $("#toggle-dark").click(() => {
             AuthScript.toggleDarkTheme();
         });
+        
         $("#login-submit-btn").click(() => {
             GlobalScript.loadCaptcha('login-form');
         });
@@ -52,7 +54,7 @@ const AuthScript = (() => {
          * values in the localStorage.
          * */
         changeTheme: () => {
-            if (localStorage.getItem("darkTheme") != null && localStorage.getItem("darkTheme") === "enabled") {
+            if (localStorage.getItem("darkTheme") === null || localStorage.getItem("darkTheme") === "disabled") {
                 return;
             }
             $("body").removeClass("gradient-light")
@@ -93,7 +95,7 @@ const AuthScript = (() => {
          * */
         toggleDarkTheme: () => {
             if (localStorage.getItem("darkTheme") === null) {
-                localStorage.setItem("darkTheme", "disabled");
+                localStorage.setItem("darkTheme", "enabled");
                 location.reload();
             } else if (localStorage.getItem("darkTheme") === "enabled") {
                 localStorage.setItem("darkTheme", "disabled");

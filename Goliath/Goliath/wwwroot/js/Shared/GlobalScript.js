@@ -18,6 +18,10 @@ const GlobalScript = (() => {
         "alert-danger": 3,
         "alert-dark": 4
     });
+
+    // Track the time (in minutes) that there has been no mouse movement.
+    let idleTime = 0;
+
     // When the user scrolls to the bottom of a scrollable page remove the footer.
     $(window).scroll(() => {
         const footerElement = $("#footer");
@@ -41,8 +45,14 @@ const GlobalScript = (() => {
     });
     // Run immediately.
     $(document).ready(() => {
+        // General javascript.
+
         $('[data-toggle="popover"]').popover();
+
+        ////////////////////////////////////////////////////////////////////////////////
+        // Load the saved notifications in localStorage.
         GlobalScript.loadSavedNotifications();
+
         // When a notification is closed.
         $(".close").click((e) => {
             // Get id of the notification and delete it from localStorage.
@@ -51,11 +61,35 @@ const GlobalScript = (() => {
         $("form").submit(() => {
             GlobalScript.renderLoading();
         });
+
+        ////////////////////////////////////////////////////////////////////////////////
+
+        // Setup Logout Threshold
+        setInterval(GlobalScript.timerIncrement, 10000); // 1 minute
+
+        //Zero the idle timer on mouse movement or key press.
+        $(this).mousemove(function (e) {
+            idleTime = 0;
+        });
+        $(this).keypress(function (e) {
+            idleTime = 0;
+        });
+
     });
     return {
         /** Returns the list of avaliable banner types. */
         BannerTypes: () => {
             return _bannerTypes;
+        },
+        timerIncrement: () => {
+            // Increment idle time.
+            idleTime = idleTime + 1;
+
+            // Check if the idle time is greater then the logout threshold.
+            if (idleTime > sessionStorage.getItem("logoutThreshold") && sessionStorage.getItem("logoutThreshold") > 0) { 
+                // Log the user out.
+                window.location.href = "/logout";
+            }
         },
         /**
          * Takes a notification and makes it into an object and appends

@@ -1,4 +1,7 @@
 ﻿@*General settings for all of the application.*@
+@using Goliath.Models
+@inject Goliath.Repository.IAccountRepository _accountRepository
+@inject Microsoft.AspNetCore.Identity.SignInManager<ApplicationUser> _signInManager
 @{
     ViewData["Version"] = $" v{config["General:WebVersion"]}";
     ViewData["CarouselImage1"] = config["General:Images:Carousel:1"];
@@ -6,4 +9,18 @@
     ViewData["CarouselImage3"] = config["General:Images:Carousel:3"];
     ViewData["WebIcon"] = config["General:Images:Icon"];
     Layout = "_Layout";
+    // Manage the logout threshold for users. -1 = Not Signed In
+    if(ViewData["LogoutThreshold"] == null || (int)ViewData["LogoutThreshold"] == -1)
+    {
+        if (_signInManager.IsSignedIn(User))
+        {
+            var user = await _accountRepository.GetUserFromContextAsync(User);
+            ViewData["LogoutThreshold"] = user.LogoutThreshold;
+        }
+        else
+        {
+            ViewData["LogoutThreshold"] = -1;
+        }
+    }
+
 }
