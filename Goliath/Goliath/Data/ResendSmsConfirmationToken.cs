@@ -11,9 +11,10 @@ namespace Goliath.Data
     public class ResendSmsConfirmationToken
     {
         [Key]
-        public int NumericID { get; set; }
+        public int NumericId { get; set; }
 
         [Required]
+        [MinLength(36)]
         [MaxLength(36)]
         public string UserID { get; set; }
 

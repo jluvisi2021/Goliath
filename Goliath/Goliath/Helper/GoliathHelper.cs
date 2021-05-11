@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Security;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -10,7 +12,19 @@ namespace Goliath.Helper
     public sealed class GoliathHelper
     {
         /// <summary>
+        /// The maximum length of cryptographic tokens.
+        /// Migrations will have to be updated after modifying this value.
+        /// </summary>
+        public const int MaximumTokenValueLength = 32;
+        /// <summary>
+        /// The minimum length of cryptographic secure tokens.
+        /// Migrations will have to be updated after modifying this value.
+        /// </summary>
+        public const int MinimumTokenValueLength = 32;
+
+        /// <summary>
         /// The type that a debug message is.
+        /// Migrations will have to be updated after modifying this value.
         /// </summary>
         public enum PrintType
         {
@@ -48,23 +62,29 @@ namespace Goliath.Helper
         }
 
         /// <summary>
-        /// Generates a secure random number using the <see cref="RandomNumberGenerator" />.
+        /// Generates a secure random number using the <see cref="RandomGenerator" />.
+        /// The maximum value and minimum value for the random numbers are set
         /// </summary>
         /// <returns> </returns>
         public static string GenerateSecureRandomNumber()
         {
-            StringBuilder validCode = new();
-            RNGCryptoServiceProvider provider = new();
-            byte[] byteArray = new byte[4];
-            provider.GetBytes(byteArray);
-            uint randomInteger = BitConverter.ToUInt32(byteArray, 0);
-            string x = System.Convert.ToString(randomInteger);
-            for (int i = 0; i < x.Length; i++)
+            RandomGenerator generator = new();
+            StringBuilder token = new();
+            for(int i = 0; i < MinimumTokenValueLength; i++)
             {
-                validCode.Append(x[i]);
+                token.Append($"{generator.Next(0, 9)}");
             }
-            provider.Dispose();
-            return validCode.ToString();
+            // Add random exta numbers for a varying maximum possible value.
+            for (int i = 0; i < MaximumTokenValueLength-MinimumTokenValueLength; i++)
+            {
+                if(generator.Next(0, 1) == 0)
+                {
+                    token.Append($"{generator.Next(0, 9)}");
+                }
+            }
+            generator.Dispose();
+            return token.ToString();
+
         }
     }
 }

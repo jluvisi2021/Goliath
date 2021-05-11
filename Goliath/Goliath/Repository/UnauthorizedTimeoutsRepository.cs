@@ -21,7 +21,7 @@ namespace Goliath.Repository
         /// Gets a user with the specified <paramref name="userId" />.
         /// </summary>
         /// <param name="userId"> The userId to query. </param>
-        /// <returns> The NumericID of that user. </returns>
+        /// <returns> The NumericId of that user. </returns>
         private async Task<int> GetUserNumericIndex(string userId)
         {
             UnauthorizedTimeouts timeouts = await _context.TimeoutsUnauthorizedTable.FirstOrDefaultAsync(u => u.UserId.Equals(userId));
@@ -29,7 +29,7 @@ namespace Goliath.Repository
             {
                 return -1;
             }
-            return timeouts.NumericID;
+            return timeouts.NumericId;
         }
 
         public async Task UpdateRequestAsync(string userId, UnauthorizedRequest requestType)
@@ -40,7 +40,7 @@ namespace Goliath.Repository
                 case UnauthorizedRequest.RequestVerificationEmail:
                     if (numericId != -1)
                     {
-                        UnauthorizedTimeouts existingUser = await _context.TimeoutsUnauthorizedTable.FirstOrDefaultAsync(u => u.NumericID == numericId);
+                        UnauthorizedTimeouts existingUser = await _context.TimeoutsUnauthorizedTable.FirstOrDefaultAsync(u => u.NumericId == numericId);
                         existingUser.RequestVerifyEmail = DateTime.UtcNow.ToString();
                         break;
                     }
@@ -58,7 +58,7 @@ namespace Goliath.Repository
                 case UnauthorizedRequest.RequestUsernameEmail:
                     if (numericId != -1)
                     {
-                        UnauthorizedTimeouts existingUser = await _context.TimeoutsUnauthorizedTable.FirstOrDefaultAsync(u => u.NumericID == numericId);
+                        UnauthorizedTimeouts existingUser = await _context.TimeoutsUnauthorizedTable.FirstOrDefaultAsync(u => u.NumericId == numericId);
                         existingUser.RequestForgotUsername = DateTime.UtcNow.ToString();
                         break;
                     }
@@ -76,7 +76,7 @@ namespace Goliath.Repository
                 case UnauthorizedRequest.RequestForgotPasswordEmail:
                     if (numericId != -1)
                     {
-                        UnauthorizedTimeouts existingUser = await _context.TimeoutsUnauthorizedTable.FirstOrDefaultAsync(u => u.NumericID == numericId);
+                        UnauthorizedTimeouts existingUser = await _context.TimeoutsUnauthorizedTable.FirstOrDefaultAsync(u => u.NumericId == numericId);
                         existingUser.RequestForgotPassword = DateTime.UtcNow.ToString();
                         break;
                     }
@@ -94,7 +94,7 @@ namespace Goliath.Repository
                 case UnauthorizedRequest.InitalTwoFactorRequestSms:
                     if (numericId != -1)
                     {
-                        UnauthorizedTimeouts existingUser = await _context.TimeoutsUnauthorizedTable.FirstOrDefaultAsync(u => u.NumericID == numericId);
+                        UnauthorizedTimeouts existingUser = await _context.TimeoutsUnauthorizedTable.FirstOrDefaultAsync(u => u.NumericId == numericId);
                         existingUser.RequestTwoFactorSmsInital = DateTime.UtcNow.ToString();
                         break;
                     }
@@ -112,7 +112,7 @@ namespace Goliath.Repository
                 case UnauthorizedRequest.RequestTwoFactorResendSms:
                     if (numericId != -1)
                     {
-                        UnauthorizedTimeouts existingUser = await _context.TimeoutsUnauthorizedTable.FirstOrDefaultAsync(u => u.NumericID == numericId);
+                        UnauthorizedTimeouts existingUser = await _context.TimeoutsUnauthorizedTable.FirstOrDefaultAsync(u => u.NumericId == numericId);
                         existingUser.RequestTwoFactorSmsResend = DateTime.UtcNow.ToString();
                         break;
                     }
@@ -141,7 +141,7 @@ namespace Goliath.Repository
             {
                 return true;
             }
-            UnauthorizedTimeouts existingUser = await _context.TimeoutsUnauthorizedTable.FirstOrDefaultAsync(u => u.NumericID == numericId);
+            UnauthorizedTimeouts existingUser = await _context.TimeoutsUnauthorizedTable.FirstOrDefaultAsync(u => u.NumericId == numericId);
             if (string.IsNullOrWhiteSpace(existingUser.RequestTwoFactorSmsInital))
             {
                 return true;
@@ -161,7 +161,7 @@ namespace Goliath.Repository
             {
                 return true;
             }
-            UnauthorizedTimeouts existingUser = await _context.TimeoutsUnauthorizedTable.FirstOrDefaultAsync(u => u.NumericID == numericId);
+            UnauthorizedTimeouts existingUser = await _context.TimeoutsUnauthorizedTable.FirstOrDefaultAsync(u => u.NumericId == numericId);
             if (string.IsNullOrWhiteSpace(existingUser.RequestVerifyEmail))
             {
                 return true;
@@ -181,7 +181,7 @@ namespace Goliath.Repository
             {
                 return true;
             }
-            UnauthorizedTimeouts existingUser = await _context.TimeoutsUnauthorizedTable.FirstOrDefaultAsync(u => u.NumericID == numericId);
+            UnauthorizedTimeouts existingUser = await _context.TimeoutsUnauthorizedTable.FirstOrDefaultAsync(u => u.NumericId == numericId);
             if (string.IsNullOrWhiteSpace(existingUser.RequestForgotPassword))
             {
                 return true;
@@ -201,7 +201,7 @@ namespace Goliath.Repository
             {
                 return true;
             }
-            UnauthorizedTimeouts existingUser = await _context.TimeoutsUnauthorizedTable.FirstOrDefaultAsync(u => u.NumericID == numericId);
+            UnauthorizedTimeouts existingUser = await _context.TimeoutsUnauthorizedTable.FirstOrDefaultAsync(u => u.NumericId == numericId);
             if (string.IsNullOrWhiteSpace(existingUser.RequestForgotUsername))
             {
                 return true;
@@ -221,7 +221,7 @@ namespace Goliath.Repository
             {
                 return true;
             }
-            UnauthorizedTimeouts existingUser = await _context.TimeoutsUnauthorizedTable.FirstOrDefaultAsync(u => u.NumericID == numericId);
+            UnauthorizedTimeouts existingUser = await _context.TimeoutsUnauthorizedTable.FirstOrDefaultAsync(u => u.NumericId == numericId);
             if (string.IsNullOrWhiteSpace(existingUser.RequestTwoFactorSmsResend))
             {
                 return true;

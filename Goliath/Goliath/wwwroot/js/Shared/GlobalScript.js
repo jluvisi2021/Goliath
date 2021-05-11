@@ -65,7 +65,7 @@ const GlobalScript = (() => {
         ////////////////////////////////////////////////////////////////////////////////
 
         // Setup Logout Threshold
-        setInterval(GlobalScript.timerIncrement, 10000); // 1 minute
+        setInterval(GlobalScript.timerIncrement, 60000); // 1 minute
 
         //Zero the idle timer on mouse movement or key press.
         $(this).mousemove(function (e) {

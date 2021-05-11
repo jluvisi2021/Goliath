@@ -58,7 +58,7 @@ namespace Goliath.Repository
 
         public async Task CleanUpUnusedTokensAsync()
         {
-            List<int> primaryKeys = await _context.ValidTokens.Select(u => u.NumericID).ToListAsync();
+            List<int> primaryKeys = await _context.ValidTokens.Select(u => u.NumericId).ToListAsync();
             int amount = 0;
             foreach (int keyIndex in primaryKeys)
             {

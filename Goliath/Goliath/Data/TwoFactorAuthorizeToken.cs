@@ -24,13 +24,16 @@ namespace Goliath.Data
     public class TwoFactorAuthorizeToken
     {
         [Key]
-        public int NumericID { get; set; }
+        public int NumericId { get; set; }
 
         [Required]
+        [MinLength(36)]
         [MaxLength(36)]
         public string UserId { get; set; }
 
         [Required]
+        [MinLength(Helper.GoliathHelper.MinimumTokenValueLength)]
+        [MaxLength(Helper.GoliathHelper.MaximumTokenValueLength)]
         public string AuthorizeToken { get; set; }
     }
 }

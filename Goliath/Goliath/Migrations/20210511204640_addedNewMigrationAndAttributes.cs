@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-using System;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Goliath.Migrations
 {
-    public partial class addedApplicationUser : Migration
+    public partial class addedNewMigrationAndAttributes : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -12,6 +12,9 @@ namespace Goliath.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Icon = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsAdministrator = table.Column<bool>(type: "bit", nullable: false),
+                    ExcludedURLComponents = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -26,9 +29,19 @@ namespace Goliath.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    BackgroundColor = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DarkTheme = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserData = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BackgroundColor = table.Column<string>(type: "nvarchar(7)", maxLength: 7, nullable: false),
+                    DarkTheme = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
+                    AccountCreationDate = table.Column<string>(type: "nvarchar(22)", maxLength: 22, nullable: false),
+                    LastUserLogin = table.Column<string>(type: "nvarchar(22)", maxLength: 22, nullable: true),
+                    LogoutThreshold = table.Column<int>(type: "int", maxLength: 2, nullable: false),
+                    UnverifiedNewEmail = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: true),
+                    UnverifiedNewPhone = table.Column<string>(type: "nvarchar(12)", maxLength: 12, nullable: true),
+                    LastPasswordUpdate = table.Column<string>(type: "nvarchar(22)", maxLength: 22, nullable: false),
+                    TwoFactorUpdated = table.Column<string>(type: "nvarchar(22)", maxLength: 22, nullable: true),
+                    AccountLoginHistory = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PendingNotifications = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserData = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TwoFactorMethod = table.Column<int>(type: "int", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -47,6 +60,66 @@ namespace Goliath.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ResendSmsConfirmationToken",
+                columns: table => new
+                {
+                    NumericId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserID = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
+                    TokenSentTimestamp = table.Column<string>(type: "nvarchar(22)", maxLength: 22, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ResendSmsConfirmationToken", x => x.NumericId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TwoFactorAuthorizationTokens",
+                columns: table => new
+                {
+                    NumericId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
+                    AuthorizeToken = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TwoFactorAuthorizationTokens", x => x.NumericId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UnauthorizedTimeoutTable",
+                columns: table => new
+                {
+                    NumericId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
+                    RequestVerifyEmail = table.Column<string>(type: "nvarchar(22)", maxLength: 22, nullable: true),
+                    RequestForgotPassword = table.Column<string>(type: "nvarchar(22)", maxLength: 22, nullable: true),
+                    RequestForgotUsername = table.Column<string>(type: "nvarchar(22)", maxLength: 22, nullable: true),
+                    RequestTwoFactorSmsInital = table.Column<string>(type: "nvarchar(22)", maxLength: 22, nullable: true),
+                    RequestTwoFactorSmsResend = table.Column<string>(type: "nvarchar(22)", maxLength: 22, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UnauthorizedTimeoutTable", x => x.NumericId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ValidCaptchaCookieTokens",
+                columns: table => new
+                {
+                    NumericId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Token = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
+                    GeneratedDateTime = table.Column<string>(type: "nvarchar(22)", maxLength: 22, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ValidCaptchaCookieTokens", x => x.NumericId);
                 });
 
             migrationBuilder.CreateTable(
@@ -211,6 +284,18 @@ namespace Goliath.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "ResendSmsConfirmationToken");
+
+            migrationBuilder.DropTable(
+                name: "TwoFactorAuthorizationTokens");
+
+            migrationBuilder.DropTable(
+                name: "UnauthorizedTimeoutTable");
+
+            migrationBuilder.DropTable(
+                name: "ValidCaptchaCookieTokens");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

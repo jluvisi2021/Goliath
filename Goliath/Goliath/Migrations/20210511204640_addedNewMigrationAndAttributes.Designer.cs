@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Goliath.Migrations
 {
     [DbContext(typeof(GoliathContext))]
-    [Migration("20210420225630_addedSmsResendTable")]
-    partial class addedSmsResendTable
+    [Migration("20210511204640_addedNewMigrationAndAttributes")]
+    partial class addedNewMigrationAndAttributes
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,7 +23,7 @@ namespace Goliath.Migrations
 
             modelBuilder.Entity("Goliath.Data.ResendSmsConfirmationToken", b =>
                 {
-                    b.Property<int>("NumericID")
+                    b.Property<int>("NumericId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -35,29 +35,91 @@ namespace Goliath.Migrations
 
                     b.Property<string>("UserID")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
 
-                    b.HasKey("NumericID");
+                    b.HasKey("NumericId");
 
                     b.ToTable("ResendSmsConfirmationToken");
                 });
 
+            modelBuilder.Entity("Goliath.Data.TwoFactorAuthorizeToken", b =>
+                {
+                    b.Property<int>("NumericId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("AuthorizeToken")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
+
+                    b.HasKey("NumericId");
+
+                    b.ToTable("TwoFactorAuthorizationTokens");
+                });
+
+            modelBuilder.Entity("Goliath.Data.UnauthorizedTimeouts", b =>
+                {
+                    b.Property<int>("NumericId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("RequestForgotPassword")
+                        .HasMaxLength(22)
+                        .HasColumnType("nvarchar(22)");
+
+                    b.Property<string>("RequestForgotUsername")
+                        .HasMaxLength(22)
+                        .HasColumnType("nvarchar(22)");
+
+                    b.Property<string>("RequestTwoFactorSmsInital")
+                        .HasMaxLength(22)
+                        .HasColumnType("nvarchar(22)");
+
+                    b.Property<string>("RequestTwoFactorSmsResend")
+                        .HasMaxLength(22)
+                        .HasColumnType("nvarchar(22)");
+
+                    b.Property<string>("RequestVerifyEmail")
+                        .HasMaxLength(22)
+                        .HasColumnType("nvarchar(22)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
+
+                    b.HasKey("NumericId");
+
+                    b.ToTable("UnauthorizedTimeoutTable");
+                });
+
             modelBuilder.Entity("Goliath.Data.ValidHumanVerifyTokens", b =>
                 {
-                    b.Property<int>("NumericID")
+                    b.Property<int>("NumericId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("GeneratedDateTime")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(22)
+                        .HasColumnType("nvarchar(22)");
 
                     b.Property<string>("Token")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
 
-                    b.HasKey("NumericID");
+                    b.HasKey("NumericId");
 
                     b.ToTable("ValidCaptchaCookieTokens");
                 });
@@ -181,6 +243,13 @@ namespace Goliath.Migrations
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
+
+                    b.Property<int>("TwoFactorMethod")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TwoFactorUpdated")
+                        .HasMaxLength(22)
+                        .HasColumnType("nvarchar(22)");
 
                     b.Property<string>("UnverifiedNewEmail")
                         .HasMaxLength(40)

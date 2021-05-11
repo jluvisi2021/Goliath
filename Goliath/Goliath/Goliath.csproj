@@ -32,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Migrations\" />
     <Folder Include="Views\UserPanel\Database\" />
     <Folder Include="Views\UserPanel\Utilities\" />
   </ItemGroup>

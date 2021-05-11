@@ -10,9 +10,11 @@ namespace Goliath.Data
     public class ValidHumanVerifyTokens
     {
         [Key]
-        public int NumericID { get; set; }
+        public int NumericId { get; set; }
 
         [Required]
+        [MinLength(Helper.GoliathHelper.MinimumTokenValueLength)]
+        [MaxLength(Helper.GoliathHelper.MaximumTokenValueLength)]
         public string Token { get; set; }
 
         [Required]
