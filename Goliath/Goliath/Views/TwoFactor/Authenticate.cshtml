@@ -2,14 +2,14 @@
 @using Newtonsoft.Json
 @{
     // Create a request model for sending the two-factor code.
-        ResendTwoFactorSmsCodeModel requestModel = new()
-        {
-            Username = User.Identity.Name,
-            Controller = GoliathControllers.TwoFactorController,
-            Action = nameof(TwoFactorController.Index),
-            IsUrnRedirect = true,
-            ReturnPath = $"{Context.Request.Path}{Context.Request.QueryString}"
-     };
+    ResendTwoFactorSmsCodeModel requestModel = new()
+    {
+        Username = User.Identity.Name,
+        Controller = GoliathControllers.TwoFactorController,
+        Action = nameof(TwoFactorController.Index),
+        IsUrnRedirect = true,
+        ReturnPath = $"{Context.Request.Path}{Context.Request.QueryString}"
+    };
 
 }
 

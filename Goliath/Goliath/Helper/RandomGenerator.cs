@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Threading.Tasks;
 
 namespace Goliath.Helper
 {
@@ -13,6 +10,7 @@ namespace Goliath.Helper
     public class RandomGenerator : IDisposable
     {
         private readonly RNGCryptoServiceProvider csp;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -20,12 +18,13 @@ namespace Goliath.Helper
         {
             csp = new RNGCryptoServiceProvider();
         }
+
         /// <summary>
         /// Get random value
         /// </summary>
-        /// <param name="minValue">The minimum value.</param>
-        /// <param name="maxExclusiveValue">The maximum value.</param>
-        /// <returns>The cryptographic-secure random number.</returns>
+        /// <param name="minValue"> The minimum value. </param>
+        /// <param name="maxExclusiveValue"> The maximum value. </param>
+        /// <returns> The cryptographic-secure random number. </returns>
         public int Next(int minValue, int maxExclusiveValue)
         {
             if (minValue == maxExclusiveValue) return minValue;
@@ -35,8 +34,8 @@ namespace Goliath.Helper
                 throw new ArgumentOutOfRangeException($"{nameof(minValue)} must be lower than {nameof(maxExclusiveValue)}");
             }
 
-            var diff = (long)maxExclusiveValue - minValue;
-            var upperBound = uint.MaxValue / diff * diff;
+            long diff = (long)maxExclusiveValue - minValue;
+            long upperBound = uint.MaxValue / diff * diff;
 
             uint ui;
             do
@@ -48,17 +47,19 @@ namespace Goliath.Helper
 
         private uint GetRandomUInt()
         {
-            var randomBytes = GenerateRandomBytes(sizeof(uint));
+            byte[] randomBytes = GenerateRandomBytes(sizeof(uint));
             return BitConverter.ToUInt32(randomBytes, 0);
         }
 
         private byte[] GenerateRandomBytes(int bytesNumber)
         {
-            var buffer = new byte[bytesNumber];
+            byte[] buffer = new byte[bytesNumber];
             csp.GetBytes(buffer);
             return buffer;
         }
+
         private bool _disposed;
+
         /// <summary>
         /// Public implementation of Dispose pattern callable by consumers.
         /// </summary>
@@ -67,10 +68,11 @@ namespace Goliath.Helper
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
         /// <summary>
         /// Protected implementation of Dispose pattern.
         /// </summary>
-        /// <param name="disposing"></param>
+        /// <param name="disposing"> </param>
         protected virtual void Dispose(bool disposing)
         {
             if (_disposed)

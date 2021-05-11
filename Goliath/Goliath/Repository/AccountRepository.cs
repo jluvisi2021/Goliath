@@ -2,11 +2,13 @@
 using Goliath.Enums;
 using Goliath.Helper;
 using Goliath.Models;
+using Goliath.Models.Accounts;
 using Goliath.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,6 +57,7 @@ namespace Goliath.Repository
             if (!(await _roleManager.RoleExistsAsync(GoliathRoles.Administrator)))
             {
                 _logger.LogInformation("Creating SuperUser account and Goliath roles.");
+
                 #region Create admin role
 
                 await _roleManager.CreateAsync(new ApplicationRole()
@@ -138,7 +141,6 @@ namespace Goliath.Repository
         );
                 await _userManager.AddToRoleAsync(await GetUserByNameAsync(userName), GoliathRoles.Default);
             }
-            
         }
 
         public async Task<bool> IsAdminAsync(ApplicationUser user)
@@ -390,18 +392,28 @@ namespace Goliath.Repository
             _logger.LogInformation($"Disabled two-factor authentication for user {user.Id}.");
         }
 
-        public async Task<SignInResult> AuthorizeUserTwoFactorAsync(ApplicationUser user, string token)
+        public async Task<SignInResult> AuthorizeUserTwoFactorAsync(ApplicationUser user, string token, string remoteIp)
         {
             _logger.LogInformation($"Attempting to authorize user {user.Id} through two-factor.");
             _cookieManager.DeleteCookie(CookieKeys.TwoFactorAuthorizeCookie);
-            return await _signInManager.TwoFactorSignInAsync(TokenOptions.DefaultPhoneProvider, token, false, false);
+            SignInResult result = await _signInManager.TwoFactorSignInAsync(TokenOptions.DefaultPhoneProvider, token, false, false);
+            if (result.Succeeded)
+            {
+                await AddNewLoginTracebackEntryAsync(user.UserName, remoteIp);
+            }
+            return result;
         }
 
-        public async Task<SignInResult> AuthorizeUserTwoFactorAsync(ApplicationUser user, string token, bool rememberMe)
+        public async Task<SignInResult> AuthorizeUserTwoFactorAsync(ApplicationUser user, string token, string remoteIp, bool rememberMe)
         {
             _logger.LogInformation($"Attempting to authorize user {user.Id} through two-factor.");
             _cookieManager.DeleteCookie(CookieKeys.TwoFactorAuthorizeCookie);
-            return await _signInManager.TwoFactorSignInAsync(TokenOptions.DefaultPhoneProvider, token, rememberMe, false);
+            SignInResult result = await _signInManager.TwoFactorSignInAsync(TokenOptions.DefaultPhoneProvider, token, rememberMe, false);
+            if (result.Succeeded)
+            {
+                await AddNewLoginTracebackEntryAsync(user.UserName, remoteIp);
+            }
+            return result;
         }
 
         public async Task SendTwoFactorCodeSms(ApplicationUser user)
@@ -413,7 +425,6 @@ namespace Goliath.Repository
                 Message = $"Your Two-Factor Code is: {code}.",
                 To = user.PhoneNumber
             });
-
         }
 
         public async Task<List<string>> GenerateUserRecoveryCodesAsync(ApplicationUser user)
@@ -601,14 +612,49 @@ namespace Goliath.Repository
             return await _userManager.FindByEmailAsync(email);
         }
 
-        public async Task<SignInResult> PasswordSignInAsync(SignInModel signInModel)
+        public async Task<SignInResult> PasswordSignInAsync(SignInModel signInModel, string remoteIp)
         {
             SignInResult result = await _signInManager.PasswordSignInAsync(signInModel.Username, signInModel.Password, signInModel.RememberMe, false);
-            if(result.Succeeded)
+
+            if (result.Succeeded)
             {
                 _logger.LogInformation($"User {signInModel.Username} - Logged in.");
+                await AddNewLoginTracebackEntryAsync(signInModel.Username, remoteIp);
             }
             return result;
+        }
+
+        private async Task AddNewLoginTracebackEntryAsync(string userName, string ipAddress)
+        {
+            List<LoginTracebackEntryModel> loginHistory;
+            ApplicationUser user = await _userManager.FindByNameAsync(userName);
+
+            string tracebackHistory = user.AccountLoginHistory;
+
+            LoginTracebackEntryModel tracebackEntryModel = new()
+            {
+                IPAddress = ipAddress,
+                Timestamp = DateTime.UtcNow.ToString()
+            };
+
+            if (string.IsNullOrWhiteSpace(tracebackHistory))
+            {
+                loginHistory = new();
+                loginHistory.Add(tracebackEntryModel);
+            }
+            else
+            {
+                loginHistory = JsonConvert.DeserializeObject<List<LoginTracebackEntryModel>>(tracebackHistory);
+                loginHistory.Add(tracebackEntryModel);
+                if (loginHistory.Count > 10)
+                {
+                    loginHistory.RemoveAt(0);
+                }
+            }
+
+            tracebackHistory = JsonConvert.SerializeObject(loginHistory);
+            user.AccountLoginHistory = tracebackHistory;
+            await _userManager.UpdateAsync(user);
         }
 
         public async Task SignOutAsync()

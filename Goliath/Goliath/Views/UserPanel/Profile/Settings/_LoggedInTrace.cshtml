@@ -1,6 +1,9 @@
 ﻿@model Goliath.Models.ProfileSettingsModel
+@using Goliath.Models.Accounts
+@using Newtonsoft.Json
 @{
     var user = await _repository.GetUserFromContextAsync(User);
+    List<LoginTracebackEntryModel> history = JsonConvert.DeserializeObject<List<LoginTracebackEntryModel>>(user.AccountLoginHistory);
 }
 
 <p id="option-text">
@@ -13,6 +16,7 @@
     </i>
 </p>
 <p class="text-muted font-italic">Goliath keeps track of the last 10 logins on your account.</p>
+<p><a href="#!">Clear All</a></p>
 <table class="table table-hover table-striped">
     <thead class="thead-dark">
         <tr>
@@ -23,24 +27,37 @@
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <th scope="row">1</th>
-            <td>5:00 PM</td>
-            <td>30 Mins Ago.</td>
-            <td>72.160.48.391</td>
-        </tr>
-        <tr>
-            <th scope="row">2</th>
-            <td>6:00 PM</td>
-            <td>1 Hour Ago Ago.</td>
-            <td>72.160.48.391</td>
-        </tr>
+        @for (int i = 0; i < history?.Count; i++)
+        {
+            string message = string.Empty;
+            TimeSpan t = DateTime.UtcNow.Subtract(DateTime.Parse(history[i].Timestamp));
+            if (t.Days > 0)
+            {
+                message = $"{t.Days} day(s) ago.";
+            }
+            else if (t.Hours > 0)
+            {
+                message = $"{t.Hours} hour(s) ago.";
+            }
+            else if (t.Minutes > 0)
+            {
+                message = $"{t.Minutes} minute(s) ago.";
+            }
+            else if (t.Seconds > 0)
+            {
+                message = $"{t.Seconds} second(s) ago.";
+            }
+            else
+            {
+                message = $"<1 second ago.";
+            }
 
-        <tr class="table-danger">
-            <th scope="row">3</th>
-            <td>6:30 PM</td>
-            <td>2 Hours Ago.</td>
-            <td>72.160.48.391</td>
-        </tr>
+            <tr>
+                <th scope="row">@(i+1)</th>
+                <td><span data-toggle="tooltip" data-placement="right" title="@history[i].Timestamp">@(DateTime.Parse(history[i].Timestamp).ToShortDateString())</span></td>
+                <td>@message</td>
+                <td>@history[i].IPAddress</td>
+            </tr>
+        }
     </tbody>
 </table>

@@ -36,8 +36,9 @@ namespace Goliath.Repository
         /// Attempts to sign the user in using IdentityCore and a <paramref name="signInModel" />.
         /// </summary>
         /// <param name="signInModel"> The model to sign the user in with. </param>
+        /// <param name="remoteIp"> The remoteIp address of the user. </param>
         /// <returns> If the task was successful. </returns>
-        Task<SignInResult> PasswordSignInAsync(SignInModel signInModel);
+        Task<SignInResult> PasswordSignInAsync(SignInModel signInModel, string remoteIp);
 
         /// <summary>
         /// Signs the current user out and removes confidential cookies.
@@ -113,17 +114,19 @@ namespace Goliath.Repository
         /// </summary>
         /// <param name="user"> The user to authorize. </param>
         /// <param name="token"> The token the user has input. </param>
+        /// <param name="remoteIp"> The remote ip address of the user. </param>
         /// <returns> If the task is successful. </returns>
-        Task<SignInResult> AuthorizeUserTwoFactorAsync(ApplicationUser user, string token);
+        Task<SignInResult> AuthorizeUserTwoFactorAsync(ApplicationUser user, string token, string remoteIp);
 
         /// <summary>
         /// Attempts to authorize a user using a two factor code.
         /// </summary>
         /// <param name="user"> The user to authorize. </param>
         /// <param name="token"> The token the user has input. </param>
+        /// <param name="remoteIp"> The remote ip address of the user. </param>
         /// <param name="rememberMe"> If this two-factor authorization should be cached. </param>
         /// <returns> If the task is successful. </returns>
-        Task<SignInResult> AuthorizeUserTwoFactorAsync(ApplicationUser user, string token, bool rememberMe);
+        Task<SignInResult> AuthorizeUserTwoFactorAsync(ApplicationUser user, string token, string remoteIp, bool rememberMe);
 
         /// <summary>
         /// Sends a two-factor code to a <paramref name="user" /> through their phone number.
@@ -154,9 +157,7 @@ namespace Goliath.Repository
         Task SetTwoFactorEnabledAsync(ApplicationUser user, TwoFactorMethod method);
 
         /// <param name="user"> The <paramref name="user" /> to query. </param>
-        /// <returns>
-        /// The amount of two-factor recovery codes the <paramref name="user" /> has.
-        /// </returns>
+        /// <returns> The amount of two-factor recovery codes the <paramref name="user" /> has. </returns>
         Task<int> GetUserRecoveryCodeAmountAsync(ApplicationUser user);
 
         /// <summary>
@@ -206,9 +207,7 @@ namespace Goliath.Repository
         Task<bool> DoesPhoneNumberExistAsync(string phone);
 
         /// <param name="email"> A string representing a email address. </param>
-        /// <returns>
-        /// If the <paramref name="email" /> is a valid email address that is in use.
-        /// </returns>
+        /// <returns> If the <paramref name="email" /> is a valid email address that is in use. </returns>
         Task<bool> DoesEmailExistAsync(string email);
 
         /// <summary>

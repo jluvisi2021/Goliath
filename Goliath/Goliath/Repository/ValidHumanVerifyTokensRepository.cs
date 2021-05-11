@@ -14,6 +14,7 @@ namespace Goliath.Repository
     {
         private readonly GoliathContext _context;
         private readonly ILogger _logger;
+
         public ValidHumanVerifyTokensRepository(GoliathContext context, ILogger<ValidHumanVerifyTokensRepository> logger)
         {
             _context = context;

@@ -10,7 +10,7 @@
     ViewData["WebIcon"] = config["General:Images:Icon"];
     Layout = "_Layout";
     // Manage the logout threshold for users. -1 = Not Signed In
-    if(ViewData["LogoutThreshold"] == null || (int)ViewData["LogoutThreshold"] == -1)
+    if (ViewData["LogoutThreshold"] == null || (int)ViewData["LogoutThreshold"] == -1)
     {
         if (_signInManager.IsSignedIn(User))
         {

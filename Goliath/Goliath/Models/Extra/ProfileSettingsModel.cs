@@ -42,6 +42,7 @@ namespace Goliath.Models
 
         [StringLength(2, MinimumLength = 1, ErrorMessage = "The logout threshold must be between 0 and 99 minutes.")]
         public string LogoutThreshold { get; set; }
+
         // A two factor code to check against.
         public string TwoFactorCode { get; set; }
     }

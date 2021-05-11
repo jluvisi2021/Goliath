@@ -164,6 +164,7 @@ const GlobalScript = (() => {
             if (notifications === null) {
                 return;
             }
+            console.log(notifications.length);
             for (let i = 0; i < notifications.length; i++) {
                 const notification = notifications[i];
                 // Display the notification but do not save it in localStorage because it is already there.
@@ -233,7 +234,7 @@ const GlobalScript = (() => {
             }
             // Notification will not be saved to localStorage so we display it now with DOM Injection.
             if (!save) {
-                $("#" + divParentID).prepend().html(
+                $("#" + divParentID).prepend().html($("#" + divParentID).html()+
                     '<div id=' + id + ' class="alert ' + typeStr + ' alert-dismissible fade show" role="alert">' +
                     '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
                     '<span aria-hidden="true">×</span>' +

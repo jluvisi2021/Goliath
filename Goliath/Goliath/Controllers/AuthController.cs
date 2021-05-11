@@ -94,7 +94,7 @@ namespace Goliath.Controllers
             }
 
             // Attempt to sign the user in.
-            SignInResult result = await _accountRepository.PasswordSignInAsync(signInModel);
+            SignInResult result = await _accountRepository.PasswordSignInAsync(signInModel, GetRemoteClientIPv4());
 
             if (result.Succeeded)
             {
@@ -183,7 +183,7 @@ namespace Goliath.Controllers
             {
                 if (await _accountRepository.TwoFactorCodeValidAsync(user, model.InputTwoFactorCode))
                 {
-                    SignInResult result = await _accountRepository.AuthorizeUserTwoFactorAsync(user, model.InputTwoFactorCode, model.RememberMe);
+                    SignInResult result = await _accountRepository.AuthorizeUserTwoFactorAsync(user, model.InputTwoFactorCode, GetRemoteClientIPv4(), model.RememberMe);
 
                     if (result.Succeeded)
                     {

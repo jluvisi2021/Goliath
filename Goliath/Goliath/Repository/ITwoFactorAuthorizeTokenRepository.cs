@@ -8,9 +8,7 @@ namespace Goliath.Repository
     /// The purpose of this repository is to check if the person requesting a two-factor token for
     /// the specific User has in fact already input their Username and Password.
     /// </para>
-    /// <para>
-    /// Without these checks then a user could simply enter the URL for the two-factor request:
-    /// </para>
+    /// <para> Without these checks then a user could simply enter the URL for the two-factor request: </para>
     /// <para> <em> ex: </em><c> https://(...)/account/validate/?userName=GoliathAdmin </c> </para>
     /// <para>
     /// They would be able to request a two-factor code and even request a resend despite never
