@@ -49,6 +49,12 @@ namespace Goliath.Controllers
             return View(model);
         }
 
+        [Route("sms-code-sent")]
+        public IActionResult SentSmsCode()
+        {
+            return View();
+        }
+
         [GoliathAuthorize(nameof(Profile))]
         public IActionResult Index()
         {

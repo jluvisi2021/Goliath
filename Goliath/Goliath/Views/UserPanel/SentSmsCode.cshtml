@@ -1,0 +1,41 @@
+﻿@{
+    ViewData["Title"] = "Profile";
+}
+
+<article id="outer">
+    <div id="inner">
+        @if (TempData[TempDataKeys.Redirect] != null)
+        {
+            if (TempData[TempDataKeys.Redirect].Equals((int)RedirectPurpose.TwoFactorSmsResendSuccess))
+            {
+                <div class="alert alert-success" role="alert">
+                    <h4 class="alert-heading">Success <i class="fas fa-check-circle fa-fw"></i></h4>
+                    A verification code has been sent to your device. You can now input this code into the required text area.
+                </div>
+            }
+            else if (TempData[TempDataKeys.Redirect].Equals((int)RedirectPurpose.TwoFactorSmsResendFailureTimeout))
+            {
+                <div class="alert alert-danger" role="alert">
+                    <h4 class="alert-heading">Error <i class="fas fa-times-circle fa-fw"></i></h4>
+                    Please wait before requesting additional verification codes. Codes that have been sent to you are still valid.
+                </div>
+            }
+            else
+            {
+    <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">Error <i class="fas fa-times-circle fa-fw"></i></h4>
+        We had a problem processing your request.
+    </div>
+            }
+        }
+        else
+        {
+    <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">Error <i class="fas fa-times-circle fa-fw"></i></h4>
+        We had a problem processing your request.
+    </div>
+        }
+
+
+    </div>
+</article>

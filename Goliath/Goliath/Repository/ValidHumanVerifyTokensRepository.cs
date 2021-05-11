@@ -1,6 +1,7 @@
 ﻿using Goliath.Data;
 using Goliath.Helper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,10 +13,11 @@ namespace Goliath.Repository
     public class ValidHumanVerifyTokensRepository : IValidHumanVerifyTokensRepository
     {
         private readonly GoliathContext _context;
-
-        public ValidHumanVerifyTokensRepository(GoliathContext context)
+        private readonly ILogger _logger;
+        public ValidHumanVerifyTokensRepository(GoliathContext context, ILogger<ValidHumanVerifyTokensRepository> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public async Task AddTokenAsync(string key)
@@ -25,7 +27,7 @@ namespace Goliath.Repository
                 Token = key,
                 GeneratedDateTime = DateTime.UtcNow.ToString()
             };
-
+            _logger.LogInformation($"Created a new token for {nameof(ValidHumanVerifyTokens)}.");
             await _context.ValidTokens.AddAsync(token);
             await _context.SaveChangesAsync();
         }
@@ -57,20 +59,24 @@ namespace Goliath.Repository
         public async Task CleanUpUnusedTokensAsync()
         {
             List<int> primaryKeys = await _context.ValidTokens.Select(u => u.NumericID).ToListAsync();
+            int amount = 0;
             foreach (int keyIndex in primaryKeys)
             {
                 ValidHumanVerifyTokens key = await _context.ValidTokens.FindAsync(keyIndex);
                 // Check if token is over 5 minutes old.
                 if (DateTime.Parse(key.GeneratedDateTime) < DateTime.UtcNow.Subtract(new TimeSpan(0, 5, 0)))
                 {
+                    amount++;
                     _context.Remove(key);
                 }
             }
             await _context.SaveChangesAsync();
+            _logger.LogInformation($"Cleaned table {nameof(ValidHumanVerifyTokens)}. Removed {amount} tokens from a size of {primaryKeys.Count}.");
         }
 
         public async Task ClearAllTokensAsync()
         {
+            _logger.LogInformation($"Cleared all tokens from {nameof(ValidHumanVerifyTokens)} repository.");
             foreach (ValidHumanVerifyTokens token in _context.ValidTokens)
             {
                 _context.Remove(token);

@@ -1,5 +1,6 @@
 ﻿using Goliath.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
@@ -9,10 +10,12 @@ namespace Goliath.Repository
     public class SmsVerifyTokensRepository : ISmsVerifyTokensRepository
     {
         private readonly GoliathContext _context;
+        private readonly ILogger _logger;
 
-        public SmsVerifyTokensRepository(GoliathContext context)
+        public SmsVerifyTokensRepository(GoliathContext context, ILogger<SmsVerifyTokensRepository> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public async Task AddRequestAsync(string uid)
@@ -25,12 +28,14 @@ namespace Goliath.Repository
 
             await _context.SmsVerifyTable.AddAsync(timeStamp);
             await _context.SaveChangesAsync();
+            _logger.LogInformation($"Added new token request for {uid} to table {nameof(ResendSmsConfirmationToken)}.");
         }
 
         public async Task RemoveRequestAsync(string uid)
         {
             _context.SmsVerifyTable.Remove(await _context.SmsVerifyTable.FirstOrDefaultAsync(u => u.UserID.Equals(uid)));
             await _context.SaveChangesAsync();
+            _logger.LogInformation($"Removed a token with UID {uid} from table {nameof(ResendSmsConfirmationToken)}.");
         }
 
         public async Task<bool> IsUserResendValidAsync(string uid)

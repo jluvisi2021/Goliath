@@ -1,10 +1,12 @@
 ﻿using Goliath.Helper;
 using Goliath.Models;
 using MailKit.Net.Smtp;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MimeKit;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Goliath.Services
@@ -13,15 +15,17 @@ namespace Goliath.Services
     public class EmailService : IEmailService
     {
         private readonly SMTPConfigModel _smtpConfig;
+        private readonly ILogger _logger;
 
         // For email templates
         private static readonly string footerPath = @$"Services/EmailTemplate/Partial/Footer.html";
 
         private static readonly string stylesPath = @$"Services/EmailTemplate/Partial/Styles.html";
 
-        public EmailService(IOptions<SMTPConfigModel> options)
+        public EmailService(IOptions<SMTPConfigModel> options, ILogger<EmailService> logger)
         {
             _smtpConfig = options.Value;
+            _logger = logger;
         }
 
         public async Task<bool> SendTestEmailAsync(UserEmailOptions options)
@@ -134,10 +138,12 @@ namespace Goliath.Services
                     // Disconnect from the session.
                     await client.DisconnectAsync(true);
                     client.Timeout = 20000;
+                    _logger.LogInformation($"Sent an email to {options.ToEmails.Aggregate((a, b) => a + ", " + b)} at {DateTime.UtcNow} (UTC).");
                     return true;
                 }
                 catch (Exception e)
                 {
+                    _logger.LogInformation($"Failed to send an email to {options.ToEmails.Aggregate((a, b) => a + ", " + b)}.");
                     GoliathHelper.PrintDebugger(GoliathHelper.PrintType.Error, e.Message);
                     return false;
                 }

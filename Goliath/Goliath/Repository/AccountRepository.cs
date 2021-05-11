@@ -6,6 +6,7 @@ using Goliath.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +28,7 @@ namespace Goliath.Repository
         private readonly ITwilioService _twilio;
         private readonly ICookieManager _cookieManager;
         private readonly GoliathContext _context;
+        private readonly ILogger _logger;
 
         /// <summary>
         /// The account repository is used for directly interacting with the ApplicationUser class.
@@ -35,7 +37,7 @@ namespace Goliath.Repository
         /// <param name="signInManager"> </param>
         /// <param name="emailService"> </param>
         /// <param name="config"> </param>
-        public AccountRepository(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<ApplicationRole> roleManager, IEmailService emailService, IConfiguration config, ITwilioService twilio, ICookieManager cookieManager, GoliathContext context)
+        public AccountRepository(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<ApplicationRole> roleManager, IEmailService emailService, IConfiguration config, ITwilioService twilio, ICookieManager cookieManager, GoliathContext context, ILogger<AccountRepository> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -45,12 +47,14 @@ namespace Goliath.Repository
             _config = config;
             _twilio = twilio;
             _context = context;
+            _logger = logger;
         }
 
         public async Task LoadDefaultsAsync()
         {
             if (!(await _roleManager.RoleExistsAsync(GoliathRoles.Administrator)))
             {
+                _logger.LogInformation("Creating SuperUser account and Goliath roles.");
                 #region Create admin role
 
                 await _roleManager.CreateAsync(new ApplicationRole()
@@ -108,8 +112,7 @@ namespace Goliath.Repository
 
         public async Task AddTestingDataAsync(int amount)
         {
-            GoliathHelper.PrintDebugger("Stress testing database. Adding user accounts please wait...");
-
+            _logger.LogInformation($"Created testing data for Goliath. Created {amount} accounts.");
             Random rand = new();
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ_";
 
@@ -135,7 +138,7 @@ namespace Goliath.Repository
         );
                 await _userManager.AddToRoleAsync(await GetUserByNameAsync(userName), GoliathRoles.Default);
             }
-            GoliathHelper.PrintDebugger("Finished database account adding");
+            
         }
 
         public async Task<bool> IsAdminAsync(ApplicationUser user)
@@ -194,6 +197,7 @@ namespace Goliath.Repository
                 await _userManager.AddToRoleAsync(user, GoliathRoles.Administrator);
                 IList<string> s = await _userManager.GetRolesAsync(user);
                 await SendRoleMovedEmailAsync(user, s[0].ToString(), GoliathRoles.Administrator);
+                _logger.LogInformation($"Moved {user.UserName} to role {GoliathRoles.Administrator}.");
             }
         }
 
@@ -205,6 +209,7 @@ namespace Goliath.Repository
                 await _userManager.AddToRoleAsync(user, GoliathRoles.Default);
                 IList<string> s = await _userManager.GetRolesAsync(user);
                 await SendRoleMovedEmailAsync(user, s[0].ToString(), GoliathRoles.Administrator);
+                _logger.LogInformation($"Moved {user.UserName} to role {GoliathRoles.Default}.");
             }
         }
 
@@ -214,6 +219,7 @@ namespace Goliath.Repository
             {
                 Name = name
             });
+            _logger.LogInformation($"Created new Goliath role {name}.");
         }
 
         public async Task CreateRoleAsync(string name, bool isAdmin)
@@ -223,6 +229,7 @@ namespace Goliath.Repository
                 Name = name,
                 IsAdministrator = isAdmin
             });
+            _logger.LogInformation($"Created new Goliath role {name}.");
         }
 
         public async Task CreateRoleAsync(string name, bool isAdmin, string excludedURLComponents)
@@ -233,6 +240,7 @@ namespace Goliath.Repository
                 IsAdministrator = isAdmin,
                 ExcludedURLComponents = excludedURLComponents
             });
+            _logger.LogInformation($"Created new Goliath role {name}.");
         }
 
         public async Task CreateRoleAsync(string name, string icon, bool isAdmin)
@@ -243,6 +251,7 @@ namespace Goliath.Repository
                 IsAdministrator = isAdmin,
                 Icon = icon
             });
+            _logger.LogInformation($"Created new Goliath role {name}.");
         }
 
         public async Task DeleteRoleAsync(string name)
@@ -251,6 +260,7 @@ namespace Goliath.Repository
             {
                 await _roleManager.DeleteAsync(await _roleManager.FindByNameAsync(name));
             }
+            _logger.LogInformation($"Deleted Goliath role {name}.");
         }
 
         public async Task<string> GetRoleIconAsync(string name)
@@ -293,6 +303,7 @@ namespace Goliath.Repository
                 await _userManager.AddToRoleAsync(user, name);
                 IList<string> s = await _userManager.GetRolesAsync(user);
                 await SendRoleMovedEmailAsync(user, s[0].ToString(), GoliathRoles.Administrator);
+                _logger.LogInformation($"Moved {user.UserName} to role {name}.");
             }
         }
 
@@ -320,6 +331,7 @@ namespace Goliath.Repository
 
         public async Task<IdentityResult> UpdateUserAsync(ApplicationUser user)
         {
+            _logger.LogInformation($"Attempted to update the database values for {user.Id} ({user.UserName}).");
             return await _userManager.UpdateAsync(user);
         }
 
@@ -330,6 +342,7 @@ namespace Goliath.Repository
 
         public async Task<IdentityResult> UpdatePasswordAsync(ApplicationUser user, string currPassword, string newPassword)
         {
+            _logger.LogInformation($"Updated password for {user.Id}.");
             return await _userManager.ChangePasswordAsync(user, currPassword, newPassword);
         }
 
@@ -345,6 +358,7 @@ namespace Goliath.Repository
 
         public async Task UpdatePhoneAsync(ApplicationUser user, string number)
         {
+            _logger.LogInformation($"Updated phone number for {user.Id}.");
             await _userManager.SetPhoneNumberAsync(user, number);
         }
 
@@ -364,6 +378,7 @@ namespace Goliath.Repository
             user.TwoFactorUpdated = DateTime.UtcNow.ToString();
             await _userManager.SetTwoFactorEnabledAsync(user, true);
             await _userManager.UpdateAsync(user);
+            _logger.LogInformation($"Enabled two-factor authentication for user {user.Id}.");
         }
 
         public async Task SetTwoFactorDisabledAsync(ApplicationUser user)
@@ -372,32 +387,38 @@ namespace Goliath.Repository
             user.TwoFactorUpdated = DateTime.UtcNow.ToString();
             await _userManager.SetTwoFactorEnabledAsync(user, false);
             await _userManager.UpdateAsync(user);
+            _logger.LogInformation($"Disabled two-factor authentication for user {user.Id}.");
         }
 
         public async Task<SignInResult> AuthorizeUserTwoFactorAsync(ApplicationUser user, string token)
         {
+            _logger.LogInformation($"Attempting to authorize user {user.Id} through two-factor.");
             _cookieManager.DeleteCookie(CookieKeys.TwoFactorAuthorizeCookie);
             return await _signInManager.TwoFactorSignInAsync(TokenOptions.DefaultPhoneProvider, token, false, false);
         }
 
         public async Task<SignInResult> AuthorizeUserTwoFactorAsync(ApplicationUser user, string token, bool rememberMe)
         {
+            _logger.LogInformation($"Attempting to authorize user {user.Id} through two-factor.");
             _cookieManager.DeleteCookie(CookieKeys.TwoFactorAuthorizeCookie);
             return await _signInManager.TwoFactorSignInAsync(TokenOptions.DefaultPhoneProvider, token, rememberMe, false);
         }
 
         public async Task SendTwoFactorCodeSms(ApplicationUser user)
         {
+            _logger.LogInformation($"Attempting to send SMS verification code to user {user.Id}.");
             string code = await _userManager.GenerateTwoFactorTokenAsync(user, TokenOptions.DefaultPhoneProvider);
             await _twilio.SendSmsAsync(new SMSTextModel()
             {
                 Message = $"Your Two-Factor Code is: {code}.",
                 To = user.PhoneNumber
             });
+
         }
 
         public async Task<List<string>> GenerateUserRecoveryCodesAsync(ApplicationUser user)
         {
+            _logger.LogInformation($"Retrieved recovery codes for user {user.Id}.");
             return (await _userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 10)).ToList();
         }
 
@@ -408,6 +429,7 @@ namespace Goliath.Repository
 
         public async Task<IdentityResult> RedeemRecoveryCodeAsync(ApplicationUser user, string code)
         {
+            _logger.LogInformation($"Redeemed recovery codes for user {user.Id}.");
             return await _userManager.RedeemTwoFactorRecoveryCodeAsync(user, code);
         }
 
@@ -466,12 +488,12 @@ namespace Goliath.Repository
                     // Send them a token.
                     await GenerateEmailConfirmationTokenAsync(userModel, user, device);
                 }
-
+                _logger.LogInformation($"Created user \"{user.Id}\" with username \"{user.UserName}\" and email \"{user.Email}\".");
                 return result;
             }
             catch (Exception e)
             {
-                GoliathHelper.PrintDebugger(GoliathHelper.PrintType.Error, "CreateUserAsync: Failed to execute.");
+                _logger.LogError("Failed to create new user.");
                 return IdentityResult.Failed(
                     new IdentityError()
                     {
@@ -582,7 +604,10 @@ namespace Goliath.Repository
         public async Task<SignInResult> PasswordSignInAsync(SignInModel signInModel)
         {
             SignInResult result = await _signInManager.PasswordSignInAsync(signInModel.Username, signInModel.Password, signInModel.RememberMe, false);
-
+            if(result.Succeeded)
+            {
+                _logger.LogInformation($"User {signInModel.Username} - Logged in.");
+            }
             return result;
         }
 
@@ -974,18 +999,19 @@ namespace Goliath.Repository
                     user.UnverifiedNewEmail = string.Empty;
 
                     await UpdateUserAsync(user); // Update the user in database.
-
+                    _logger.LogInformation($"Confirmed email address for user {uid}.");
                     return IdentityResult.Success;
                 }
                 else
                 {
+                    _logger.LogInformation($"Failed to confirm email for user {uid}.");
                     // If the result failed then do not update any of the user data.
                     return IdentityResult.Failed();
                 }
             }
             catch (Exception)
             {
-                GoliathHelper.PrintDebugger(GoliathHelper.PrintType.Error, "ConfirmEmailAsync: Failed to execute.");
+                _logger.LogError($"Failed to confirm email for user {uid} due to internal problem?");
                 return IdentityResult.Failed();
             }
         }
@@ -997,10 +1023,11 @@ namespace Goliath.Repository
                 if (await _userManager.VerifyChangePhoneNumberTokenAsync(user, token, user.UnverifiedNewPhone))
                 {
                     await _userManager.ChangePhoneNumberAsync(user, user.UnverifiedNewPhone, token);
-
+                    _logger.LogInformation($"Confirmed phone number for user {user.Id}.");
                     return IdentityResult.Success;
                 }
             }
+            _logger.LogInformation($"Failed to confirm phone number for user {user.Id}.");
             return IdentityResult.Failed();
         }
 
@@ -1009,11 +1036,12 @@ namespace Goliath.Repository
             // If the email cannot be confirmed then return a failed attempt.
             try
             {
+                _logger.LogInformation($"Reset password for user {model.UserId}.");
                 return await _userManager.ResetPasswordAsync(await _userManager.FindByIdAsync(model.UserId), model.Token, model.NewPassword);
             }
             catch (Exception)
             {
-                GoliathHelper.PrintDebugger(GoliathHelper.PrintType.Error, "ResetPasswordAsync: Failed to execute.");
+                _logger.LogError($"Failed to reset password for user {model.UserId}.");
                 return IdentityResult.Failed();
             }
         }

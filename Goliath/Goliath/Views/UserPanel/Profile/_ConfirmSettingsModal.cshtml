@@ -1,6 +1,14 @@
 ﻿@model Goliath.Models.ProfileSettingsModel
+@inject Goliath.Services.ICookieManager _cookieManager
 @{
     var user = await _repository.GetUserFromContextAsync(User);
+
+    ResendTwoFactorSmsCodeModel requestModel = new()
+    {
+        Username = User.Identity.Name,
+        Controller = GoliathControllers.UserPanelController,
+        Action = nameof(UserPanelController.SentSmsCode)
+    };
 }
 
 <div class="modal fade" id="confirm-settings" tabindex="-1" role="dialog" aria-hidden="true">
@@ -18,10 +26,41 @@
                 <ul id='settings-updates' style="font-family: 'Trebuchet MS';" class='list-group list-group-flush pt-2 pb-1 mb-0'></ul>
 
                 <!-- Changed Settings End -->
+                @if (_cookieManager.HasCookie(CookieKeys.ValidateCaptchaCookie))
+                {
+                    <div class="pt-2">
+                        <partial name="~/Views/Captcha/_ValidateCaptchaEmbedded.cshtml" />
+                    </div>
+                }
+                else
+                {
+                    <div class="w-75 pt-2">
+                        <partial name="~/Views/Captcha/_ValidateCaptchaEmbedded.cshtml" />
+                    </div>
+                }
+                @if (user.TwoFactorEnabled)
+                {
+                    <hr />
+                    <p id="option-text">
+                        TWO-FACTOR CODE
+                    </p>
 
-                <div class="w-75 pt-2">
-                    <partial name="~/Views/Captcha/_ValidateCaptchaEmbedded.cshtml" />
-                </div>
+                    <div class="ht-tm-element input-group mb-3">
+                        <div class="input-group-prepend">
+                            <button class="btn btn-outline-primary" type="button">
+                                <i class="fas fa-hashtag fa-fw"></i>
+                            </button>
+                        </div>
+                        <input asp-for="TwoFactorCode" type="password" placeholder="Two-Factor Code" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
+                    </div>
+
+                    @if (user.TwoFactorMethod == (int)TwoFactorMethod.SmsVerify)
+                    {
+                        <a target="_blank" asp-controller="@GoliathControllers.TwoFactorController" asp-action="SendSmsCode" asp-route-m="@Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(requestModel)))" class="btn btn-primary mb-2">
+                            <i class="fas fa-sms fa-fw"></i> Send Code
+                        </a>
+                    }
+                }
             </div>
 
             <div class="modal-footer">
