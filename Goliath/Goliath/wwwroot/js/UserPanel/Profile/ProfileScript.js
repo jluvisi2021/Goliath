@@ -118,6 +118,7 @@ const ProfileScript = (() => {
                 settingUpdates.append("<li id=" + id + " class='list-group-item'></li>");
                 // Get decoded HTML (Anti-XSS)
                 $("#" + id).text("- Change Email from " + dbValue + " to " + email);
+                ProfileScript.showTwoFactorCode();
             }
         },
         /**
@@ -154,6 +155,7 @@ const ProfileScript = (() => {
                 settingUpdates.append("<li id=" + id + " class='list-group-item'></li>");
                 // Get decoded HTML (Anti-XSS)
                 $("#" + id).text("- Change Phone number to " + phone);
+                ProfileScript.showTwoFactorCode();
             }
         },
         /**
@@ -168,7 +170,18 @@ const ProfileScript = (() => {
                 settingUpdates.append(`
         <li class='list-group-item'>
             - Change Account Password.` + `</li>`);
+                ProfileScript.showTwoFactorCode();
             }
+        },
+        /**
+         * Makes the two-factor input field in the confirm
+         * settings modal visible.
+         * */
+        showTwoFactorCode: () => {
+            $("#two-factor").css({
+                "display": "unset"
+            });
+
         }
     };
 })();

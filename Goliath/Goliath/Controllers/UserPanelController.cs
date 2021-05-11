@@ -92,6 +92,8 @@ namespace Goliath.Controllers
             goliathUser.DarkTheme = model.DarkThemeEnabled;
             goliathUser.LogoutThreshold = int.Parse(model.LogoutThreshold);
             // **
+            // If settings which require a two-factor code are updated.
+            bool requiresTwoFactor = false;
 
             #endregion Simple value updates
 
@@ -107,6 +109,7 @@ namespace Goliath.Controllers
                 else
                 {
                     goliathUser.UnverifiedNewEmail = model.NewEmail;
+                    requiresTwoFactor = true;
                 }
             }
 
@@ -124,6 +127,7 @@ namespace Goliath.Controllers
                 else
                 {
                     goliathUser.UnverifiedNewPhone = model.NewPhoneNumber;
+                    requiresTwoFactor = true;
                 }
             }
 
@@ -146,9 +150,28 @@ namespace Goliath.Controllers
                     return View();
                 }
                 goliathUser.LastPasswordUpdate = DateTime.UtcNow.ToString();
+                requiresTwoFactor = true;
             }
 
             #endregion Validating password
+
+            #region Check two-factor codes
+            if(goliathUser.TwoFactorEnabled && requiresTwoFactor)
+            {
+                if(string.IsNullOrWhiteSpace(model.TwoFactorCode))
+                {
+                    _captcha.DeleteCaptchaCookie();
+                    ModelState.AddModelError(string.Empty, "Your two-factor code is invalid.");
+                    return View();
+                }
+                if(!await _accountRepository.TwoFactorCodeValidAsync(goliathUser, model.TwoFactorCode))
+                {
+                    _captcha.DeleteCaptchaCookie();
+                    ModelState.AddModelError(string.Empty, "Your two-factor code is invalid.");
+                    return View();
+                }
+            }
+            #endregion
 
             #region Sending potential verification emails
 
