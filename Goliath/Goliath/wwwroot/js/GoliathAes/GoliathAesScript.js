@@ -1,1 +1,5 @@
-﻿
+﻿const AesToolScript = (() => {
+    return {
+
+    }
+});

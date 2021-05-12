@@ -1,70 +1,159 @@
-﻿@{
+﻿@model Goliath.Models.GoliathAes.FileDecryptionModel
+@using Goliath.Models.GoliathAes
+@using Newtonsoft.Json
+@using Goliath.Models.Extra
+@{
     ViewData["Title"] = "Decrypt File";
+    DecryptionResultModel resultModel = null;
+    if (TempData[TempDataKeys.Model] != null)
+    {
+        resultModel = (DecryptionResultModel)TempData[TempDataKeys.Model];
+    }
 }
 @section UniqueHeader {
     <link href="~/css/GoliathAes/GoliathAesStyle.css" rel="stylesheet" asp-append-version="true" />
     <script src="~/js/GoliathAes/GoliathAesScript.js" asp-append-version="true"></script>
 }
-<main id="outer">
-    <section id="inner">
-        <article id="front" class="p-5">
-            
-            <div class="container-fluid">
-                <div class="row justify-content-center">
-                    <span class="display-4">Decrypt User Data File</span>
+@if (resultModel?.IsSuccess == true)
+{
+    <style>
+        body {
+            background: white;
+            font-family: Consolas;
+        }
+        #footer {
+            display: none;
+        }
+    </style>
+    <main class="container-fluid">
+        <hr />
+        <section class="row p-0 m-0">
+            <span class="h5 p-0 m-0 font-weight-normal">File Result for <q>@resultModel.FileName</q></span>
+        </section>
+        <section class="row p-0 m-0">
+            <span>File Size: @(Math.Round(double.Parse(resultModel.FileBytes) / 1024, 2)) KB</span>
+        </section>
+        <section class="row p-0 m-0">
+            <span>
+                Encryption: <a asp-controller="@GoliathControllers.RedirectController"
+                               asp-action="@nameof(RedirectController.Index)"
+                               asp-route-redirectUrl="https://github.com/jluvisi2021/Goliath/blob/main/Goliath/Goliath/Helper/AesHelper.cs"
+                               asp-route-returnUrl="@Context.Request.Path"
+                               target="_blank">Rijndael AES-256 Salted</a>
+            </span>
+        </section>
+        <br />
+        <section class="row p-0 m-0">
+            @if (TempData[TempDataKeys.HtmlMessage] == null)
+            {
+            <a href="#!"><i class="fas fa-file-download fa-fw"></i>Download File</a>
+            }
+            else
+            {
+                <a target="_blank" href="data:application/octet-stream;charset=utf-8;base64,@Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(JsonConvert.DeserializeObject<UserDataModel>((string)TempData[TempDataKeys.HtmlMessage]), Formatting.Indented)))" download="@resultModel.FileName"><i class="fas fa-file-download fa-fw"></i>Download File</a>
+
+            }
+        </section>
+        <section class="row p-0 m-0">
+            <a asp-controller="@GoliathControllers.AesController" asp-action="@nameof(GoliathAesController.DecryptUserData)"><i class="fas fa-arrow-circle-left fa-fw"></i>Back to File Decryption</a>
+        </section>
+        <section class="row p-0 m-0">
+            <a asp-controller="@GoliathControllers.AuthController" asp-action="@nameof(AuthController.Index)"><i class="fas fa-arrow-circle-left fa-fw"></i>Back to Goliath</a>
+        </section>
+        <hr />
+        <section class="row pl-1">
+            @if (TempData[TempDataKeys.HtmlMessage] == null)
+            {
+                <span class="text-danger pl-2" style="word-wrap: break-word; white-space: pre-wrap;">Your data has expired due to a refresh or redirect.<br />Please decrypt your file again.</span>
+                    }
+                    else
+                    {
+                    <span style="word-wrap: break-word; white-space: pre-wrap;">@($"{JsonConvert.SerializeObject(JsonConvert.DeserializeObject<UserDataModel>((string)TempData[TempDataKeys.HtmlMessage]), Formatting.Indented).Trim()}")</span>
+                    }
+            </section>
+    </main>
+    }
+else
+{
+    <main id="outer">
+        <section id="inner">
+            <article id="front" class="p-5">
+                <div class="container-fluid">
+                    <div class="row justify-content-center">
+                        <span class="display-4">Decrypt User Data File</span>
+                    </div>
+
+                    <hr />
+                    <div class="row justify-content-center">
+                        <span class="text-muted">Select an encrypted user data file on your computer to decrypt it.</span>
+                    </div>
+                    @if (resultModel != null)
+                    {
+                        <hr />
+                        if (!resultModel.IsSuccess)
+                        {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <strong>We encountered problems with your request:</strong>
+                    <br />
+                    @try
+                    {
+                        <span>Errors: @(resultModel.ModelErrors.Aggregate((a, b) => a + ", " + b))</span>
+                    }
+                    catch (Exception)
+                    {
+                        <span>Internal error processing this request. Try again.</span>
+                    }
                 </div>
-                <hr />
-                <div class="row justify-content-center">
-                    <span class="text-muted">Select an encrypted user data file on your computer to decrypt it.</span>
-                </div>
-                <hr />
-                <div class="row">
-                    <form asp-action="" asp-antiforgery="true" class="w-100">
-                        <div class="ht-tm-element input-group mb-2">
-                            <div class="input-group-prepend">
-                                <button class="btn btn-primary" type="button">
-                                    <i class="fas fa-file-alt fa-fw"></i>
-                                </button>
+                        }
+
+                    }
+
+                    <form asp-action="DecryptUserData" enctype="multipart/form-data" asp-antiforgery="true" class="w-100">
+                        <div class="row">
+                            <div class="ht-tm-element input-group mb-2">
+                                <div class="input-group-prepend">
+                                </div>
+                                <input asp-for="DataFile" placeholder="File" type="file" required="" autofocus="" />
                             </div>
-                            <input placeholder="File" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
+
+                            <div class="ht-tm-element input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <button class="btn btn-primary" type="button">
+                                        <i class="fas fa-key fa-fw"></i>
+                                    </button>
+                                </div>
+                                <input asp-for="SecretKey" placeholder="Secret Key" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
+                            </div>
+                            <div class="ht-tm-element input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <button class="btn btn-primary" type="button">
+                                        <i class="fas fa-user-lock fa-fw"></i>
+                                    </button>
+                                </div>
+                                <input asp-for="SaltValue" placeholder="SALT Value" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
+                            </div>
                         </div>
-                        <button type="button" class="btn btn-secondary mb-3">
-                            <i class="fas fa-file-upload fa-fw"></i>
-                            Select File
-                        </button>
-                        <div class="ht-tm-element input-group mb-3">
-                            <div class="input-group-prepend">
-                                <button class="btn btn-primary" type="button">
-                                    <i class="fas fa-key fa-fw"></i>
-                                </button>
-                            </div>
-                            <input placeholder="Secret Key" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
-                        </div>
-                        <div class="ht-tm-element input-group mb-3">
-                            <div class="input-group-prepend">
-                                <button class="btn btn-primary" type="button">
-                                    <i class="fas fa-user-lock fa-fw"></i>
-                                </button>
-                            </div>
-                            <input placeholder="SALT Value" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
+                        <hr />
+                        <div class="row">
+                            <button type="submit" class="btn btn-primary mr-1">
+                                <i class="fas fa-upload fa-fw"></i>
+                                Submit
+                            </button>
+                            <button type="button" class="btn btn-primary ml-1">
+                                <i class="fas fa-question-circle fa-fw"></i>
+                                Get Help
+                            </button>
                         </div>
                     </form>
+
+                    <div class="row pt-1">
+                        <a href="javascript:history.go(-1);">Go Back</a>
+                    </div>
                 </div>
-                <hr />
-                <div class="row">
-                    <button type="button" class="btn btn-primary mr-1">
-                        <i class="fas fa-upload fa-fw"></i>
-                        Submit
-                    </button>
-                    <button type="button" class="btn btn-primary ml-1">
-                        <i class="fas fa-question-circle fa-fw"></i>
-                        Get Help
-                    </button>
-                </div>
-                <div class="row pt-1">
-                    <a href="javascript:history.go(-1);">Go Back</a>
-                </div>
-                </div>
-</article>
-</section>
-</main>
+            </article>
+        </section>
+    </main>
+}

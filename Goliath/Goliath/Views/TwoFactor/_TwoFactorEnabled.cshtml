@@ -14,18 +14,30 @@
                     You have <strong><u>enabled</u></strong> Two-Factor Authentication.
                     <hr />
                     <strong>Recovery Codes:</strong>
-                    @{
-                        List<string> codes = JsonConvert.DeserializeObject<List<string>>((string)TempData[TempDataKeys.TwoFactorRecoveryCodes]);
-                    }
-                    <hr />
-                    <a class="btn btn-primary" href="#!">
-                        <i class="fas fa-file-pdf fa-fw mr-1"></i>
-                        Download PDF
-                    </a>
-                    <a class="btn btn-primary" href="#!">
-                        <i class="fas fa-window-restore fa-fw mr-1"></i>
-                        View Codes in Browser
-                    </a>
+                    <p>
+                        <span class="text-muted">Each two-factor code can be used only one time.</span>
+                        <hr />
+                        Choose how to view your verification codes.<br />
+                        Keep your verification codes a secret as they can be used to log in.<br />
+                        Each verification code can only be used once.
+                        @{
+                            List<string> codes = JsonConvert.DeserializeObject<List<string>>((string)TempData[TempDataKeys.TwoFactorRecoveryCodes]);
+                            TwoFactorVerificationCodesModel model = new()
+                            {
+                                Codes = codes
+                            };
+                            TempData[TempDataKeys.Model] = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(model)));
+                        }
+                        <hr />
+                        <a class="btn btn-primary" href="#!">
+                            <i class="fas fa-file-pdf fa-fw mr-1"></i>
+                            Download PDF
+                        </a>
+                        <a class="btn btn-primary" asp-action="TwoFactorCodes" target="_blank">
+                            <i class="fas fa-window-restore fa-fw mr-1"></i>
+                            View Codes in Browser
+                        </a>
+                    </p>
                 </div>
             </div>
             <div class="modal-footer">

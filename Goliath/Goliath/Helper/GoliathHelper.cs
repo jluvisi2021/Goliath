@@ -1,6 +1,4 @@
-﻿using System.IO;
-using System.Security.Cryptography;
-using System.Text;
+﻿using System.Text;
 
 namespace Goliath.Helper
 {
@@ -117,6 +115,6 @@ namespace Goliath.Helper
             return token.ToString();
         }
 
-        
+
     }
 }

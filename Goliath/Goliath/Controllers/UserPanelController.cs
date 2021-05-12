@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -374,7 +373,7 @@ namespace Goliath.Controllers
         [Route("userpanel/download-data")]
         public async Task<IActionResult> DownloadData()
         {
-            var user = await _accountRepository.GetUserFromContextAsync(User);
+            ApplicationUser user = await _accountRepository.GetUserFromContextAsync(User);
             string data = await _accountRepository.UserToJsonAsync(user);
             //TempData[TempDataKeys.HtmlMessage] = "Your data has been downloaded.";
             return File(Encoding.ASCII.GetBytes(data), "text/plain", user.UserName + "-data.json");
@@ -383,7 +382,7 @@ namespace Goliath.Controllers
         [Route("userpanel/download-data-enc")]
         public async Task<IActionResult> DownloadDataEncrypted()
         {
-            var user = await _accountRepository.GetUserFromContextAsync(User);
+            ApplicationUser user = await _accountRepository.GetUserFromContextAsync(User);
             string key = GoliathHelper.GenerateSecureRandomString();
             string data = AesHelper.EncryptText(await _accountRepository.UserToJsonAsync(user), key, user.UserName);
 

@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Goliath.Helper
 {
@@ -20,9 +17,10 @@ namespace Goliath.Helper
     public static class AesHelper
     {
         // Number of iterations to perform.
-        const int iterations = 1000;
+        private const int iterations = 1000;
+
         // Extra data to be added onto the salt with the username already.
-        const string extraSaltData = "abcdefg12345";
+        private const string extraSaltData = "abcdefg12345";
 
         /// <summary>
         /// Encrypt text using AES encryption.
@@ -47,11 +45,12 @@ namespace Goliath.Helper
                 string result = Convert.ToBase64String(bytesEncrypted);
 
                 return result;
-            } catch (Exception)
+            }
+            catch (Exception)
             {
                 return "Error";
             }
-            
+
         }
 
         /// <summary>
@@ -75,11 +74,12 @@ namespace Goliath.Helper
                 string result = Encoding.UTF8.GetString(bytesDecrypted);
 
                 return result;
-            } catch (Exception)
+            }
+            catch (Exception)
             {
                 return "Error";
             }
-            
+
         }
         private static byte[] AES_Encrypt(byte[] bytesToBeEncrypted, byte[] passwordBytes, string salt)
         {
@@ -96,13 +96,13 @@ namespace Goliath.Helper
                     AES.KeySize = 256;
                     AES.BlockSize = 128;
 
-                    var key = new Rfc2898DeriveBytes(passwordBytes, saltBytes, iterations);
+                    Rfc2898DeriveBytes key = new Rfc2898DeriveBytes(passwordBytes, saltBytes, iterations);
                     AES.Key = key.GetBytes(AES.KeySize / 8);
                     AES.IV = key.GetBytes(AES.BlockSize / 8);
 
                     AES.Mode = CipherMode.CBC;
 
-                    using (var cs = new CryptoStream(ms, AES.CreateEncryptor(), CryptoStreamMode.Write))
+                    using (CryptoStream cs = new CryptoStream(ms, AES.CreateEncryptor(), CryptoStreamMode.Write))
                     {
                         cs.Write(bytesToBeEncrypted, 0, bytesToBeEncrypted.Length);
                         cs.Close();
@@ -128,13 +128,13 @@ namespace Goliath.Helper
                     AES.KeySize = 256;
                     AES.BlockSize = 128;
 
-                    var key = new Rfc2898DeriveBytes(passwordBytes, saltBytes, iterations);
+                    Rfc2898DeriveBytes key = new Rfc2898DeriveBytes(passwordBytes, saltBytes, iterations);
                     AES.Key = key.GetBytes(AES.KeySize / 8);
                     AES.IV = key.GetBytes(AES.BlockSize / 8);
 
                     AES.Mode = CipherMode.CBC;
 
-                    using (var cs = new CryptoStream(ms, AES.CreateDecryptor(), CryptoStreamMode.Write))
+                    using (CryptoStream cs = new CryptoStream(ms, AES.CreateDecryptor(), CryptoStreamMode.Write))
                     {
                         cs.Write(bytesToBeDecrypted, 0, bytesToBeDecrypted.Length);
                         cs.Close();

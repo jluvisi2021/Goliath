@@ -13,5 +13,6 @@
         public const string RedirectController = "Redirect";
         public const string TwoFactorController = "TwoFactor";
         public const string AdminPanelController = "AdminPanel";
+        public const string AesController = "GoliathAes";
     }
 }
