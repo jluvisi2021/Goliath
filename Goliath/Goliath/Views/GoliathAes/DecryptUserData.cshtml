@@ -1,0 +1,70 @@
+﻿@{
+    ViewData["Title"] = "Decrypt File";
+}
+@section UniqueHeader {
+    <link href="~/css/GoliathAes/GoliathAesStyle.css" rel="stylesheet" asp-append-version="true" />
+    <script src="~/js/GoliathAes/GoliathAesScript.js" asp-append-version="true"></script>
+}
+<main id="outer">
+    <section id="inner">
+        <article id="front" class="p-5">
+            
+            <div class="container-fluid">
+                <div class="row justify-content-center">
+                    <span class="display-4">Decrypt User Data File</span>
+                </div>
+                <hr />
+                <div class="row justify-content-center">
+                    <span class="text-muted">Select an encrypted user data file on your computer to decrypt it.</span>
+                </div>
+                <hr />
+                <div class="row">
+                    <form asp-action="" asp-antiforgery="true" class="w-100">
+                        <div class="ht-tm-element input-group mb-2">
+                            <div class="input-group-prepend">
+                                <button class="btn btn-primary" type="button">
+                                    <i class="fas fa-file-alt fa-fw"></i>
+                                </button>
+                            </div>
+                            <input placeholder="File" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
+                        </div>
+                        <button type="button" class="btn btn-secondary mb-3">
+                            <i class="fas fa-file-upload fa-fw"></i>
+                            Select File
+                        </button>
+                        <div class="ht-tm-element input-group mb-3">
+                            <div class="input-group-prepend">
+                                <button class="btn btn-primary" type="button">
+                                    <i class="fas fa-key fa-fw"></i>
+                                </button>
+                            </div>
+                            <input placeholder="Secret Key" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
+                        </div>
+                        <div class="ht-tm-element input-group mb-3">
+                            <div class="input-group-prepend">
+                                <button class="btn btn-primary" type="button">
+                                    <i class="fas fa-user-lock fa-fw"></i>
+                                </button>
+                            </div>
+                            <input placeholder="SALT Value" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
+                        </div>
+                    </form>
+                </div>
+                <hr />
+                <div class="row">
+                    <button type="button" class="btn btn-primary mr-1">
+                        <i class="fas fa-upload fa-fw"></i>
+                        Submit
+                    </button>
+                    <button type="button" class="btn btn-primary ml-1">
+                        <i class="fas fa-question-circle fa-fw"></i>
+                        Get Help
+                    </button>
+                </div>
+                <div class="row pt-1">
+                    <a href="javascript:history.go(-1);">Go Back</a>
+                </div>
+                </div>
+</article>
+</section>
+</main>

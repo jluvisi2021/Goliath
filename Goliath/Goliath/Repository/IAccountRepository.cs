@@ -70,6 +70,22 @@ namespace Goliath.Repository
         Task<ApplicationUser> FindUserById(string userId);
 
         /// <summary>
+        /// Convert a user to a JSON string.
+        /// </summary>
+        /// <param name="user">The user to convert.</param>
+        /// <returns>The serialized json.</returns>
+        Task<string> UserToJsonAsync(ApplicationUser user);
+
+        /// <summary>
+        /// Sends an email to the user with a key to decrypt their data.
+        /// </summary>
+        /// <param name="userModel">Model of the user.</param>
+        /// <param name="device">UserAgent</param>
+        /// <param name="key">Key to send.</param>
+        /// <returns></returns>
+        Task GenerateNewDataEncryptionEmailAsync(ApplicationUser userModel, DeviceParser device, string key);
+
+        /// <summary>
         /// Attempts to confirm a <paramref name="user" /> phone number using Identity Core.
         /// </summary>
         /// <param name="user"> The user object to confirm. </param>

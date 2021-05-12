@@ -1,0 +1,19 @@
+﻿body {
+    margin: 0;
+    background-position: center center;
+    background: #abadff;
+    background: -webkit-linear-gradient(bottom right, #fa57e8, #abadff);
+    background: -moz-linear-gradient(bottom right, #fa57e8, #abadff);
+    background: linear-gradient(to top left, #fa57e8, #abadff);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+}
+#front {
+    background: rgb(255, 255, 255, 0.67);
+    border-radius: 20px;
+}
+#front-2 {
+    background: rgb(255, 255, 255, 0.85);
+    border-radius: 20px;
+}

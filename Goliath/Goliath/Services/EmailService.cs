@@ -100,6 +100,14 @@ namespace Goliath.Services
             return await SendEmailAsync(options);
         }
 
+        public async Task<bool> SendDataEncryptionEmailAsync(UserEmailOptions options)
+        {
+            options.Subject = "Goliath Data";
+            options.Body = await GetTemplateAsync("DataEncryptionEmail", options);
+
+            return await SendEmailAsync(options);
+        }
+
         /// <summary>
         /// Send an email to a user while using a template from UserEmailOptions. <br /> This method
         /// is not directly called to send an email rather it is passed through one of the public

@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    {{$styles}}
+</head>
+<body>
+    <h3>Hello, {{Email}}!</h3>
+    <h4>You recently requested to download an encrypted version of your data.</h4>
+    <hr />
+    <p>Your Private Key: <strong>{{PrivateKey}}</strong></p>
+    <hr />
+    <p>You can decrypt the data using this key by using the official Goliath AES decryption tool.</p>
+    <ul>
+        <li>
+            <a href="#!">Visit the secure Goliath AES decryption tool.</a>
+        </li>
+    </ul>
+    <p>
+        Make sure to enter the following for these websites:
+        <br />
+        <br />
+        <strong>The SALT is: </strong><em>Your accounts username.</em>
+        <br />
+        <strong>Secret Key is: </strong><em>The key displayed at the top of this email.</em>
+        <br />
+        <br />
+    </p>
+    <hr />
+    <em>Account Information:</em>
+    <span style="color: dimgray">
+        <code>
+            <br />
+            - Username: {{Username}}
+            <br />
+            - Email: {{Email}}
+            <br />
+            - Phone Number: {{PhoneNumber}}
+            <br />
+            - Account Creation Date: {{AccountCreationDate}}
+            <br />
+            - Last Login: {{LastLogin}}
+        </code>
+    </span>
+    <hr />
+    <em>Sender Information:</em>
+    <span style="color: dimgray">
+        <code>
+            <br />
+            - IP Address: {{IPAddress}}
+            <br />
+            <u>Computer/Browser Info:</u> {{ComputerInfo}}
+            <br />
+        </code>
+    </span>
+    {{$footer}}
+</body>
+</html>

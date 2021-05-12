@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Goliath.Helper
 {
@@ -82,5 +84,39 @@ namespace Goliath.Helper
             generator.Dispose();
             return token.ToString();
         }
+        /// <summary>
+        /// Generates a secure random string using the <see cref="RandomGenerator" />. The maximum
+        /// value and minimum value for the random numbers are set.
+        /// </summary>
+        /// <returns> </returns>
+        public static string GenerateSecureRandomString()
+        {
+            RandomGenerator generator = new();
+            StringBuilder token = new();
+            char[] possibleChars =
+            {
+                'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
+                'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
+                '0','1','2','3','4','5','6','7','8','9',
+                '!','@','#','$','/','\\','&'
+            };
+
+            for (int i = 0; i < MinimumTokenValueLength; i++)
+            {
+                token.Append($"{possibleChars[generator.Next(0, possibleChars.Length)]}");
+            }
+            // Add random exta numbers for a varying maximum possible value.
+            for (int i = 0; i < MaximumTokenValueLength - MinimumTokenValueLength; i++)
+            {
+                if (generator.Next(0, 1) == 0)
+                {
+                    token.Append($"{possibleChars[generator.Next(0, possibleChars.Length)]}");
+                }
+            }
+            generator.Dispose();
+            return token.ToString();
+        }
+
+        
     }
 }

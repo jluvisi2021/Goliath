@@ -3,6 +3,7 @@ using Goliath.Enums;
 using Goliath.Helper;
 using Goliath.Models;
 using Goliath.Models.Accounts;
+using Goliath.Models.Extra;
 using Goliath.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -514,6 +515,34 @@ namespace Goliath.Repository
             }
         }
 
+        public async Task<string> UserToJsonAsync(ApplicationUser user)
+        {
+            UserDataModel model = new()
+            {
+                AccountCreationDate = user.AccountCreationDate,
+                AccountLoginHistory = JsonConvert.DeserializeObject<List<LoginTracebackEntryModel>>(user.AccountLoginHistory),
+                BackgroundColor = user.BackgroundColor,
+                DarkTheme = user.DarkTheme,
+                Email = user.Email,
+                EmailConfirmed = $"{user.EmailConfirmed}",
+                LastPasswordUpdate = user.LastPasswordUpdate,
+                LastUserLogin = user.LastUserLogin,
+                LogoutThreshold = $"{user.LogoutThreshold}",
+                PendingNotifications = user.PendingNotifications,
+                PhoneNumber = user.PhoneNumber,
+                PhoneNumberConfirmed = $"{user.PhoneNumberConfirmed}",
+                TwoFactorMethod = $"{user.TwoFactorMethod}",
+                TwoFactorUpdated = user.TwoFactorUpdated,
+                UnverifiedNewEmail = user.UnverifiedNewEmail,
+                UnverifiedNewPhone = user.UnverifiedNewPhone,
+                UserData = user.UserData,
+                UserId = user.Id,
+                UserName = user.UserName,
+                UserRole = await GetPrimaryRoleAsync(user)
+            };
+            return JsonConvert.SerializeObject(model, Formatting.Indented);
+        }
+
         public async Task UpdateLastLoginAsync(ApplicationUser user)
         {
             user.LastUserLogin = DateTime.UtcNow.ToString();
@@ -573,6 +602,11 @@ namespace Goliath.Repository
                 });
                 await SendNewPhoneEmailAsync(userModel, device);
             }
+        }
+
+        public async Task GenerateNewDataEncryptionEmailAsync(ApplicationUser userModel, DeviceParser device, string key)
+        {
+            await SendDataEncryptionEmailAsync(userModel, device, key);
         }
 
         public async Task GenerateNewPhoneConfirmationTokenAsync(ApplicationUser userModel)
@@ -770,6 +804,58 @@ namespace Goliath.Repository
                     {
                         "{{LastLogin}}", user.LastUserLogin
                     },
+                        }
+            });
+        }
+
+        private async Task SendDataEncryptionEmailAsync(ApplicationUser user, DeviceParser device, string key)
+        {
+            // Check if the phone number is null.
+            string phone;
+            if (string.IsNullOrWhiteSpace(user.PhoneNumber))
+            {
+                phone = "Not Specified.";
+            }
+            else
+            {
+                phone = user.PhoneNumber;
+            }
+
+            // Generate email with placeholders.
+            await _emailService.SendDataEncryptionEmailAsync(new()
+            {
+                ToEmails = new List<string>() { user.Email },
+                Placeholders = new Dictionary<string, string> {
+                    {
+                        "{{Username}}", user.UserName
+                    },
+                    {
+                        "{{Email}}", user.Email
+                    },
+                    {
+                        "{{IPAddress}}", device.IPv4
+                    },
+                    {
+                        "{{ComputerInfo}}", device.ToSimpleString()
+                    },
+                    {
+                        "{{DateTime}}", DateTime.UtcNow.ToString()
+                    },
+                    {
+                        "{{PhoneNumber}}", phone
+                    },
+                    {
+                        "{{NewPhone}}", user.UnverifiedNewPhone
+                    },
+                    {
+                        "{{AccountCreationDate}}", user.AccountCreationDate
+                    },
+                    {
+                        "{{LastLogin}}", user.LastUserLogin
+                    },
+                    {
+                        "{{PrivateKey}}", key
+                    }
                         }
             });
         }

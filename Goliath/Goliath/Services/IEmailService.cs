@@ -48,6 +48,13 @@ namespace Goliath.Services
         Task<bool> SendRoleMovedEmailAsync(UserEmailOptions options);
 
         /// <summary>
+        /// Sends an email to the user with a key to decrypt their data.
+        /// </summary>
+        /// <param name="options">The email's options from <see cref="UserEmailOptions" />.</param>
+        /// <returns> If the email was sent successfully. </returns>
+        Task<bool> SendDataEncryptionEmailAsync(UserEmailOptions options);
+
+        /// <summary>
         /// Sends a confirmation email to a user's new email address.
         /// </summary>
         /// <param name="options"> The email's options from <see cref="UserEmailOptions" />. </param>

@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Goliath.Controllers
@@ -34,6 +36,7 @@ namespace Goliath.Controllers
         }
 
         [HttpPost]
+        [Route("userpanel/authorize")]
         public IActionResult NotAuthenticated(string title)
         {
             return View(new NotAuthorizedModel()
@@ -42,7 +45,7 @@ namespace Goliath.Controllers
             });
         }
 
-        [Route("authorize")]
+        [Route("userpanel/authorize")]
         [HttpGet]
         public IActionResult NotAuthenticated(NotAuthorizedModel model)
         {
@@ -211,6 +214,7 @@ namespace Goliath.Controllers
             return View();
         }
 
+
         [GoliathAuthorize(nameof(Profile))]
         [Route("userpanel/verify-phone")]
         [PreventDuplicateRequest]
@@ -364,6 +368,28 @@ namespace Goliath.Controllers
             // been logged out.
             TempData[TempDataKeys.Redirect] = RedirectPurpose.LogoutSuccess;
             return RedirectToAction(nameof(AuthController.Index), GoliathControllers.AuthController);
+        }
+
+        [GoliathAuthorize(nameof(Profile))]
+        [Route("userpanel/download-data")]
+        public async Task<IActionResult> DownloadData()
+        {
+            var user = await _accountRepository.GetUserFromContextAsync(User);
+            string data = await _accountRepository.UserToJsonAsync(user);
+            //TempData[TempDataKeys.HtmlMessage] = "Your data has been downloaded.";
+            return File(Encoding.ASCII.GetBytes(data), "text/plain", user.UserName + "-data.json");
+        }
+        [GoliathAuthorize(nameof(Profile))]
+        [Route("userpanel/download-data-enc")]
+        public async Task<IActionResult> DownloadDataEncrypted()
+        {
+            var user = await _accountRepository.GetUserFromContextAsync(User);
+            string key = GoliathHelper.GenerateSecureRandomString();
+            string data = AesHelper.EncryptText(await _accountRepository.UserToJsonAsync(user), key, user.UserName);
+
+            await _accountRepository.GenerateNewDataEncryptionEmailAsync(user, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()), key);
+            //TempData[TempDataKeys.HtmlMessage] = "Your encrypted data has been downloaded. Please check your email.";
+            return File(Encoding.ASCII.GetBytes(data), "text/plain", user.UserName + "-data.txt");
         }
 
         [GoliathAuthorize(nameof(Database))]
