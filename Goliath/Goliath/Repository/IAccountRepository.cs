@@ -383,6 +383,13 @@ namespace Goliath.Repository
         Task<bool> IsPasswordValidAsync(ApplicationUser user, string pass);
 
         /// <summary>
+        /// Remove the login traceback data from the user.
+        /// </summary>
+        /// <param name="user">The <paramref name="user"/> to remove the data from.</param>
+        /// <returns></returns>
+        Task ClearLoginTracebackAsync(ApplicationUser user);
+
+        /// <summary>
         /// Gets a user from a <see cref="ClaimsPrincipal" />.
         /// </summary>
         /// <param name="claims"> The <see cref="ClaimsPrincipal" /> to find the user with. </param>

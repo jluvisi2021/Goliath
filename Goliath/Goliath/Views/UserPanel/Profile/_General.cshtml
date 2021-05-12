@@ -15,6 +15,15 @@
 }
 
 <hr />
+@if (TempData[TempDataKeys.HtmlMessage] != null)
+{
+    <div class="alert alert-secondary alert-dismissible fade show" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+        @TempData[TempDataKeys.HtmlMessage]
+    </div>
+}
 
 <form id="settings" asp-action="@nameof(UserPanelController.Profile)" asp-antiforgery="true" novalidate>
 

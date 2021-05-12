@@ -49,6 +49,7 @@ namespace Goliath.Controllers
             return View(model);
         }
 
+        [GoliathAuthorize(nameof(Profile))]
         [Route("sms-code-sent")]
         public IActionResult SentSmsCode()
         {
@@ -328,6 +329,15 @@ namespace Goliath.Controllers
             });
         }
 
+        [GoliathAuthorize(nameof(Profile))]
+        [Route("clear-traceback")]
+        public async Task<IActionResult> ClearLoginTraceback()
+        {
+            TempData[TempDataKeys.HtmlMessage] = "Cleared all login tracebacks.";
+            await _accountRepository.ClearLoginTracebackAsync(await _accountRepository.GetUserFromContextAsync(User));
+            return RedirectToAction(nameof(Profile));
+        }
+
         /// <summary>
         /// Returns a specific partial view in Ajax. <br /> Specifically useful for loading a part
         /// of the screen that is unknown at runtime.
@@ -343,7 +353,7 @@ namespace Goliath.Controllers
             await _accountRepository.SignOutAsync();
             if (User != null)
             {
-                _logger.LogInformation($"{User.Identity.Name}) - Logged out.");
+                _logger.LogInformation($"({User.Identity.Name}) - Logged out.");
             }
             if (_cookies.HasCookie(CookieKeys.TwoFactorAuthorizeCookie))
             {

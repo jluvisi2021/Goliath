@@ -657,6 +657,12 @@ namespace Goliath.Repository
             await _userManager.UpdateAsync(user);
         }
 
+        public async Task ClearLoginTracebackAsync(ApplicationUser user)
+        {
+            user.AccountLoginHistory = string.Empty;
+            await _userManager.UpdateAsync(user);
+        }
+
         public async Task SignOutAsync()
         {
             await _signInManager.SignOutAsync();
