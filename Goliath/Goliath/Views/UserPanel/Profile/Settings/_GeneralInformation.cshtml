@@ -1,5 +1,4 @@
-﻿@inject Goliath.Repository.IAccountRepository _accoutRepository
-@{
+﻿@{
     var user = await _repository.GetUserFromContextAsync(User);
     var isAdmin = await _repository.IsAdminAsync(user);
     var role = await _repository.GetPrimaryRoleAsync(user);

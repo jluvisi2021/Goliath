@@ -136,7 +136,7 @@ namespace Goliath
             services.AddScoped<Services.ICookieManager, CookieManager>();
             services.AddScoped<IGoliathCaptchaService, GoliathCaptchaService>();
             services.AddScoped<ITwilioService, TwilioService>();
-            services.AddScoped<IUnauthorizedTimeoutsRepository, UnauthorizedTimeoutsRepository>();
+            services.AddScoped<IUserTimeoutsRepository, UserTimeoutsRepository>();
             services.AddScoped<ITwoFactorAuthorizeTokenRepository, TwoFactorAuthorizeTokenRepository>();
 
             #endregion Custom Goliath services
@@ -211,7 +211,7 @@ namespace Goliath
             loggerFactory.AddFile($"{path}\\Logs\\Log.txt");
             // Create roles and super user if not created.
             accountRepository.LoadDefaultsAsync().Wait();
-            //accountRepository.AddTestingDataAsync(350).Wait();
+            //accountRepository.AddTestingDataAsync(500).Wait();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

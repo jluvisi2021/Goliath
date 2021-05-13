@@ -26,14 +26,14 @@ namespace Goliath.Controllers
         private readonly IAccountRepository _accountRepository;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IGoliathCaptchaService _captcha;
-        private readonly IUnauthorizedTimeoutsRepository _timeoutsRepository;
+        private readonly IUserTimeoutsRepository _timeoutsRepository;
         private readonly ITwoFactorAuthorizeTokenRepository _twoFactorTokenRepository;
 
         public AuthController
             (IAccountRepository accountRepository,
             SignInManager<ApplicationUser> signInManager,
             IGoliathCaptchaService captcha,
-            IUnauthorizedTimeoutsRepository timeoutsRepository,
+            IUserTimeoutsRepository timeoutsRepository,
             ITwoFactorAuthorizeTokenRepository twoFactorTokenRepository,
             ILogger<AuthController> logger)
         {
@@ -156,10 +156,10 @@ namespace Goliath.Controllers
                 TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorSmsResendFailure;
                 return RedirectToActionPermanent(nameof(Login));
             }
-            if (user.TwoFactorMethod == (int)TwoFactorMethod.SmsVerify && TempData[TempDataKeys.Redirect] == null && await _timeoutsRepository.CanRequestTwoFactorSmsAsync(user.Id))
+            if (user.TwoFactorMethod == (int)TwoFactorMethod.SmsVerify && TempData[TempDataKeys.Redirect] == null && await _timeoutsRepository.CanRequestInitalTwoFactorSmsAsync(user.Id))
             {
                 await _accountRepository.SendTwoFactorCodeSms(user);
-                await _timeoutsRepository.UpdateRequestAsync(user.Id, UnauthorizedRequest.InitalTwoFactorRequestSms);
+                await _timeoutsRepository.UpdateRequestAsync(user.Id, UserRequest.InitalTwoFactorRequestSms);
             }
 
             return View(nameof(TwoFactorValidation), new TwoFactorAuthenticateModel()
@@ -336,7 +336,7 @@ namespace Goliath.Controllers
             // Cache Captcha Validation.
             _logger.LogInformation($"{user.Id} ({user.UserName}) has requested a password reset email.");
             await _captcha.CacheNewCaptchaValidateAsync();
-            await _timeoutsRepository.UpdateRequestAsync(user.Id, UnauthorizedRequest.RequestForgotPasswordEmail);
+            await _timeoutsRepository.UpdateRequestAsync(user.Id, UserRequest.RequestForgotPasswordEmail);
             return View(model);
         }
 
@@ -388,7 +388,7 @@ namespace Goliath.Controllers
             model.IsEmailSent = true;
             ModelState.Clear();
             await _captcha.CacheNewCaptchaValidateAsync();
-            await _timeoutsRepository.UpdateRequestAsync(user.Id, UnauthorizedRequest.RequestUsernameEmail);
+            await _timeoutsRepository.UpdateRequestAsync(user.Id, UserRequest.RequestUsernameEmail);
             _logger.LogInformation($"{user.Id} ({user.UserName}) has requested a forgot username email.");
             return View(model);
         }
@@ -461,7 +461,7 @@ namespace Goliath.Controllers
             // Clear all fields.
             ModelState.Clear();
             await _captcha.CacheNewCaptchaValidateAsync();
-            await _timeoutsRepository.UpdateRequestAsync(user.Id, UnauthorizedRequest.RequestVerificationEmail);
+            await _timeoutsRepository.UpdateRequestAsync(user.Id, UserRequest.RequestVerificationEmail);
             return View(model);
         }
 

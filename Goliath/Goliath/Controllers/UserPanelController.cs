@@ -22,16 +22,18 @@ namespace Goliath.Controllers
         private readonly ILogger _logger;
         private readonly IAccountRepository _accountRepository;
         private readonly ISmsVerifyTokensRepository _requestTable;
+        private readonly IUserTimeoutsRepository _timeouts;
         private readonly IGoliathCaptchaService _captcha;
         private readonly ICookieManager _cookies;
 
-        public UserPanelController(IAccountRepository accountRepository, IGoliathCaptchaService captcha, ISmsVerifyTokensRepository requestTable, ICookieManager cookies, ILogger<AuthController> logger)
+        public UserPanelController(IAccountRepository accountRepository, IGoliathCaptchaService captcha, ISmsVerifyTokensRepository requestTable, ICookieManager cookies, IUserTimeoutsRepository timeouts, ILogger<AuthController> logger)
         {
             _accountRepository = accountRepository;
             _captcha = captcha;
             _requestTable = requestTable;
             _cookies = cookies;
             _logger = logger;
+            _timeouts = timeouts;
         }
 
         [HttpPost]
@@ -88,7 +90,13 @@ namespace Goliath.Controllers
 
             ApplicationUser goliathUser = await _accountRepository.GetUserFromContextAsync(User);
 
-            #region Simple value updates
+            if (!await _timeouts.CanRequestProfileSettingsUpdateAsync(goliathUser.Id))
+            {
+                ModelState.AddModelError(string.Empty, "Please wait before updating your profile again.");
+                return View();
+            }
+
+           #region Simple value updates
 
             // ** Values which do not need database checking
             goliathUser.BackgroundColor = model.BackgroundColor;
@@ -193,11 +201,10 @@ namespace Goliath.Controllers
             #endregion Sending potential verification emails
 
             #region Updating/Caching
-
             // Update all of the changed values.
             await _accountRepository.UpdateUserAsync(goliathUser);
             await _captcha.CacheNewCaptchaValidateAsync();
-
+            await _timeouts.UpdateRequestAsync(goliathUser.Id, UserRequest.UpdateProfileSettings);
             #endregion Updating/Caching
 
             ModelState.Clear();
@@ -372,8 +379,15 @@ namespace Goliath.Controllers
         [Route("userpanel/download-data")]
         public async Task<IActionResult> DownloadData()
         {
-            await Task.Delay(5000); // Wait 5 seconds.
             ApplicationUser user = await _accountRepository.GetUserFromContextAsync(User);
+            if (!await _timeouts.CanRequestDataDownloadAsync(user.Id))
+            {
+                TempData[TempDataKeys.HtmlMessage] = "Please wait before downloading your data again.";
+                return RedirectToAction(nameof(Profile));
+            }
+
+            await Task.Delay(5000); // Wait 5 seconds.
+            await _timeouts.UpdateRequestAsync(user.Id, UserRequest.RequestDataDownload);
             string data = await _accountRepository.UserToJsonAsync(user);
             return File(Encoding.ASCII.GetBytes(data), "text/plain", user.UserName + "-data.json");
         }
@@ -382,8 +396,16 @@ namespace Goliath.Controllers
         [Route("userpanel/download-data-enc")]
         public async Task<IActionResult> DownloadDataEncrypted()
         {
-            await Task.Delay(5000); // Wait 5 seconds.
             ApplicationUser user = await _accountRepository.GetUserFromContextAsync(User);
+            if (!await _timeouts.CanRequestDataDownloadAsync(user.Id))
+            {
+                TempData[TempDataKeys.HtmlMessage] = "Please wait before downloading your data again.";
+                return RedirectToAction(nameof(Profile));
+            }
+
+            await Task.Delay(5000); // Wait 5 seconds.
+            await _timeouts.UpdateRequestAsync(user.Id, UserRequest.RequestDataDownload);
+
             string key = GoliathHelper.GenerateSecureRandomString();
             string data = AesHelper.EncryptText(await _accountRepository.UserToJsonAsync(user), key, user.UserName);
 

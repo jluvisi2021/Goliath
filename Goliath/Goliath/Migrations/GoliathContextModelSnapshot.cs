@@ -63,18 +63,26 @@ namespace Goliath.Migrations
                     b.ToTable("TwoFactorAuthorizationTokens");
                 });
 
-            modelBuilder.Entity("Goliath.Data.UnauthorizedTimeouts", b =>
+            modelBuilder.Entity("Goliath.Data.UserTimeouts", b =>
                 {
                     b.Property<int>("NumericId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("RequestDataDownload")
+                        .HasMaxLength(22)
+                        .HasColumnType("nvarchar(22)");
+
                     b.Property<string>("RequestForgotPassword")
                         .HasMaxLength(22)
                         .HasColumnType("nvarchar(22)");
 
                     b.Property<string>("RequestForgotUsername")
+                        .HasMaxLength(22)
+                        .HasColumnType("nvarchar(22)");
+
+                    b.Property<string>("RequestTwoFactorSmsAuthorized")
                         .HasMaxLength(22)
                         .HasColumnType("nvarchar(22)");
 
@@ -90,6 +98,10 @@ namespace Goliath.Migrations
                         .HasMaxLength(22)
                         .HasColumnType("nvarchar(22)");
 
+                    b.Property<string>("UpdateProfileSettings")
+                        .HasMaxLength(22)
+                        .HasColumnType("nvarchar(22)");
+
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasMaxLength(36)
@@ -97,7 +109,7 @@ namespace Goliath.Migrations
 
                     b.HasKey("NumericId");
 
-                    b.ToTable("UnauthorizedTimeoutTable");
+                    b.ToTable("UserTimeoutsTable");
                 });
 
             modelBuilder.Entity("Goliath.Data.ValidHumanVerifyTokens", b =>

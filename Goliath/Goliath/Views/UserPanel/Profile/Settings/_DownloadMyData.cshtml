@@ -1,6 +1,8 @@
 ﻿@model Goliath.Models.ProfileSettingsModel
+
 @{
     var user = await _repository.GetUserFromContextAsync(User);
+
 }
 <p id="option-text">
     DOWNLOAD DATA
@@ -12,10 +14,23 @@
     </i>
 </p>
 <p class="text-muted font-italic">Goliath remains transparent about all user data it stores and collects.</p>
-<a id="download-data-btn" asp-action="DownloadData" class="btn btn-danger mb-2">
-    <i class="fas fa-database mr-2"></i>Download My Data
-</a>
-<br />
-<a id="download-data-enc-btn" asp-action="DownloadDataEncrypted" class="btn btn-danger mt-2">
-    <i class="fas fa-database mr-2"></i>Download My Data Encrypted
-</a>
+@if (await _timeouts.CanRequestDataDownloadAsync(user.Id))
+{
+    <a id="download-data-btn" asp-action="@nameof(UserPanelController.DownloadData)" class="btn btn-danger mb-2">
+        <i class="fas fa-database mr-2"></i>Download My Data
+    </a>
+    <br />
+    <a id="download-data-enc-btn" asp-action="@nameof(UserPanelController.DownloadDataEncrypted)" class="btn btn-danger mt-2">
+        <i class="fas fa-database mr-2"></i>Download My Data Encrypted
+    </a>
+}
+else
+{
+    <button id="download-data-btn" class="btn btn-danger mb-2" disabled>
+        <i class="fas fa-database mr-2"></i>Download My Data
+    </button>
+    <br />
+    <button id="download-data-enc-btn" class="btn btn-danger mt-2" disabled>
+        <i class="fas fa-database mr-2"></i>Download My Data Encrypted
+    </button>
+}

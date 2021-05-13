@@ -163,7 +163,6 @@ const GlobalScript = (() => {
             if (notifications === null) {
                 return;
             }
-            console.log(notifications.length);
             for (let i = 0; i < notifications.length; i++) {
                 const notification = notifications[i];
                 // Display the notification but do not save it in localStorage because it is already there.
@@ -225,9 +224,17 @@ const GlobalScript = (() => {
                 id = GlobalScript.createUUID();
             }
             if (id.length != 36) {
+                console.log(id.length);
                 console.error("UUID Security: Invalid UUID.");
                 return;
             }
+            // Validate safe Regex
+            if (!(/^[A-Za-z0-9-]+$/.test(id))) {
+                console.error("Detected unsafe regex. Cleared notifications");
+                localStorage.removeItem("Notifications");
+                return;
+            }
+            
             if (save) {
                 GlobalScript.saveNotification(textHeader, text, typeStr, divParentID, id);
             }

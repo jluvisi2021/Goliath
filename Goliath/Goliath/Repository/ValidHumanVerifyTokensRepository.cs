@@ -29,7 +29,7 @@ namespace Goliath.Repository
                 GeneratedDateTime = DateTime.UtcNow.ToString()
             };
             _logger.LogInformation($"Created a new token for {nameof(ValidHumanVerifyTokens)}.");
-            await _context.ValidTokens.AddAsync(token);
+            await _context.ValidCaptchaTokens.AddAsync(token);
             await _context.SaveChangesAsync();
         }
 
@@ -44,7 +44,7 @@ namespace Goliath.Repository
             await CleanUpUnusedTokensAsync();
 
             // Get all tokens in the database.
-            List<string> result = await _context.ValidTokens.Select(u => u.Token).ToListAsync();
+            List<string> result = await _context.ValidCaptchaTokens.Select(u => u.Token).ToListAsync();
 
             // Compare Them
             for (int i = 0; i < result.Count; i++)
@@ -59,11 +59,11 @@ namespace Goliath.Repository
 
         public async Task CleanUpUnusedTokensAsync()
         {
-            List<int> primaryKeys = await _context.ValidTokens.Select(u => u.NumericId).ToListAsync();
+            List<int> primaryKeys = await _context.ValidCaptchaTokens.Select(u => u.NumericId).ToListAsync();
             int amount = 0;
             foreach (int keyIndex in primaryKeys)
             {
-                ValidHumanVerifyTokens key = await _context.ValidTokens.FindAsync(keyIndex);
+                ValidHumanVerifyTokens key = await _context.ValidCaptchaTokens.FindAsync(keyIndex);
                 // Check if token is over 5 minutes old.
                 if (DateTime.Parse(key.GeneratedDateTime) < DateTime.UtcNow.Subtract(new TimeSpan(0, 5, 0)))
                 {
@@ -78,7 +78,7 @@ namespace Goliath.Repository
         public async Task ClearAllTokensAsync()
         {
             _logger.LogInformation($"Cleared all tokens from {nameof(ValidHumanVerifyTokens)} repository.");
-            foreach (ValidHumanVerifyTokens token in _context.ValidTokens)
+            foreach (ValidHumanVerifyTokens token in _context.ValidCaptchaTokens)
             {
                 _context.Remove(token);
             }

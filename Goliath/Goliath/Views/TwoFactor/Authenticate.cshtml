@@ -78,9 +78,9 @@
                     </button>
                     @if (Model?.TwoFactorCodeRequired == true)
                     {
-                        if (await _timeouts.CanRequestResendTwoFactorSmsAsync((await _repository.GetUserByNameAsync(User.Identity.Name)).Id))
+                        if (await _timeouts.CanRequestAuthorizedTwoFactorSmsAsync((await _repository.GetUserByNameAsync(User.Identity.Name)).Id))
                         {
-                            <a asp-action="SendSmsCode" asp-route-m="@Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(requestModel)))" class="btn btn-primary">
+                            <a asp-action="@nameof(TwoFactorController.SendSmsCode)" asp-route-m="@Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(requestModel)))" class="btn btn-primary">
                                 <i class="fas fa-sms fa-fw"></i> Send Code
                             </a>
                         }

@@ -16,6 +16,9 @@ const ProfileScript = (() => {
         $("#submit-settings").click(() => {
             $("#confirm-modal").load("/UserPanel/GetModule?partialName=Profile/_ConfirmSettingsModal");
         });
+        $("#submit-settings-timeout").click(() => {
+            GlobalScript.displayModal("Timeout", "Please wait before updating your settings again!");
+        });
         $("#submit-verify-phone-form").click(() => {
             GlobalScript.loadCaptcha("verify-phone-form");
         });

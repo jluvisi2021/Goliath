@@ -108,6 +108,7 @@
                                                 <a asp-controller="@GoliathControllers.AuthController" asp-action="@nameof(AuthController.ForgotUsername)" id="forgot-username" class="dropdown-item">Forgot Username</a>
                                                 <a asp-controller="@GoliathControllers.AuthController" asp-action="@nameof(AuthController.ForgotPassword)" id="forgot-password" class="dropdown-item">Forgot Password</a>
                                                 <a asp-controller="@GoliathControllers.AuthController" asp-action="@nameof(AuthController.VerifyEmail)" id="verify-email" class="dropdown-item">Verify Email</a>
+                                                <a asp-controller="@GoliathControllers.AesController" asp-action="@nameof(GoliathAesController.Index)" id="verify-email" class="dropdown-item">AES Tools</a>
                                                 <div id="dropdown-divider" class="dropdown-divider"></div>
                                                 @*OAuth Login Methods*@
                                                 <a class="dropdown-item py-xl-1" href="#!"><i id="signin-google-icon" class="fab fa-google px-sm-2 dropdown-bottom-icons"></i>Sign in with Google</a>

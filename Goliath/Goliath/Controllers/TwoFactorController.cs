@@ -22,10 +22,10 @@ namespace Goliath.Controllers
     {
         private readonly ILogger _logger;
         private readonly IAccountRepository _repository;
-        private readonly IUnauthorizedTimeoutsRepository _timeoutsRepository;
+        private readonly IUserTimeoutsRepository _timeoutsRepository;
         private readonly ITwoFactorAuthorizeTokenRepository _authorizeTokenRepository;
 
-        public TwoFactorController(IAccountRepository repository, IUnauthorizedTimeoutsRepository timeoutsRepository, ITwoFactorAuthorizeTokenRepository authorizeTokenRepository, ILogger<TwoFactorController> logger)
+        public TwoFactorController(IAccountRepository repository, IUserTimeoutsRepository timeoutsRepository, ITwoFactorAuthorizeTokenRepository authorizeTokenRepository, ILogger<TwoFactorController> logger)
         {
             _repository = repository;
             _timeoutsRepository = timeoutsRepository;
@@ -283,24 +283,44 @@ namespace Goliath.Controllers
             #region Check if the user is on timeout
 
             // If the user has waited the timeout and is allowed to request another token.
-            if (!await _timeoutsRepository.CanRequestResendTwoFactorSmsAsync(user.Id))
+            if (!User.Identity.IsAuthenticated && !await _timeoutsRepository.CanRequestResendTwoFactorSmsAsync(user.Id))
             {
-                _logger.LogInformation($"[CHECK-5] Unauthorized request for user {user.Id} ({user.UserName} was rejected (Bad Timeout). Model Data = [{m}]");
+                _logger.LogInformation($"[CHECK-5A] Unauthorized request for user {user.Id} ({user.UserName} was rejected (Bad Timeout). Model Data = [{m}]");
                 TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorSmsResendFailureTimeout;
-                TempData[TempDataKeys.HtmlMessage] = "Please wait before requesting another code.";
                 if (model.IsUrnRedirect)
                 {
                     return RedirectToAction(model.Action, model.Controller);
                 }
                 return RedirectToAction(model.Action, model.Controller, new { userName = model.Username });
             }
+            if(User.Identity.IsAuthenticated && !await _timeoutsRepository.CanRequestAuthorizedTwoFactorSmsAsync(user.Id))
+            {
+
+                    _logger.LogInformation($"[CHECK-5B] Authorized request for user {user.Id} ({user.UserName} was rejected (Bad Timeout). Model Data = [{m}]");
+                    TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorSmsResendFailureTimeout;
+                    TempData[TempDataKeys.HtmlMessage] = "Please wait before requesting another code.";
+                    if (model.IsUrnRedirect)
+                    {
+                        return RedirectToAction(model.Action, model.Controller);
+                    }
+                    return RedirectToAction(model.Action, model.Controller, new { userName = model.Username });
+                }
+            
 
             #endregion Check if the user is on timeout
 
             // Send the user their code.
             await _repository.SendTwoFactorCodeSms(user);
             // Register the fact that they requested a two-factor code.
-            await _timeoutsRepository.UpdateRequestAsync(user.Id, UnauthorizedRequest.RequestTwoFactorResendSms);
+            if(User.Identity.IsAuthenticated)
+            {
+                await _timeoutsRepository.UpdateRequestAsync(user.Id, UserRequest.RequestTwoFactorSmsAuthorized);
+            }
+            else
+            {
+                await _timeoutsRepository.UpdateRequestAsync(user.Id, UserRequest.RequestTwoFactorResendSms);
+            }
+            
             // Send the success information back.
             TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorSmsResendSuccess;
             // If the redirect is a url with query parameters.

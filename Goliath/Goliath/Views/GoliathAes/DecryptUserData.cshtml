@@ -46,7 +46,7 @@
         <section class="row p-0 m-0">
             @if (TempData[TempDataKeys.HtmlMessage] != null)
             {
-                <a target="_blank" href="data:application/octet-stream;charset=utf-8;base64,@Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(JsonConvert.DeserializeObject<UserDataModel>((string)TempData[TempDataKeys.HtmlMessage]), Formatting.Indented)))" download="@(resultModel.FileName[..(resultModel.FileName.Length-3)]).json"><i class="fas fa-file-download fa-fw"></i>Download File</a>
+                <a target="_blank" href="data:application/octet-stream;charset=utf-8;base64,@Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(JsonConvert.DeserializeObject<UserDataModel>((string)TempData[TempDataKeys.HtmlMessage]), Formatting.Indented)))" download="@(resultModel.FileName[..(resultModel.FileName.Length-4)]).json"><i class="fas fa-file-download fa-fw"></i>Download File</a>
             }
         </section>
         <section class="row p-0 m-0">
@@ -113,7 +113,7 @@ else
 
                     }
 
-                    <form asp-action="DecryptUserData" enctype="multipart/form-data" asp-antiforgery="true">
+                    <form asp-action="@nameof(GoliathAesController.DecryptUserData)" enctype="multipart/form-data" asp-antiforgery="true">
                         <div class="row">
                             <div class="ht-tm-element input-group mb-2 input-field">
                                 <div class="input-group-prepend">
