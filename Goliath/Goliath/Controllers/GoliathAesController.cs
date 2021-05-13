@@ -15,8 +15,7 @@ using System.Threading.Tasks;
 namespace Goliath.Controllers
 {
     /// <summary>
-    /// The controller for managing AES actions. 
-    /// Currently used to decrypt user data.
+    /// The controller for managing AES actions. Currently used to decrypt user data.
     /// </summary>
     [Route("aes")]
     public class GoliathAesController : Controller
@@ -57,6 +56,7 @@ namespace Goliath.Controllers
         }
 
         private const string uploadFormat = ".txt";
+
         [Route("decrypt")]
         [ValidateAntiForgeryToken]
         [HttpPost]
@@ -65,8 +65,8 @@ namespace Goliath.Controllers
         {
             DecryptionResultModel resultModel = new();
             // make sure file is .txt file.
-            string fileExtension = Path.GetExtension(model.DataFile.FileName);
-            if (!fileExtension.Equals(uploadFormat))
+            string fileExtension = Path.GetExtension(model.DataFile?.FileName);
+            if (!string.IsNullOrWhiteSpace(fileExtension) && !fileExtension.Equals(uploadFormat))
             {
                 ModelState.AddModelError(string.Empty, $"Invalid format. File must be a {uploadFormat} file.");
             }
@@ -83,7 +83,6 @@ namespace Goliath.Controllers
                 {
                     allErrors.Add("Internal error processing request. Try again.");
                 }
-
 
                 resultModel.IsSuccess = false;
                 resultModel.ModelErrors = allErrors;
@@ -121,8 +120,8 @@ namespace Goliath.Controllers
         /// <summary>
         /// Reads a IFormFile and prints it to a string.
         /// </summary>
-        /// <param name="file"></param>
-        /// <returns></returns>
+        /// <param name="file"> </param>
+        /// <returns> </returns>
         private static async Task<string> ReadAsStringAsync(IFormFile file)
         {
             StringBuilder result = new StringBuilder();
@@ -135,11 +134,12 @@ namespace Goliath.Controllers
         }
     }
 }
+
 /*
- * 
- * 
+ *
+ *
 resultModel.IsSuccess = true;
                 ModelState.Clear();
                 return RedirectToAction(nameof(DecryptUserData), new { m = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(resultModel))) });
- * 
+ *
  */

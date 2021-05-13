@@ -18,7 +18,7 @@ const AuthScript = (() => {
         $("#toggle-dark").click(() => {
             AuthScript.toggleDarkTheme();
         });
-        
+
         $("#login-submit-btn").click(() => {
             GlobalScript.loadCaptcha('login-form');
         });

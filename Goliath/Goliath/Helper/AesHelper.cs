@@ -7,12 +7,8 @@ namespace Goliath.Helper
 {
     //Credit: https://www.codeproject.com/Articles/769741/Csharp-AES-bits-Encryption-Library-with-Salt
     /// <summary>
-    /// <para>
-    /// Class for handling AES encryption in Goliath.
-    /// </para>
-    /// <para>
-    /// The salts used in AesHelper are usually usernames + <see cref="extraSaltData"/>.
-    /// </para>
+    /// <para> Class for handling AES encryption in Goliath. </para>
+    /// <para> The salts used in AesHelper are usually usernames + <see cref="extraSaltData" />. </para>
     /// </summary>
     public static class AesHelper
     {
@@ -25,10 +21,10 @@ namespace Goliath.Helper
         /// <summary>
         /// Encrypt text using AES encryption.
         /// </summary>
-        /// <param name="input">The text to encrypt.</param>
-        /// <param name="password">The private key.</param>
-        /// <param name="salt">Salt data (usually a username)</param>
-        /// <returns></returns>
+        /// <param name="input"> The text to encrypt. </param>
+        /// <param name="password"> The private key. </param>
+        /// <param name="salt"> Salt data (usually a username) </param>
+        /// <returns> </returns>
         public static string EncryptText(string input, string password, string salt)
         {
             try
@@ -50,16 +46,15 @@ namespace Goliath.Helper
             {
                 return "Error";
             }
-
         }
 
         /// <summary>
         /// Decrypt text using AES encryption.
         /// </summary>
-        /// <param name="input">The text to decrypt.</param>
-        /// <param name="password">The private key.</param>
-        /// <param name="salt">Salt data (usually a username)</param>
-        /// <returns></returns>
+        /// <param name="input"> The text to decrypt. </param>
+        /// <param name="password"> The private key. </param>
+        /// <param name="salt"> Salt data (usually a username) </param>
+        /// <returns> </returns>
         public static string DecryptText(string input, string password, string salt)
         {
             try
@@ -79,14 +74,13 @@ namespace Goliath.Helper
             {
                 return "Error";
             }
-
         }
+
         private static byte[] AES_Encrypt(byte[] bytesToBeEncrypted, byte[] passwordBytes, string salt)
         {
             byte[] encryptedBytes = null;
 
-            // Set your salt here, change it to meet your flavor:
-            // The salt bytes must be at least 8 bytes.
+            // Set your salt here, change it to meet your flavor: The salt bytes must be at least 8 bytes.
             byte[] saltBytes = Encoding.ASCII.GetBytes($"{salt}{extraSaltData}");
 
             using (MemoryStream ms = new())
@@ -113,12 +107,12 @@ namespace Goliath.Helper
 
             return encryptedBytes;
         }
+
         private static byte[] AES_Decrypt(byte[] bytesToBeDecrypted, byte[] passwordBytes, string salt)
         {
             byte[] decryptedBytes = null;
 
-            // Set your salt here, change it to meet your flavor:
-            // The salt bytes must be at least 8 bytes.
+            // Set your salt here, change it to meet your flavor: The salt bytes must be at least 8 bytes.
             byte[] saltBytes = Encoding.ASCII.GetBytes($"{salt}{extraSaltData}");
 
             using (MemoryStream ms = new())

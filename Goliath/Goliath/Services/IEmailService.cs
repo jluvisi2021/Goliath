@@ -50,7 +50,7 @@ namespace Goliath.Services
         /// <summary>
         /// Sends an email to the user with a key to decrypt their data.
         /// </summary>
-        /// <param name="options">The email's options from <see cref="UserEmailOptions" />.</param>
+        /// <param name="options"> The email's options from <see cref="UserEmailOptions" />. </param>
         /// <returns> If the email was sent successfully. </returns>
         Task<bool> SendDataEncryptionEmailAsync(UserEmailOptions options);
 

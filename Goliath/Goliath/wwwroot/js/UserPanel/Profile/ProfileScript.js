@@ -19,6 +19,13 @@ const ProfileScript = (() => {
         $("#submit-verify-phone-form").click(() => {
             GlobalScript.loadCaptcha("verify-phone-form");
         });
+        $("#download-data-btn").click(() => {
+            GlobalScript.displayModal("Downloading...", "Your data is being downloaded!<br />Please wait up to 5 seconds...");
+        });
+
+        $("#download-data-enc-btn").click(() => {
+            GlobalScript.displayModal("Downloading...", "Your data is being downloaded!<br />Please wait up to 5 seconds...<br />Check your email for more information on decrypting this file.");
+        });
         if (GlobalScript.checkBrowser(false)) {
             $("#browser-supported").addClass("font-weight-bold").addClass("text-success").text("Yes");
         } else {
@@ -181,7 +188,6 @@ const ProfileScript = (() => {
             $("#two-factor").css({
                 "display": "unset"
             });
-
         }
     };
 })();

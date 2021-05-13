@@ -74,7 +74,6 @@ const GlobalScript = (() => {
         $(this).keypress(function (e) {
             idleTime = 0;
         });
-
     });
     return {
         /** Returns the list of avaliable banner types. */
@@ -86,7 +85,7 @@ const GlobalScript = (() => {
             idleTime = idleTime + 1;
 
             // Check if the idle time is greater then the logout threshold.
-            if (idleTime > sessionStorage.getItem("logoutThreshold") && sessionStorage.getItem("logoutThreshold") > 0) { 
+            if (idleTime > sessionStorage.getItem("logoutThreshold") && sessionStorage.getItem("logoutThreshold") > 0) {
                 // Log the user out.
                 window.location.href = "/logout";
             }
@@ -234,7 +233,7 @@ const GlobalScript = (() => {
             }
             // Notification will not be saved to localStorage so we display it now with DOM Injection.
             if (!save) {
-                $("#" + divParentID).prepend().html($("#" + divParentID).html()+
+                $("#" + divParentID).prepend().html($("#" + divParentID).html() +
                     '<div id=' + id + ' class="alert ' + typeStr + ' alert-dismissible fade show" role="alert">' +
                     '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
                     '<span aria-hidden="true">×</span>' +
@@ -271,7 +270,7 @@ const GlobalScript = (() => {
          * @param {string} body [Supports HTML(Use ``)]
          */
         displayModal: (title, body) => {
-            $("#outer").append(`
+            $("body").append(`
         <div class="modal fade" id="render-model" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">

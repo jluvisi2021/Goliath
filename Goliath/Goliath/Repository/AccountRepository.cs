@@ -604,9 +604,9 @@ namespace Goliath.Repository
             }
         }
 
-        public async Task GenerateNewDataEncryptionEmailAsync(ApplicationUser userModel, DeviceParser device, string key)
+        public async Task GenerateNewDataEncryptionEmailAsync(ApplicationUser userModel, DeviceParser device, string key, string link)
         {
-            await SendDataEncryptionEmailAsync(userModel, device, key);
+            await SendDataEncryptionEmailAsync(userModel, device, key, link);
         }
 
         public async Task GenerateNewPhoneConfirmationTokenAsync(ApplicationUser userModel)
@@ -808,7 +808,7 @@ namespace Goliath.Repository
             });
         }
 
-        private async Task SendDataEncryptionEmailAsync(ApplicationUser user, DeviceParser device, string key)
+        private async Task SendDataEncryptionEmailAsync(ApplicationUser user, DeviceParser device, string key, string link)
         {
             // Check if the phone number is null.
             string phone;
@@ -852,6 +852,9 @@ namespace Goliath.Repository
                     },
                     {
                         "{{LastLogin}}", user.LastUserLogin
+                    },
+                    {
+                        "{{Link}}", link
                     },
                     {
                         "{{PrivateKey}}", key

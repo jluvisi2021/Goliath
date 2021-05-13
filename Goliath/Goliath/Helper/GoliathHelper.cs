@@ -82,6 +82,7 @@ namespace Goliath.Helper
             generator.Dispose();
             return token.ToString();
         }
+
         /// <summary>
         /// Generates a secure random string using the <see cref="RandomGenerator" />. The maximum
         /// value and minimum value for the random numbers are set.
@@ -114,7 +115,5 @@ namespace Goliath.Helper
             generator.Dispose();
             return token.ToString();
         }
-
-
     }
 }

@@ -3,8 +3,7 @@
 namespace Goliath.Models.GoliathAes
 {
     /// <summary>
-    /// A model that represents the result of the user attempting to
-    /// decrypt their file.
+    /// A model that represents the result of the user attempting to decrypt their file.
     /// </summary>
     public class DecryptionResultModel
     {

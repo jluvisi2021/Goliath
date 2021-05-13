@@ -44,14 +44,15 @@
         </section>
         <br />
         <section class="row p-0 m-0">
-            @if (TempData[TempDataKeys.HtmlMessage] == null)
+            @if (TempData[TempDataKeys.HtmlMessage] != null)
             {
-            <a href="#!"><i class="fas fa-file-download fa-fw"></i>Download File</a>
+                <a target="_blank" href="data:application/octet-stream;charset=utf-8;base64,@Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(JsonConvert.DeserializeObject<UserDataModel>((string)TempData[TempDataKeys.HtmlMessage]), Formatting.Indented)))" download="@(resultModel.FileName[..(resultModel.FileName.Length-3)]).json"><i class="fas fa-file-download fa-fw"></i>Download File</a>
             }
-            else
+        </section>
+        <section class="row p-0 m-0">
+            @if (TempData[TempDataKeys.HtmlMessage] != null)
             {
-                <a target="_blank" href="data:application/octet-stream;charset=utf-8;base64,@Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(JsonConvert.DeserializeObject<UserDataModel>((string)TempData[TempDataKeys.HtmlMessage]), Formatting.Indented)))" download="@resultModel.FileName"><i class="fas fa-file-download fa-fw"></i>Download File</a>
-
+                <a href="javascript:AesToolScript.copyJsonString();"><i class="fas fa-clipboard fa-fw"></i>Copy Text to Clipboard</a>
             }
         </section>
         <section class="row p-0 m-0">
@@ -65,19 +66,19 @@
             @if (TempData[TempDataKeys.HtmlMessage] == null)
             {
                 <span class="text-danger pl-2" style="word-wrap: break-word; white-space: pre-wrap;">Your data has expired due to a refresh or redirect.<br />Please decrypt your file again.</span>
-                    }
-                    else
-                    {
-                    <span style="word-wrap: break-word; white-space: pre-wrap;">@($"{JsonConvert.SerializeObject(JsonConvert.DeserializeObject<UserDataModel>((string)TempData[TempDataKeys.HtmlMessage]), Formatting.Indented).Trim()}")</span>
-                    }
-            </section>
+            }
+            else
+            {
+                <span id="json" style="word-wrap: break-word; white-space: pre-wrap;">@($"{JsonConvert.SerializeObject(JsonConvert.DeserializeObject<UserDataModel>((string)TempData[TempDataKeys.HtmlMessage]), Formatting.Indented).Trim()}")</span>
+            }
+        </section>
     </main>
     }
 else
 {
     <main id="outer">
         <section id="inner">
-            <article id="front" class="p-5">
+            <article id="front" style="max-width: 700px;" class="p-5">
                 <div class="container-fluid">
                     <div class="row justify-content-center">
                         <span class="display-4">Decrypt User Data File</span>
@@ -87,9 +88,10 @@ else
                     <div class="row justify-content-center">
                         <span class="text-muted">Select an encrypted user data file on your computer to decrypt it.</span>
                     </div>
+                    <hr />
                     @if (resultModel != null)
                     {
-                        <hr />
+
                         if (!resultModel.IsSuccess)
                         {
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -111,23 +113,30 @@ else
 
                     }
 
-                    <form asp-action="DecryptUserData" enctype="multipart/form-data" asp-antiforgery="true" class="w-100">
+                    <form asp-action="DecryptUserData" enctype="multipart/form-data" asp-antiforgery="true">
                         <div class="row">
-                            <div class="ht-tm-element input-group mb-2">
+                            <div class="ht-tm-element input-group mb-2 input-field">
                                 <div class="input-group-prepend">
+                                    <button class="btn btn-primary" type="button">
+                                        <i class="fas fa-file-upload fa-fw"></i>
+                                    </button>
                                 </div>
-                                <input asp-for="DataFile" placeholder="File" type="file" required="" autofocus="" />
+                                <div class="custom-file">
+                                    <input id="data-file-input" asp-for="DataFile" placeholder="File" type="file" class="custom-file-input" />
+                                    <label class="custom-file-label px-2" for="data-file-input">Choose file</label>
+                                </div>
                             </div>
 
-                            <div class="ht-tm-element input-group mb-3">
+                            <div class="ht-tm-element input-group mb-3 input-field">
                                 <div class="input-group-prepend">
                                     <button class="btn btn-primary" type="button">
                                         <i class="fas fa-key fa-fw"></i>
                                     </button>
                                 </div>
-                                <input asp-for="SecretKey" placeholder="Secret Key" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
+                                <input asp-for="SecretKey" type="password" placeholder="Secret Key" required="" autofocus="" class="form-control shadow-sm px-2 rounded-right" />
                             </div>
-                            <div class="ht-tm-element input-group mb-3">
+
+                            <div class="ht-tm-element input-group mb-3 input-field">
                                 <div class="input-group-prepend">
                                     <button class="btn btn-primary" type="button">
                                         <i class="fas fa-user-lock fa-fw"></i>
@@ -157,3 +166,10 @@ else
         </section>
     </main>
 }
+<script>
+    // Edit file input text on select
+    $(".custom-file-input").on("change", function () {
+        var fileName = $(this).val().split("\\").pop();
+        $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+    });
+</script>

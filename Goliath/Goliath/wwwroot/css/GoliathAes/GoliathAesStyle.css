@@ -9,11 +9,37 @@
     background-size: cover;
     background-attachment: fixed;
 }
+
 #front {
     background: rgb(255, 255, 255, 0.67);
     border-radius: 20px;
 }
+
 #front-2 {
     background: rgb(255, 255, 255, 0.85);
     border-radius: 20px;
+}
+
+@media (min-width: 1368px) {
+    .input-field {
+        padding-right: 50%;
+    }
+}
+
+@media (max-width: 1367px) {
+    .input-field {
+        padding-right: 35%;
+    }
+}
+
+@media only screen and (pointer:none), (pointer:coarse) and (max-width: 767px) {
+    .input-field {
+        padding-right: 10%;
+    }
+}
+
+@media only screen and (pointer:none), (pointer:coarse) and (max-width: 512px) {
+    .input-field {
+        padding-right: 0%;
+    }
 }

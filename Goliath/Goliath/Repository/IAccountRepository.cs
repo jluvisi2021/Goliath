@@ -72,18 +72,19 @@ namespace Goliath.Repository
         /// <summary>
         /// Convert a user to a JSON string.
         /// </summary>
-        /// <param name="user">The user to convert.</param>
-        /// <returns>The serialized json.</returns>
+        /// <param name="user"> The user to convert. </param>
+        /// <returns> The serialized json. </returns>
         Task<string> UserToJsonAsync(ApplicationUser user);
 
         /// <summary>
         /// Sends an email to the user with a key to decrypt their data.
         /// </summary>
-        /// <param name="userModel">Model of the user.</param>
-        /// <param name="device">UserAgent</param>
-        /// <param name="key">Key to send.</param>
-        /// <returns></returns>
-        Task GenerateNewDataEncryptionEmailAsync(ApplicationUser userModel, DeviceParser device, string key);
+        /// <param name="userModel"> Model of the user. </param>
+        /// <param name="device"> UserAgent </param>
+        /// <param name="key"> Key to send. </param>
+        /// <param name="link"> The link to reference the user to. </param>
+        /// <returns> </returns>
+        Task GenerateNewDataEncryptionEmailAsync(ApplicationUser userModel, DeviceParser device, string key, string link);
 
         /// <summary>
         /// Attempts to confirm a <paramref name="user" /> phone number using Identity Core.
@@ -173,7 +174,9 @@ namespace Goliath.Repository
         Task SetTwoFactorEnabledAsync(ApplicationUser user, TwoFactorMethod method);
 
         /// <param name="user"> The <paramref name="user" /> to query. </param>
-        /// <returns> The amount of two-factor recovery codes the <paramref name="user" /> has. </returns>
+        /// <returns>
+        /// The amount of two-factor recovery codes the <paramref name="user" /> has.
+        /// </returns>
         Task<int> GetUserRecoveryCodeAmountAsync(ApplicationUser user);
 
         /// <summary>
@@ -223,7 +226,9 @@ namespace Goliath.Repository
         Task<bool> DoesPhoneNumberExistAsync(string phone);
 
         /// <param name="email"> A string representing a email address. </param>
-        /// <returns> If the <paramref name="email" /> is a valid email address that is in use. </returns>
+        /// <returns>
+        /// If the <paramref name="email" /> is a valid email address that is in use.
+        /// </returns>
         Task<bool> DoesEmailExistAsync(string email);
 
         /// <summary>
@@ -401,8 +406,8 @@ namespace Goliath.Repository
         /// <summary>
         /// Remove the login traceback data from the user.
         /// </summary>
-        /// <param name="user">The <paramref name="user"/> to remove the data from.</param>
-        /// <returns></returns>
+        /// <param name="user"> The <paramref name="user" /> to remove the data from. </param>
+        /// <returns> </returns>
         Task ClearLoginTracebackAsync(ApplicationUser user);
 
         /// <summary>
