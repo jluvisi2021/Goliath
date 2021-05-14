@@ -697,6 +697,17 @@ namespace Goliath.Repository
             await _userManager.UpdateAsync(user);
         }
 
+        public async Task DeleteUserAccountAsync(ApplicationUser user)
+        {
+            _logger.LogInformation($"User {user.Id} ({user.UserName}) has been deleted.");
+            await _userManager.RemoveFromRolesAsync(user, await _userManager.GetRolesAsync(user));
+            foreach(UserLoginInfo login in await _userManager.GetLoginsAsync(user))
+            {
+                await _userManager.RemoveLoginAsync(user, login.LoginProvider, login.ProviderKey);
+            }
+            await _userManager.DeleteAsync(user);
+        }
+
         public async Task SignOutAsync()
         {
             await _signInManager.SignOutAsync();

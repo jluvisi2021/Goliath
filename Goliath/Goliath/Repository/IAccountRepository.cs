@@ -95,6 +95,13 @@ namespace Goliath.Repository
         Task<IdentityResult> ConfirmPhoneAsync(ApplicationUser user, string token);
 
         /// <summary>
+        /// Deletes a user account.
+        /// </summary>
+        /// <param name="user">The user to delete.</param>
+        /// <returns></returns>
+        Task DeleteUserAccountAsync(ApplicationUser user);
+
+        /// <summary>
         /// Sends an email to a user with a link to confirm their email.
         /// </summary>
         /// <param name="signUpModel"> Model used to confirm user. </param>

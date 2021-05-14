@@ -2,12 +2,14 @@
 using Goliath.Enums;
 using Goliath.Helper;
 using Goliath.Models;
+using Goliath.Models.Accounts;
 using Goliath.Repository;
 using Goliath.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -411,6 +413,54 @@ namespace Goliath.Controllers
 
             await _accountRepository.GenerateNewDataEncryptionEmailAsync(user, new DeviceParser(GetClientUserAgent(), GetRemoteClientIPv4()), key, Url.ActionLink(nameof(GoliathAesController.DecryptUserData), GoliathControllers.AesController));
             return File(Encoding.ASCII.GetBytes(data), "text/plain", user.UserName + "-data.txt");
+        }
+
+        [GoliathAuthorize(nameof(Profile))]
+        [Route("userpanel/delete")]
+        public IActionResult DeleteAccount()
+        {
+            return View();
+        }
+
+        [GoliathAuthorize(nameof(Profile))]
+        [Route("userpanel/delete")]
+        [HttpPost, ValidateAntiForgeryToken, PreventDuplicateRequest]
+        public async Task<IActionResult> DeleteAccount(DeleteAccountModel model)
+        {
+            
+
+            if(!ModelState.IsValid)
+            {
+                TempData[TempDataKeys.HtmlMessage] = ModelState.Values.SelectMany(v => v.Errors).Select(v => v.ErrorMessage).AsEnumerable().Reverse().Aggregate((a, b) => a + "<br />" + b);
+                return RedirectToAction(nameof(DeleteAccount));
+            }
+            if (!model.Username.Equals(User.Identity.Name))
+            {
+                ModelState.AddModelError(string.Empty, "Invalid Username.");
+            }
+            var user = await _accountRepository.GetUserFromContextAsync(User);
+
+            if (!await _accountRepository.IsPasswordValidAsync(user, model.Password))
+            {
+                ModelState.AddModelError(string.Empty, "Invalid Password.");
+            }
+            if(user.TwoFactorEnabled)
+            {
+                if (!await _accountRepository.TwoFactorCodeValidAsync(user, model.TwoFactorCode))
+                {
+                    ModelState.AddModelError(string.Empty, "Invalid Two-Factor Code.");
+                }
+            }
+            // Check model state again.
+            if (!ModelState.IsValid)
+            {
+                TempData[TempDataKeys.HtmlMessage] = ModelState.Values.SelectMany(v => v.Errors).Select(v => v.ErrorMessage).AsEnumerable().Aggregate((a, b) => a + "<br />" + b);
+                return RedirectToAction(nameof(DeleteAccount));
+            }
+            await _accountRepository.SignOutAsync();
+            await _accountRepository.DeleteUserAccountAsync(user);
+            TempData[TempDataKeys.Redirect] = RedirectPurpose.AccountDeleted;
+            return RedirectToAction(nameof(AuthController.Login), GoliathControllers.AuthController);
         }
 
         [GoliathAuthorize(nameof(Database))]

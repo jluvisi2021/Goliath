@@ -225,7 +225,11 @@ namespace Goliath.Controllers
             {
                 _logger.LogInformation($"[CHECK-2] Received invalid serialization for SendSmsCode(m). Model Data = [{m}]");
                 TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorSmsResendFailure;
-                TempData[TempDataKeys.HtmlMessage] = "Internal Error. Try again later.";
+                if(model.UtilizeHtmlMessage ?? true)
+                {
+                    TempData[TempDataKeys.HtmlMessage] = "Internal Error. Try again later.";
+                }
+
                 return RedirectToActionPermanent(nameof(AuthController.Index), GoliathControllers.AuthController);
             }
             // Query for the user.
@@ -236,7 +240,11 @@ namespace Goliath.Controllers
             {
                 _logger.LogInformation($"[CHECK-3] Received invalid serialization for SendSmsCode(m). Model Data = [{m}]");
                 TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorSmsResendFailure;
-                TempData[TempDataKeys.HtmlMessage] = "Internal Error. Try again later.";
+                if (model.UtilizeHtmlMessage ?? true)
+                {
+                    TempData[TempDataKeys.HtmlMessage] = "Internal Error. Try again later.";
+                }
+                
                 if (model.IsUrnRedirect)
                 {
                     return RedirectToActionPermanent(model.Action, model.Controller);
@@ -253,7 +261,11 @@ namespace Goliath.Controllers
             {
                 _logger.LogInformation($"[CHECK-4A] Unauthorized request for user {user.Id} ({user.UserName} was rejected (Invalid Authorization Token). Model Data = [{m}]");
                 TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorSmsResendFailure;
-                TempData[TempDataKeys.HtmlMessage] = "Invalid account session.";
+                if (model.UtilizeHtmlMessage ?? true)
+                {
+                    TempData[TempDataKeys.HtmlMessage] = "Invalid account session.";
+                }
+                
                 if (model.IsUrnRedirect)
                 {
                     return RedirectToAction(model.Action, model.Controller);
@@ -270,7 +282,10 @@ namespace Goliath.Controllers
             {
                 _logger.LogInformation($"[CHECK-4B] Authorized request for user {user.Id} ({user.UserName} was rejected (Invalid Session). Model Data = [{m}]");
                 TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorSmsResendFailure;
-                TempData[TempDataKeys.HtmlMessage] = "Invalid account session.";
+                if (model.UtilizeHtmlMessage ?? true)
+                {
+                    TempData[TempDataKeys.HtmlMessage] = "Invalid account session.";
+                }
                 if (model.IsUrnRedirect)
                 {
                     return RedirectToAction(model.Action, model.Controller);
@@ -298,7 +313,11 @@ namespace Goliath.Controllers
 
                     _logger.LogInformation($"[CHECK-5B] Authorized request for user {user.Id} ({user.UserName} was rejected (Bad Timeout). Model Data = [{m}]");
                     TempData[TempDataKeys.Redirect] = RedirectPurpose.TwoFactorSmsResendFailureTimeout;
+                if (model.UtilizeHtmlMessage ?? true)
+                {
                     TempData[TempDataKeys.HtmlMessage] = "Please wait before requesting another code.";
+                }
+                
                     if (model.IsUrnRedirect)
                     {
                         return RedirectToAction(model.Action, model.Controller);

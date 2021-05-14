@@ -11,6 +11,6 @@
     </i>
 </p>
 <p class="text-muted font-italic">Remove your data from Goliath databases.</p>
-<button type="button" class="btn btn-danger">
+<a asp-controller="@GoliathControllers.UserPanelController" asp-action="@nameof(UserPanelController.DeleteAccount)" class="btn btn-danger">
     <i class="fas fa-trash mr-2"></i>Delete Account
-</button>
+</a>

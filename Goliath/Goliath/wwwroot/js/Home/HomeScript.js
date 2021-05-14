@@ -8,11 +8,11 @@
         gyroControls: false,
         minHeight: 200.00,
         minWidth: 200.00,
-        scale: 1.00,
-        scaleMobile: 1.00,
+        scale: 1.50,
+        scaleMobile: 1.50,
         color: 0x686868,
         backgroundColor: 0x2a2a2e,
-        maxDistance: 22.00,
+        maxDistance: 25.00,
         spacing: 16.00
     });
     // Make background visible after loading.

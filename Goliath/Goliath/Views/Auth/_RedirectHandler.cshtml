@@ -52,6 +52,12 @@ else if (TempData[TempDataKeys.Redirect].Equals((int)RedirectPurpose.TwoFactorSm
         GlobalScript.displayNotification("Error", "There was an internal problem with your request.", GlobalScript.BannerTypes()["alert-danger"], "center-banner");
     </script>
 }
+else if (TempData[TempDataKeys.Redirect].Equals((int)RedirectPurpose.AccountDeleted))
+{
+    <script>
+        GlobalScript.displayNotification("Thank you for using Goliath.", "You have been signed out and your account has been removed from Goliath servers & databases.", GlobalScript.BannerTypes()["alert-success"], "center-banner");
+    </script>
+}
 else if (TempData[TempDataKeys.Redirect].Equals((int)RedirectPurpose.Exception))
 {
 

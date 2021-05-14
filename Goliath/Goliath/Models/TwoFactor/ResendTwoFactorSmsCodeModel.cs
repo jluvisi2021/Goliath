@@ -12,5 +12,6 @@
         /// IsUrnRedirect must also be true to read the returnPath.
         /// </summary>
         public string ReturnPath { get; set; }
+        public bool? UtilizeHtmlMessage { get; set; } = true;
     }
 }

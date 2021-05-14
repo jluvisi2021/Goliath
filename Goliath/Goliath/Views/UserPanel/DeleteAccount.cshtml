@@ -1,0 +1,97 @@
+﻿@model Goliath.Models.Accounts.DeleteAccountModel 
+@inject Goliath.Repository.IAccountRepository _repository
+@using Goliath.Models 
+@using Newtonsoft.Json 
+@{
+    ViewData["Title"] = "Profile";
+    var user = await _repository.GetUserFromContextAsync(User);
+    ResendTwoFactorSmsCodeModel requestModel = new()
+    {
+        Username = User.Identity.Name,
+        Controller = GoliathControllers.UserPanelController,
+        Action = nameof(UserPanelController.SentSmsCode),
+        UtilizeHtmlMessage = false
+    };
+}
+<link href="~/css/UserPanel/Profile/DeleteAccountStyle.css" rel="stylesheet" />
+<script src="~/js/UserPanel/Profile/DeleteAccountScript.js" asp-append-version="true"></script>
+<div class="mt-5 pb-5">
+    <div class="container bg-white rounded p-4">
+        <div class="row justify-content-center">
+            <h4>Permanently delete your account.</h4>
+        </div>
+        <hr />
+        <div class="row justify-content-center">
+            <p>
+
+                Once you delete your account, all of your data will be removed from Goliath servers. <br />
+                Deleting user accounts cannot be undone, and once finished, your data will not be recoverable. <br />
+                Before finalizing this process, please make sure you have <a href="#!">downloaded your data</a> so you will not lose any critical information. <br />
+
+            </p>
+            <p>
+                <strong>If you are deleting your data because of security concerns then please read more about <a href="#!">how Goliath protects your data.</a></strong>
+            </p>
+        </div>
+        <hr />
+        
+        <div class="row justify-content-center">
+            <div id="verify-form" class="card">
+                @if (TempData[TempDataKeys.HtmlMessage] != null)
+                {
+                    <div class="alert alert-danger text-left" role="alert">
+                        <h4 class="alert-heading">Please fix these errors.</h4>
+                        @Html.Raw(TempData[TempDataKeys.HtmlMessage])
+                    </div>
+                }
+                <div class="card-body">
+                    <h4 class="card-title">Delete your account.</h4>
+                    <p class="card-text">
+                        We are sorry to see you go @(user.UserName). But Before removing your account please validate the information below so we know it is really you.
+                    </p>
+                    <hr />
+                    <form asp-action="DeleteAccount" asp-antiforgery="true">
+                        <div class="form-group text-left">
+                            <label for="input-username">Username</label>
+                            <input asp-for="Username" class="form-control" id="input-username"
+                                   placeholder="Enter Username">
+                            <label for="input-password">Password</label>
+                            <input asp-for="Password" type="password" class="form-control" id="input-password"
+                                   placeholder="Enter Password">
+                            @if (user.TwoFactorEnabled)
+                            {
+                                if (user.TwoFactorMethod == (int)TwoFactorMethod.SmsVerify)
+                                {
+                                    <label for="input-two-factor">Two-Factor Code (<a target="_blank" asp-controller="@GoliathControllers.TwoFactorController" asp-action="SendSmsCode" asp-route-m="@Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(requestModel)))">Send Code</a>)</label>
+                                }
+                                else
+                                {
+                        <label for="input-two-factor">Two-Factor Code</label>
+                                }
+
+                                <input asp-for="TwoFactorCode" class="form-control" id="input-two-factor"
+                                       placeholder="Enter Two-Factor Code">
+                            }
+
+
+                            <label for="input-feedback">Feedback</label>
+                            <textarea asp-for="Feedback" class="form-control" id="input-feedback"
+                                      placeholder="Please enter any feedback about your experience using Goliath services.">
+
+                            </textarea>
+
+                            <small id="text-counter" class="form-text text-muted">Your feedback helps improve the experience for others!</small>
+
+                        </div>
+                        <hr />
+                        <span class="text-muted">This action cannot be undone.</span>
+                        <br />
+                        <button type="submit" class="btn btn-danger"><strong><i class="fas fa-trash-alt fa-fw mr-1"></i>Delete my Account</strong></button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

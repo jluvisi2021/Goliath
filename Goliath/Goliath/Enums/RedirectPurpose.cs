@@ -10,7 +10,6 @@
 
         // Authentication Panel
         RegisterSuccess,
-
         LogoutSuccess,
         VerifiedEmailSuccess,
         VerifiedEmailFailure,
@@ -20,6 +19,7 @@
         TwoFactorSmsResendSuccess,
         TwoFactorSmsResendFailureTimeout,
         TwoFactorSmsResendFailure,
+        AccountDeleted,
         Exception,
 
         // User Panel
